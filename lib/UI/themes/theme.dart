@@ -7,7 +7,7 @@ class MyTheme {
     bodyMedium:GoogleFonts.openSans(
       fontSize: 25,
       fontWeight: FontWeight.bold,
-      color: Colors.orange,
+      color: Colors.black,
     ),
     bodyLarge: GoogleFonts.openSans(
       fontSize: 14.0,
@@ -65,6 +65,15 @@ class MyTheme {
     ),
   );
 
+  static TextTheme orangeTheme = TextTheme(
+    bodyLarge: GoogleFonts.openSans(
+      fontSize: 14.0,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+    ),
+
+  );
+
   // 3
   static ThemeData light() {
     return ThemeData(
@@ -109,4 +118,20 @@ class MyTheme {
       textTheme: darkTextTheme,
     );
   }
+
+  static ThemeData defaultTheme() {
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: Colors.orange[100], // permet de changer le fond
+      appBarTheme: AppBarTheme(
+        foregroundColor:  Colors.orangeAccent,
+        backgroundColor:  Colors.orange[200],
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        foregroundColor: Colors.orangeAccent,
+        backgroundColor: Colors.deepOrange,
+      ),
+      textTheme: orangeTheme,
+    );
+}
 }

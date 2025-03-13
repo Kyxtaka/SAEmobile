@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'UI/home.dart';
+import 'UI/themes/theme.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,7 +10,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
-      title: "IUTables'O");
+      title: "IUTables'O",
+      home: Home(),
+      theme: theme);
   }
   }
