@@ -5,6 +5,7 @@ import 'UI/login.dart';
 import 'UI/themes/theme.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:saemobile/UI/decouverte.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
       title: "IUTables'O",
-      home: Home(),
+      home: Decouverte(),
       theme: theme);
   }
 
