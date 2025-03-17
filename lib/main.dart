@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'UI/home.dart';
 import 'UI/login.dart';
 import 'UI/themes/theme.dart';
@@ -9,15 +10,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() {
   runApp(MyApp());
 }
-
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => Home(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => Login(),
+    ),
+  ],
+);
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
-    return MaterialApp(debugShowCheckedModeBanner: false,
+    return MaterialApp.router(debugShowCheckedModeBanner: false,
       title: "IUTables'O",
-      home: Home(),
-      theme: theme);
+      theme: theme,
+      routerConfig: _router,);
   }
 
   Future<void> main() async {
