@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'UI/home.dart';
 import 'UI/login.dart';
+import 'UI/details.dart';
 import 'UI/themes/theme.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
       title: "IUTables'O",
-      home: Home(),
+      home:Details(),
       theme: theme);
   }
 
@@ -28,3 +29,4 @@ class MyApp extends StatelessWidget {
     runApp(MyApp());
   }
   }
+
