@@ -11,8 +11,10 @@ void main() {
   runApp(MyApp());
 }
 final GoRouter _router = GoRouter(
+  initialLocation: '/',
   routes: [
     GoRoute(
+      name:'home',
       path: '/',
       builder: (context, state) => Home(),
     ),
