@@ -5,13 +5,33 @@ import 'package:saemobile/UI/themes/boutonRetour.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+import 'package:saemobile/utils/UserTools.dart';
+
 class Login extends StatefulWidget {
-  /// utilisation d'un statefulwidget pour les etats des fields
   @override
-  _LoginState createState() => _LoginState();
+  _LoginPageState createState() => _LoginPageState();
 }
-class _LoginState extends State<Login> {
+
+class _LoginPageState extends State<Login> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final UserTools loginState = UserTools();
+
+  /// Connexion Supabse
+  Future<void> _login() async {
+    if (_formKey.currentState!.saveAndValidate()) {
+      final email = _formKey.currentState!.value['email'];
+      final password = _formKey.currentState!.value['password'];
+
+      final errorMessage = await loginState.login(email, password);
+      if (errorMessage == null) {
+        context.go("/home");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erreur : $errorMessage")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,59 +48,33 @@ class _LoginState extends State<Login> {
                 Text("Connexion", style: TextStyle(fontSize: 18.0)),
                 SizedBox(height: 16.0),
 
-                // Champ Email
                 FormBuilderTextField(
                   name: 'email',
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.7),
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un email';
-                    }
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                      return 'Email invalide';
-                    }
-                    return null;
-                  },
+                  validator: (value) => value!.isEmpty ? 'Veuillez entrer un email' : null,
                 ),
 
                 SizedBox(height: 16.0),
 
-                // Champ Mot de passe
                 FormBuilderTextField(
                   name: 'password',
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.7),
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
                   ),
-                  validator: (value) {
-                    if (value == null || value.length < 8) {
-                      return 'Le mot de passe doit contenir au moins 8 caractères';
-                    }
-                    return null;
-                  },
+                  validator: (value) => (value != null && value.length < 8)
+                      ? 'Le mot de passe doit contenir au moins 8 caractères'
+                      : null,
                 ),
 
                 SizedBox(height: 16.0),
 
-                // Bouton de connexion
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.saveAndValidate()) {
-                      final formData = _formKey.currentState!.value;
-                      print("Données valides : $formData");
-                      context.go("/home"); // Redirige après connexion
-                    } else {
-                      print("Validation échouée");
-                    }
-                  },
+                  onPressed: _login,
                   child: Text("Se connecter"),
                 ),
 
