@@ -13,8 +13,10 @@ class UserTools {
   Future<String?> login(String email, String password) async {
     try {
       await supabase.auth.signInWithPassword(email: email, password: password);
+      print("connected");
       return null;
     } catch (error) {
+      print(error);
       return error.toString();
     }
   }
