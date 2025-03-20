@@ -11,6 +11,7 @@
 .svn/
 .env
 .swiftpm/
+.env
 migrate_working_dir/
 
 # IntelliJ related

@@ -8,10 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-class RestaurantAPI {
-
+/*
   Future<SupabaseClient> _initDb() async {
+
     try {
       await dotenv.load(fileName: ".env");
       await Supabase.initialize(
@@ -23,14 +22,19 @@ class RestaurantAPI {
       debugPrint("supabase and are already initialized");
       return Supabase.instance.client;
     }
-
   }
+  */
 
+class RestaurantAPI {
+
+  final SupabaseClient database;
+
+  const RestaurantAPI({required this.database});
 
   Future<List<Restaurant>> getAllRestaurants() async {
-    final supabase = await _initDb();
+    //final supabase = await _initDb();
     try {
-      final response = await supabase
+      final response = await this.database
           .from('Restaurant')
           .select();
 
@@ -40,8 +44,6 @@ class RestaurantAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            //debugPrint("Row: $row");
-            //debugPrint("Type of myVar: ${row['siret'].runtimeType}");
             Restaurant restaurant = new Restaurant(
                 row['id_resto'],
                 row['nom']??'None',
