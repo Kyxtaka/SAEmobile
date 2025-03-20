@@ -51,6 +51,34 @@ class UserTools {
 
   }
 
+  Future<String?> signin(String nom, String prenom, String email, String password, field) async {
+    try {
+      if (!field){
+        throw new Exception("Le mot de passe est différent");
+      }
+      final supabase = _initDb();
+      final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
+      if (result.isNotEmpty) {
+        print(result[0]);
+        print(password);
+        if(result[0]['mail']==email){
+          throw new Exception("Vous avez déjà un compte");
+        }
+      }
+      else {
+        final result = await this.supabase.from("Visiteur").insert({'mail':email, 'password': password, 'prenom': prenom, 'nom_user': nom}).select();
+        if (result.isNotEmpty){
+          print("connected");
+          return null;
+        }
+        throw new Exception("Le compte n'a pas pu être crée");
+      }
+    } catch (error) {
+      print(error);
+      return error.toString();
+    }
+  }
+
   /// Déconnexion de l'utilisateur
   Future<void> logout() async {
     await supabase.auth.signOut();

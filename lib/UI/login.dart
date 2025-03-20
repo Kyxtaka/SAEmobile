@@ -21,21 +21,25 @@ class _LoginPageState extends State<Login> {
 
   /// Connexion Supabse
   Future<void> _login() async {
-    if (_formKey.currentState!.saveAndValidate()) {
-      final email = _formKey.currentState!.value['email'];
-      final password = _formKey.currentState!.value['password'];
-      print(email);
-      var bytes = utf8.encode(password);
-      var digest = r"\x" + sha256.convert(bytes).toString();
+    try {
+      if (_formKey.currentState!.saveAndValidate()) {
+        final email = _formKey.currentState!.value['email'];
+        final password = _formKey.currentState!.value['password'];
+        print(email);
+        var bytes = utf8.encode(password);
+        var digest = r"\x" + sha256.convert(bytes).toString();
 
-      final errorMessage = await loginState.login(email, digest);
-      if (errorMessage == null) {
-        context.go("/home");
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur : $errorMessage")),
-        );
-      }
+        final errorMessage = await loginState.login(email, digest);
+        if (errorMessage == null) {
+          context.go("/home");
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Erreur : $errorMessage")),
+          );
+        }
+      }} catch (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Champs à compléter")));
     }
   }
 

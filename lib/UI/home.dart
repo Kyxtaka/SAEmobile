@@ -30,7 +30,7 @@ class Home extends StatelessWidget{
               padding: EdgeInsets.only(top:5.0),
               child: Text("Pas de compte ?", style: MyTheme.loginStyle() ),
             ),
-            TextButton(child: Text("Inscrivez-vous !", style: TextStyle(color: Colors.deepOrange,decoration: TextDecoration.underline,)), onPressed: ()=>context.go('/subscribe'),
+            TextButton(child: Text("Inscrivez-vous !", style: TextStyle(color: Colors.deepOrange,decoration: TextDecoration.underline,)), onPressed: ()=>context.go('/signIn'),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero, // Enlève le padding par défaut
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Réduit la taille du bouton au texte

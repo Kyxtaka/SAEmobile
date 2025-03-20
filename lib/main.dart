@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'UI/home.dart';
+import 'UI/signIn.dart';
 import 'UI/login.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +27,10 @@ final GoRouter _router = GoRouter(
       path: '/login',
       builder: (context, state) => Login(),
     ),
+    GoRoute(
+      path:'/signIn',
+      builder: (context, state) => SignIn(),
+    )
   ],
 );
 class MyApp extends StatelessWidget {
