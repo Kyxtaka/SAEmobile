@@ -76,7 +76,7 @@ class _LoginPageState extends State<Login> {
                     labelText: 'Mot de passe',
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
                   ),
-                  validator: (value) => (value != null && value.length < 8)
+                  validator: (value) => (value != null && value.length < 4)
                       ? 'Le mot de passe doit contenir au moins 8 caractères'
                       : null,
                 ),
