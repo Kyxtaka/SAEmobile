@@ -28,7 +28,7 @@ class _LoginPageState extends State<Login> {
       var bytes = utf8.encode(password);
       var digest = r"\x" + sha256.convert(bytes).toString();
 
-      final errorMessage = await loginState.login(email, password);
+      final errorMessage = await loginState.login(email, digest);
       if (errorMessage == null) {
         context.go("/home");
       } else {
