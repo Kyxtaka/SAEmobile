@@ -1,4 +1,7 @@
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/themes/boutonRetour.dart';
@@ -21,6 +24,9 @@ class _LoginPageState extends State<Login> {
     if (_formKey.currentState!.saveAndValidate()) {
       final email = _formKey.currentState!.value['email'];
       final password = _formKey.currentState!.value['password'];
+      print(email);
+      var bytes = utf8.encode(password);
+      var digest = r"\x" + sha256.convert(bytes).toString();
 
       final errorMessage = await loginState.login(email, password);
       if (errorMessage == null) {

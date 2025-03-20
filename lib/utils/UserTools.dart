@@ -12,7 +12,7 @@ class UserTools {
   /// Connexion avec email et mot de passe
   Future<String?> login(String email, String password) async {
     try {
-      await supabase.auth.signInWithPassword(email: email, password: password);
+      await supabase.auth.signInWithPassword(email:"clemence@mail.com","motdepasse");
       print("connected");
       return null;
     } catch (error) {
