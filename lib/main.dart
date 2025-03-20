@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
       title: "IUTables'O",
-      home:Details(),
+      home: Details(),
       theme: theme);
   }
 
