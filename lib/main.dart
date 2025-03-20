@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'UI/accueil.dart';
 import 'UI/home.dart';
 import 'UI/login.dart';
 import 'UI/themes/theme.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
       title: "IUTables'O",
-      home: Home(),
+      home: Accueil(),
       theme: theme);
   }
 

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/UI/global/header.dart';
-import 'package:saemobile/UI/themes/searchBar.dart';
+import 'package:saemobile/UI/themes/SearchBar.dart';
 
 class Accueil extends StatelessWidget{
   static Header header = new Header();
-  static searchBar barreRecherche = new searchBar();
+  static SearchBarApp barreRecherche = new SearchBarApp();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: header.create(),
-        body: Center(
-          child:Column(
-            mainAxisSize: MainAxisSize.min,
+        body:
+        Center(
+          child:
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children:[
               barreRecherche,
             ],
