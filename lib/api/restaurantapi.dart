@@ -8,14 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-class RestaurantAPI {
-  final SupabaseClient database;
-
-  const RestaurantAPI({required this.database});
-
+/*
   Future<SupabaseClient> _initDb() async {
-  /*
+
     try {
       await dotenv.load(fileName: ".env");
       await Supabase.initialize(
@@ -27,16 +22,19 @@ class RestaurantAPI {
       debugPrint("supabase and are already initialized");
       return Supabase.instance.client;
     }
-
-   */
-    return this.database;
   }
+  */
 
+class RestaurantAPI {
+
+  final SupabaseClient database;
+
+  const RestaurantAPI({required this.database});
 
   Future<List<Restaurant>> getAllRestaurants() async {
-    final supabase = await _initDb();
+    //final supabase = await _initDb();
     try {
-      final response = await supabase
+      final response = await this.database
           .from('Restaurant')
           .select();
 
@@ -46,8 +44,6 @@ class RestaurantAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            //debugPrint("Row: $row");
-            //debugPrint("Type of myVar: ${row['siret'].runtimeType}");
             Restaurant restaurant = new Restaurant(
                 row['id_resto'],
                 row['nom']??'None',
@@ -64,7 +60,7 @@ class RestaurantAPI {
                 row['gps_lat']??0.0,
                 row['gps_long']??0.0
             );
-            restaurant.debugPrint();
+            //restaurant.debugPrint();
             restaurants.add(restaurant);
           }
           debugPrint("Restaurants count: ${restaurants.length}");
@@ -80,19 +76,5 @@ class RestaurantAPI {
       return [];
     }
   }
-
-  /*
-  Future<void> testRawHttpRequest() async {
-    final url = 'https://qwspzcdwzooofvlczlew.supabase.co/rest/v1/Restaurant';
-    final headers = {
-      'apikey': dotenv.env['SUPABASE_ANON_KEY']??'';
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF3c3B6Y2R3em9vb2Z2bGN6bGV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczODk1NTYsImV4cCI6MjA1Mjk2NTU1Nn0.gHduSJK1OhDoIcuyMYwBdZoqXb4AELmJBcLV9s5iPhc',
-      'Content-Type': 'application/json',
-    };
-
-    final response = await http.get(Uri.parse(url), headers: headers);
-    debugPrint("Raw HTTP Response: ${response.body}");
-  }
-   */
 
 }
