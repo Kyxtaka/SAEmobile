@@ -10,8 +10,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
 class RestaurantAPI {
+  final SupabaseClient database;
+
+  const RestaurantAPI({required this.database});
 
   Future<SupabaseClient> _initDb() async {
+  /*
     try {
       await dotenv.load(fileName: ".env");
       await Supabase.initialize(
@@ -24,10 +28,12 @@ class RestaurantAPI {
       return Supabase.instance.client;
     }
 
+   */
+    return this.database;
   }
 
 
-  Future<void> getAllRestaurants() async {
+  Future<List<Restaurant>> getAllRestaurants() async {
     final supabase = await _initDb();
     try {
       final response = await supabase
@@ -68,8 +74,10 @@ class RestaurantAPI {
       } else {
         debugPrint("Unexpected response type: ${response.runtimeType} ❌");
       }
+      return restaurants;
     } catch (e) {
       debugPrint("Error fetching data: $e ❌");
+      return [];
     }
   }
 
