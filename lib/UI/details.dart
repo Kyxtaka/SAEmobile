@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 import 'global/footer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+// fonction get le détails d'un restaurant
+//Future<Map<String, dynamic>> getRestaurantDetails(int restaurantId) async {
+//final response = await Supabase.instance.client
+//      .from('RESTAURANT')
+//      .select()
+//      .eq('id', restaurantId)
+//      .single();
+//  if (response.error != null) {
+//    throw Exception('Erreur lors de la récupération des données');
+//  }
+//  return response.data;
+//}
 
 class Details extends StatelessWidget {
   static Footer header = new Footer(items: [
@@ -48,11 +62,22 @@ class DetailsPage extends StatelessWidget {
                 children: [
                   SizedBox(height: 10),
                   // Centrer le titre principal
-                  Center(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
                     child: Text(
                       "Un nouvel intérêt ?",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing : 1
+                      ),
                     ),
+                  ),
+                  Divider(
+                    color : Colors.orange,
+                    thickness: 2,
+                    indent: 250,
+                    endIndent: 250,
                   ),
                   SizedBox(height: 10),
                   // Image + Overlay Texte
@@ -169,3 +194,48 @@ class DetailsPage extends StatelessWidget {
             )));
   }
 }
+// version adaptée à la base
+//class DetailsPage extends StatelessWidget {
+//   final int restaurantId; // ID du restaurant passé à la page
+//
+//   DetailsPage({required this.restaurantId});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Détails")),
+//       body: FutureBuilder<Map<String, dynamic>>(
+//         future: getRestaurantDetails(restaurantId),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return Center(child: CircularProgressIndicator());
+//           } else if (snapshot.hasError) {
+//             return Center(child: Text('Erreur: ${snapshot.error}'));
+//           } else if (snapshot.hasData) {
+//             final restaurant = snapshot.data!;
+//             return Padding(
+//               padding: const EdgeInsets.all(20.0),
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     restaurant['name'],
+//                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+//                   ),
+//                   SizedBox(height: 10),
+//                   Divider(color: Colors.orange, thickness: 2),
+//                   SizedBox(height: 10),
+//                   Text('Adresse: ${restaurant['address']}'),
+//                   Text('Origine: ${restaurant['origin']}'),
+//                   Text('Contact: ${restaurant['contact']}'),
+//                   // Ajoutez d'autres informations du restaurant ici
+//                 ],
+//               ),
+//             );
+//           } else {
+//             return Center(child: Text('Aucune donnée trouvée'));
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
