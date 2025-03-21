@@ -42,72 +42,60 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
     return FutureBuilder(
-        future: initSupabase(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      future: initSupabase(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        } else if (snapshot.hasError) {
             return MaterialApp(
               home: Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
-            );
-          } else if (snapshot.hasError) {
-              return MaterialApp(
-                home: Scaffold(
-                  body: Center(child: Text("Erreur de chargement de Supabase")),
-              ),
-            );
-          }
+                body: Center(child: Text("Erreur de chargement de Supabase")),
+            ),
+          );
+        }
 
-          return MultiProvider(
-              providers: [
-                Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
-                Provider<int>(create: (_) => 42),
-                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
-              ],
-              child: Consumer<int>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-                builder: (context, number, child) {
-                  return MaterialApp.router(
-                    title: 'My App',
-                    routerConfig: GoRouter(
-                      initialLocation: '/',
-                      routes: [
-                          GoRoute(
-                            name:'home',
-                            path: '/',
-                            builder: (context, state) => Home(),
-                          ),
-                          GoRoute(
-                            path: '/login',
-                            builder: (context, state) => Login(),
-                          ),
-                          GoRoute(
-                            path:'/signIn',
-                            builder: (context, state) => SignIn(),
-                          ),
-                          GoRoute(
-                            path: '/decouverte',
-                            builder: (context, state) => Decouverte(database: Supabase.instance.client),
-                          ),
-                    ],
+        return MultiProvider(
+          providers: [
+            Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
+            Provider<int>(create: (_) => 42),
+            //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
+            //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+          ],
+          child: Consumer<int>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+            builder: (context, number, child) {
+              return MaterialApp.router(
+                title: 'My App',
+                routerConfig: GoRouter(
+                  initialLocation: '/',
+                  routes: [
+                    GoRoute(
+                      name:'home',
+                      path: '/',
+                      builder: (context, state) => Home(),
                     ),
-                  );
-                },
-              ),
-            );
-          }
+                    GoRoute(
+                      path: '/login',
+                      builder: (context, state) => Login(),
+                    ),
+                    GoRoute(
+                      path:'/signIn',
+                      builder: (context, state) => SignIn(),
+                    ),
+                    GoRoute(
+                      path: '/decouverte',
+                      builder: (context, state) => Decouverte(database: Supabase.instance.client),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      }
     );
-
-
-/*
-      MaterialApp.router(debugShowCheckedModeBanner: false,
-      title: "IUTables'O",
-      theme: theme,
-      routerConfig:
-      )
-      ,);
-      *
- */
   }
-
 }
