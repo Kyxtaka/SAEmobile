@@ -1,42 +1,101 @@
 
-import 'package:flutter/material.dart';
-import 'package:passwordfield/passwordfield.dart';
+import 'dart:convert';
 
-class Login extends StatelessWidget{
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:saemobile/UI/themes/boutonRetour.dart';
+
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+
+import 'package:saemobile/utils/UserTools.dart';
+
+class Login extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<Login> {
+  final _formKey = GlobalKey<FormBuilderState>();
+  final UserTools loginState = UserTools();
+
+  /// Connexion Supabse
+  Future<void> _login() async {
+    try {
+      if (_formKey.currentState!.saveAndValidate()) {
+        final email = _formKey.currentState!.value['email'];
+        final password = _formKey.currentState!.value['password'];
+        print(email);
+        var bytes = utf8.encode(password);
+        var digest = r"\x" + sha256.convert(bytes).toString();
+
+        final errorMessage = await loginState.login(email, digest);
+        if (errorMessage == null) {
+          context.go("/decouverte");
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Erreur : $errorMessage")),
+          );
+        }
+      }} catch (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Champs à compléter")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-          child:Column(
-            mainAxisSize: MainAxisSize.min,
-            children:[
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child:Text("Connexion"),),
-              TextField( decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 0, color: Colors.grey),
-                  borderRadius: BorderRadius.circular(25.7),
+      appBar: AppBar(title: Text("Connexion")),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FormBuilder(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Connexion", style: TextStyle(fontSize: 18.0)),
+                SizedBox(height: 16.0),
+
+                FormBuilderTextField(
+                  name: 'email',
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
+                  ),
+                  validator: (value) => value!.isEmpty ? 'Veuillez entrer un email' : null,
                 ),
-                hintText: 'email',
-              ),),
-              PasswordField(errorMessage: '''
-                - A uppercase letter
-                - A lowercase letter
-                - A digit
-                - A special character
-                - A minimum length of 8 characters
-                 ''',
-                border: PasswordBorder(
-                  border: OutlineInputBorder(
-                    borderSide: const BorderSide(width: 0, color: Colors.grey),
-                    borderRadius: BorderRadius.circular(25.7),
-                  )
+
+                SizedBox(height: 16.0),
+
+                FormBuilderTextField(
+                  name: 'password',
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Mot de passe',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
+                  ),
+                  validator: (value) => (value != null && value.length < 4)
+                      ? 'Le mot de passe doit contenir au moins 8 caractères'
+                      : null,
                 ),
-                hintText: 'mot de passe',
-              )
-            ],
+
+                SizedBox(height: 16.0),
+
+                ElevatedButton(
+                  onPressed: _login,
+                  child: Text("Se connecter"),
+                ),
+
+                SizedBox(height: 16.0),
+
+                RetourButton(onPressed: () => context.go("/")),
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
