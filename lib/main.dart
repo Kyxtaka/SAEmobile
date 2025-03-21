@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/decouverte.dart';
+import 'UI/accueil.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
@@ -88,6 +89,10 @@ class MyApp extends StatelessWidget {
                     GoRoute(
                       path: '/decouverte',
                       builder: (context, state) => Decouverte(database: Supabase.instance.client),
+                    ),
+                    GoRoute(
+                      path: '/accueil',
+                      builder: (context, state) => Accueil(database: Supabase.instance.client),
                     ),
                   ],
                 ),

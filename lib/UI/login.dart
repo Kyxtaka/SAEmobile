@@ -31,7 +31,7 @@ class _LoginPageState extends State<Login> {
 
         final errorMessage = await loginState.login(email, digest);
         if (errorMessage == null) {
-          context.go("/decouverte");
+          context.go("/accueil");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Erreur : $errorMessage")),
