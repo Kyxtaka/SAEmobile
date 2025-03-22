@@ -20,6 +20,8 @@ class SqlfliteDatabase {
         _createTypeCuisine(db);
         _createUser(db);
         _createCritique(db);
+        _createRestaurantsPreferees(db);
+        _createCuisinePreferees(db);
       },
       version: 1,
     );
@@ -41,6 +43,8 @@ class SqlfliteDatabase {
     return db.execute(
         '''
     CREATE TABLE TypeCuisine(
+      id INTEGER PRIMARY KEY,
+      nom_cuisine TEXT
     )
     '''
     );
@@ -49,7 +53,10 @@ class SqlfliteDatabase {
   Future _createUser(Database db) {
     return db.execute(
         '''
-    CREATE TABLE TypeCuisine(
+    CREATE TABLE User(
+      email TEXT PRIMARY KEY,
+      connected BOOLEAN,
+      localisation TEXT
     )
     '''
     );
@@ -58,9 +65,40 @@ class SqlfliteDatabase {
   Future _createCritique(Database db) {
     return db.execute(
         '''
-    CREATE TABLE TypeCuisine(
+    CREATE TABLE Critique(
+      id INTEGER PRIMARY KEY,
+      message TEXT,
+      note INTEGER,
+      restaurant_id INTEGER,
+      FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
     )
     '''
     );
+  }
+
+  Future _createRestaurantsPreferees(Database db) async {
+    return db.execute(
+        '''
+    CREATE TABLE restaurants_preferees(
+      email TEXT,
+      restaurant_id INTEGER,
+      PRIMARY KEY (email, restaurant_id),
+      FOREIGN KEY (email) REFERENCES user(email),
+      FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+    )
+  ''');
+  }
+
+  Future _createCuisinePreferees(Database db) async {
+    return db.execute(
+        '''
+    CREATE TABLE cuisines_preferees(
+      email TEXT,
+      cuisine_id INTEGER,
+      PRIMARY KEY (email, cuisine_id),
+      FOREIGN KEY (email) REFERENCES user(email),
+      FOREIGN KEY (cuisine_id) REFERENCES type_cuisine(id)
+    )
+  ''');
   }
 }
