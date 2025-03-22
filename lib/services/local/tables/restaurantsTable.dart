@@ -5,19 +5,19 @@ import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsTable {
+  final db;
+  RestaurantsTable({required this.db});
 
-  Future<void> insertRestaurant(Restaurant restaurant) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+  Future<int> insertRestaurant(Restaurant restaurant) async {
+    return await db.insert(
       'restaurants',
       restaurant.toMapLocal(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<void> updateRestaurant(Restaurant restaurant) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.update(
+  Future<int> updateRestaurant(Restaurant restaurant) async {
+    return await db.update(
       'restaurants',
       restaurant.toMapLocal(),
       where: 'id = ?',
@@ -25,9 +25,8 @@ class RestaurantsTable {
     );
   }
 
-  Future<void> deleteRestaurant(int id) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
+  Future<int> deleteRestaurant(int id) async {
+    return await db.delete(
       'restaurants',
       where: 'id = ?',
       whereArgs: [id],
@@ -35,7 +34,6 @@ class RestaurantsTable {
   }
 
   Future<List<Restaurant>> getAllRestaurants() async {
-    final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> restaurantMaps = await db.query('restaurants');
     return restaurantMaps.map((map) {
       return Restaurant(

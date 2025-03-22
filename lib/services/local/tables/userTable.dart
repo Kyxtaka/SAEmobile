@@ -6,19 +6,19 @@ import '../../../models/user.dart';
 import '../sqlfliteDatabase.dart';
 
 class UserTable {
+  final db;
+  UserTable({required this.db});
 
-  Future<void> insertUser(User user) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+  Future<int> insertUser(User user) async {
+    return await db.insert(
       'User',
       user.toMapLocal(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<void> updateUser(User user) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.update(
+  Future<int> updateUser(User user) async {
+    return await db.update(
       'User',
       user.toMapLocal(),
       where: 'email = ?',
@@ -26,9 +26,8 @@ class UserTable {
     );
   }
 
-  Future<void> deleteUser(String email) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
+  Future<int> deleteUser(String email) async {
+    return await db.delete(
       'User',
       where: 'email = ?',
       whereArgs: [email],
@@ -36,7 +35,6 @@ class UserTable {
   }
 
   Future<List<User>> getAllUsers() async {
-    final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> usersMaps = await db.query('User');
     return usersMaps.map((map) {
       return User(

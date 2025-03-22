@@ -2,10 +2,11 @@ import 'package:sqflite/sqflite.dart';
 import '../sqlfliteDatabase.dart';
 
 class CuisinesPrefereesTable {
+  final db;
+  CuisinesPrefereesTable({required this.db});
 
-  Future<void> insertCuisinePrefere(String email, int cuisineId) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+  Future<int> insertCuisinePrefere(String email, int cuisineId) async {
+    return await db.insert(
       'cuisines_preferees',
       {
         'email': email,
@@ -16,7 +17,6 @@ class CuisinesPrefereesTable {
   }
 
   Future<int> deleteCuisinePrefere(String email, int cuisineId) async {
-    final db = await SqlfliteDatabase.instance.database;
     return await db.delete(
       'cuisines_preferees',
       where: 'email = ? AND cuisine_id = ?',
@@ -25,7 +25,6 @@ class CuisinesPrefereesTable {
   }
 
   Future<List<Map<String, Object?>>> getCuisinesPreferees(String email) async {
-    final db = await SqlfliteDatabase.instance.database;
     return await db.query(
       'cuisines_preferees',
       where: 'email = ?',
