@@ -1,5 +1,4 @@
 import 'package:sqflite/sqflite.dart';
-
 import '../sqlfliteDatabase.dart';
 
 class CuisinesPrefereesTable {
