@@ -1,25 +1,26 @@
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class sqlfliteDatabase {
-  static final sqlfliteDatabase instance = sqlfliteDatabase._init();
+class SqlfliteDatabase {
+  static final SqlfliteDatabase instance = SqlfliteDatabase._init();
   static Database? _database;
-  sqlfliteDatabase._init();
+  SqlfliteDatabase._init();
 
-  Future<Database?> get database async {
-    return _database;
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB();
+    return _database!;
   }
 
   Future<Database> _initDB() async {
     return await openDatabase(
-      join(await getDatabasesPath(), '../../BD/bd.db'),
+      join(await getDatabasesPath(), 'bd.db'),
       onCreate: (db, version) {
         _createRestaurants(db);
         _createTypeCuisine(db);
         _createUser(db);
         _createCritique(db);
-      }
+      },
       version: 1,
     );
   }
@@ -73,6 +74,4 @@ class sqlfliteDatabase {
     '''
     );
   }
-
-
 }
