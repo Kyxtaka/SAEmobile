@@ -11,10 +11,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = openDatabase(join(await getDatabasesPath(), 'task_database.db'),
+  final database = openDatabase(join(await getDatabasesPath(), 'iutableso_database.db'),
       onCreate: (db, version) {
   return db.execute(
-  'CREATE TABLE TASK(id INTEGER PRIMARY KEY, title TEXT, tags TEXT, nbhours INTEGER, difficulty INTEGER, description TEXT)',
+      'CREATE TABLE USER (email TEXT PRIMARY KEY, connected boolean, localisation TEXT);'+
+      'CREATE TABLE RESTAURANT (id_resto INTEGER PRIMARY KEY, nom_resto TEXT, adresse_resto TEXT);'+
+      'CREATE TABLE TYPECUISINE (id_cuisine INTEGER PRIMARY KEY, nom_cuisine TEXT);'+
+      'CREATE TABLE CRITIQUE (id INTEGER PRIMARY KEY, message TEXT, note INTEGER);'
   );
   },
   version:1,
@@ -26,6 +29,7 @@ Future<void> main() async {
   final db = await database;
   runApp(MyApp());
 }
+
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
@@ -45,12 +49,15 @@ final GoRouter _router = GoRouter(
 
   ],
 );
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
     return MaterialApp(debugShowCheckedModeBanner: false,
-      title: "IUTables'O",
-      home: Home(),
-      theme: theme);
+        title: "IUTables'O",
+        home: Home(),
+        theme: theme);
   }
+}
+
