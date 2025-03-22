@@ -25,13 +25,12 @@ class _LoginPageState extends State<Login> {
       if (_formKey.currentState!.saveAndValidate()) {
         final email = _formKey.currentState!.value['email'];
         final password = _formKey.currentState!.value['password'];
-        print(email);
         var bytes = utf8.encode(password);
         var digest = r"\x" + sha256.convert(bytes).toString();
 
         final errorMessage = await loginState.login(email, digest);
         if (errorMessage == null) {
-          context.go("/home");
+          context.go("/accueil");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Erreur : $errorMessage")),

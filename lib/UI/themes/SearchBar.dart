@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SearchBarApp extends StatefulWidget {
-  const SearchBarApp({super.key});
+class SearchBar extends StatefulWidget {
+  const SearchBar({super.key, required SearchController controller, required WidgetStatePropertyAll<EdgeInsets> padding, required Null Function() onTap, required Null Function(dynamic _) onChanged, required Icon leading, required List<Widget> trailing});
 
+  @override
+  State<SearchBar> createState() => _SearchBarState();
+}
+class _SearchBarState extends State<SearchBar> {
   bool isDark = false;
 
   @override

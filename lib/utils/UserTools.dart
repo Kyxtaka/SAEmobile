@@ -59,8 +59,6 @@ class UserTools {
       final supabase = _initDb();
       final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
       if (result.isNotEmpty) {
-        print(result[0]);
-        print(password);
         if(result[0]['mail']==email){
           throw new Exception("Vous avez déjà un compte");
         }
@@ -84,5 +82,4 @@ class UserTools {
     await supabase.auth.signOut();
   }
 }
-
 
