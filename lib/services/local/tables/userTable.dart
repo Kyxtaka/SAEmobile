@@ -37,7 +37,7 @@ class UserTable {
 
   Future<List<User>> getAllUsers() async {
     final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, dynamic>> usersMaps = await db.query('User');
+    final List<Map<String, Object?>> usersMaps = await db.query('User');
     return usersMaps.map((map) {
       return User(
         map['mail'] as String,

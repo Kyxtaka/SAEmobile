@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/decouverte.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'UI/accueil.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
@@ -34,7 +34,7 @@ Future<void> initSupabase() async{
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await sqlfliteDatabase.instance.database;
+  await SqlfliteDatabase.instance.database;
 
   runApp(MyApp());
 }

@@ -52,7 +52,7 @@ class CritiqueTable {
 
   Future<List<Critique>> getCritiquesByUser(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, dynamic>> critiquesMaps = await db.query(
+    final List<Map<String, Object?>> critiquesMaps = await db.query(
       'Critique',
       where: 'email = ?',
       whereArgs: [email],
