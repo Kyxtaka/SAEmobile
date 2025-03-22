@@ -39,6 +39,7 @@ class TypeCuisineTable {
         map['idTypeCuisine'] as int,
         map['cuisine'] as String
       );
-    }).toList();  }
+    }).toList();
+  }
 }
 

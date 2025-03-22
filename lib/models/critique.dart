@@ -4,8 +4,8 @@ import 'package:saemobile/models/user.dart';
 class Critique {
   final int _id;
   final String _message;
-  final Restaurant _restaurant;
-  final User _user;
+  final Restaurant? _restaurant;
+  final User? _user;
   final String _date_test;
   final int _note;
 
@@ -21,9 +21,9 @@ class Critique {
 
   String get message => _message;
 
-  Restaurant get restaurant => _restaurant;
+  Restaurant? get restaurant => _restaurant;
 
-  User get user => _user;
+  User? get user => _user;
 
   String get date_test => _date_test;
 
