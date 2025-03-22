@@ -34,15 +34,8 @@ Future<void> initSupabase() async{
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  final database = openDatabase(
-    join(await getDatabasesPath(), '../BD/bd.db'),
-    onCreate: (db, version) {
-      return db.execute(
-        'CREATE TABLE restaurants(id INTEGER PRIMARY KEY, name TEXT, address TEXT)',
-      );
-    },
-    version: 1,
-  );
+  await sqlfliteDatabase.instance.database;
+
   runApp(MyApp());
 }
 
