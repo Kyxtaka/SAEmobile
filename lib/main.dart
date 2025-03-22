@@ -4,8 +4,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/decouverte.dart';
+import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
@@ -32,6 +34,15 @@ Future<void> initSupabase() async{
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  final database = openDatabase(
+    join(await getDatabasesPath(), '../BD/bd.db'),
+    onCreate: (db, version) {
+      return db.execute(
+        'CREATE TABLE restaurants(id INTEGER PRIMARY KEY, name TEXT, address TEXT)',
+      );
+    },
+    version: 1,
+  );
   runApp(MyApp());
 }
 
