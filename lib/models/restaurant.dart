@@ -63,22 +63,11 @@ class Restaurant {
     print(restaurant);
   }
 
-  Map<String, Object?> toMap() {
+  Map<String, Object?> toMapLocal() {
     return {
       'id': _id,
       'name': _name,
-      'address': _address,
-      'capacity': _capacity,
-      'tel': _tel,
-      'siret': _siret,
-      'website': _website,
-      'url_photo': _url_photo,
-      'id_cuisine': _id_cuisine,
-      'id_region': _id_region,
-      'nb_etoile': _nb_etoile,
-      'horaires': _horaires,
-      'gps_lat': _gps_lat,
-      'gps_long': _gps_long,
+      'address': _address
     };
   }
 

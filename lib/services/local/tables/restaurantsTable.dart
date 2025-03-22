@@ -10,7 +10,7 @@ class RestaurantsTable {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
       'restaurants',
-      restaurant.toMap(),
+      restaurant.toMapLocal(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -19,7 +19,7 @@ class RestaurantsTable {
     final db = await SqlfliteDatabase.instance.database;
     await db.update(
       'restaurants',
-      restaurant.toMap(),
+      restaurant.toMapLocal(),
       where: 'id = ?',
       whereArgs: [restaurant.id],
     );
@@ -42,17 +42,17 @@ class RestaurantsTable {
         map['id'] as int,
         map['name'] as String,
         map['address'] as String,
-        map['capacity'] as int,
-        map['tel'] as String,
-        map['siret'] as String,
-        map['website'] as String,
-        map['url_photo'] as String,
-        map['id_cuisine'] as int,
-        map['id_region'] as int,
-        map['nb_etoile'] as int,
-        map['horaires'] as String,
-        map['gps_lat'] as double,
-        map['gps_long'] as double,
+        map['capacity'] = 0,
+        map['tel'] = '',
+        map['siret'] = '',
+        map['website'] = '',
+        map['url_photo'] = '',
+        map['id_cuisine'] = 0,
+        map['id_region'] = 0,
+        map['nb_etoile'] = 0,
+        map['horaires'] = '',
+        map['gps_lat'] = 0.0,
+        map['gps_long'] = 0.0,
       );
     }).toList();
   }
