@@ -41,5 +41,4 @@ class Critique {
       'note': _note
     };
   }
-
 }
