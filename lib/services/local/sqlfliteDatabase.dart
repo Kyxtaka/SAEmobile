@@ -70,7 +70,9 @@ class SqlfliteDatabase {
       message TEXT,
       note INTEGER,
       restaurant_id INTEGER,
-      FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+      email TEXT,
+      FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+      FOREIGN KEY (email) REFERENCES User(email)
     )
     '''
     );
@@ -96,8 +98,8 @@ class SqlfliteDatabase {
       email TEXT,
       cuisine_id INTEGER,
       PRIMARY KEY (email, cuisine_id),
-      FOREIGN KEY (email) REFERENCES user(email),
-      FOREIGN KEY (cuisine_id) REFERENCES type_cuisine(id)
+      FOREIGN KEY (email) REFERENCES User(email),
+      FOREIGN KEY (cuisine_id) REFERENCES TypeCuisine(id)
     )
   ''');
   }
