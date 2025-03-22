@@ -34,7 +34,7 @@ class Restaurant {
 
   double get gps_lat => _gps_lat;
 
-  String get horraire => _horaires;
+  String get horaire => _horaires;
 
   int get id_region => _id_region;
 

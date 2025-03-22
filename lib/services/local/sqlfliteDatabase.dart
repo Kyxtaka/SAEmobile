@@ -6,6 +6,7 @@ class SqlfliteDatabase {
   static Database? _database;
   SqlfliteDatabase._init();
 
+  SqlfliteDatabase();
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB();
@@ -14,7 +15,7 @@ class SqlfliteDatabase {
 
   Future<Database> _initDB() async {
     return await openDatabase(
-      join(await getDatabasesPath(), 'bd.db'),
+      join(await getDatabasesPath(), 'iutableso.db'),
       onCreate: (db, version) {
         _createRestaurants(db);
         _createTypeCuisine(db);

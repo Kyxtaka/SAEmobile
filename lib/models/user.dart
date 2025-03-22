@@ -7,7 +7,7 @@ class User {
   final String _prenom;
   final String _role;
   final List _tester;
-  final Bool _connected;
+  final bool _connected;
   final String _localisation;
 
   const User(
@@ -32,7 +32,7 @@ class User {
 
   List get tester => _tester;
 
-  Bool get connected => _connected;
+  bool get connected => _connected;
 
   String get localisation => _localisation;
 

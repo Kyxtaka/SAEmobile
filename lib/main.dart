@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -34,49 +35,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfiWeb;
-  final database = openDatabase(join(await getDatabasesPath(), 'task_database.db'),
-    onCreate: (db, version) async {
-      await db.execute('''
-        CREATE TABLE TASK (
-          id INTEGER PRIMARY KEY, 
-          title TEXT, 
-          tags TEXT, 
-          nbhours INTEGER, 
-          difficulty INTEGER, 
-          description TEXT
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE USER (
-          email TEXT PRIMARY KEY, 
-          connected BOOLEAN, 
-          localisation TEXT
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE RESTAURANT (
-          id_resto INTEGER PRIMARY KEY, 
-          nom_resto TEXT, 
-          adresse_resto TEXT
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE TYPECUISINE (
-          id_cuisine INTEGER PRIMARY KEY, 
-          nom_cuisine TEXT
-        );
-      ''');
-      await db.execute('''
-        CREATE TABLE CRITIQUE (
-          id INTEGER PRIMARY KEY, 
-          message TEXT, 
-          note INTEGER
-        );
-      ''');
-      },
-    version:1,
-  );
-  final db = await database;
+  var database = new SqlfliteDatabase();
+  final db = await database.database;
   runApp(MyApp(database: db));
 }
 

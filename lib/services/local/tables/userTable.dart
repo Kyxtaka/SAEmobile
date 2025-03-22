@@ -46,7 +46,7 @@ class UserTable {
         map['prenom'] = '',
         map['role'] = '',
         map['tester'] = [],
-        map['connected'] as Bool,
+        map['connected'] as bool,
         map['localisation'] as String,
       );
     }).toList();
