@@ -25,10 +25,10 @@ class CritiqueAPI {
             Critique critique = new Critique(
                 row['id_critique'],
                 row['message']??"",
-                new Restaurant(row['id_resto'], row['nom'], row['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
                 new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['note']??3
+                row['etoiles']??3
             );
             //restaurant.debugPrint();
             critiques.add(critique);
@@ -52,20 +52,22 @@ class CritiqueAPI {
     try {
       final response = await this.database
           .from('Critique')
-          .select('*, Restaurant(id_resto, adresse, nom), Visiteur(mail, prenom, nom_user)')
-          .eq('mail', mail);
+          .select('*, Restaurant(id_resto, adresse, nom)')
+          .eq('mail_user', mail);
       List<Critique> critiques = [];
       if (response is List) {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
+            debugPrint(row.toString());
             Critique critique = new Critique(
+
                 row['id_critique'],
                 row['message']??"",
-                new Restaurant(row['id_resto'], row['nom'], row['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-                new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
+                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                new visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['note']??3
+                row['etoiles']??3
             );
             //restaurant.debugPrint();
             critiques.add(critique);
