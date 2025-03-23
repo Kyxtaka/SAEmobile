@@ -8,6 +8,7 @@ import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'UI/avis.dart';
 import 'UI/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
@@ -64,6 +65,10 @@ final GoRouter _router = GoRouter(
       path: '/accueil',
       builder: (context, state) => Accueil(database: Supabase.instance.client),
     ),
+    GoRoute(
+      path: '/avis',
+      builder: (context, state) => Avis(),
+    )
   ],
 );
 class MyApp extends StatelessWidget {

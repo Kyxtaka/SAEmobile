@@ -6,6 +6,8 @@ import 'package:saemobile/utils/UserTools.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/local/sqlfliteDatabase.dart';
+import 'global/footer.dart';
+import 'global/header.dart';
 
 class Avis extends StatefulWidget {
   @override
@@ -14,14 +16,33 @@ class Avis extends StatefulWidget {
 
 class _AvisState extends State<Avis> {
   CritiqueAPI critiqueAPI = new CritiqueAPI(database: Supabase.instance.client);
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+  final header = new Header();
+  late final critiques;
+
+  void getCritiques(){
+    critiques = critiqueAPI.getCritiqueForUser("mail@mail");
   }
 
-
+  @override
+  Widget build(BuildContext context) {
+    Footer footer = new Footer();
+    getCritiques();
+    return Scaffold(
+      appBar : header,
+      bottomNavigationBar: footer.create(),
+      body: ListView.builder(
+        itemCount: critiques.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+              child: ListTile(
+                title : critiques[index].user.nom + critiques[index].user.prenom,
+                subtitle: critiques[index].message,
+              )
+          );
+        },)
+    );
   }
 
 
 }
+
