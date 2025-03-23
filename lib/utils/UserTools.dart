@@ -11,6 +11,10 @@ class UserTools {
     return supabase.auth.currentSession != null;
   }
 
+  SupabaseClient get client {
+    return supabase;
+  }
+
   /// Connexion avec email et mot de passe
   Future<String?> login(String email, String password) async {
     try {
