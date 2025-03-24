@@ -61,7 +61,7 @@ class _DetailsPageState extends State<DetailsPage> {
         elevation: 0,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Chargement
+          ? Center(child: CircularProgressIndicator())
           : restaurant == null
           ? Center(child: Text("Restaurant non trouvé ❌"))
           : SingleChildScrollView(
