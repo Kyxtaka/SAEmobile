@@ -85,4 +85,24 @@ class CritiqueAPI {
       return [];
     }
   }
+
+  /// suppression d'une critique
+  Future<bool> deleteCritique(critique) async {
+    try {
+      final result = await this.database
+          .from('Critique')
+          .delete()
+          .eq('id_critique', critique.id);
+      if (result != null){
+          debugPrint("Error while deleting critique");
+          return false;
+      }
+      else {
+        return true;
+      }
+    } catch (error){
+      debugPrint("Error with database: $error ❌");
+      return false;
+    }
+  }
 }
