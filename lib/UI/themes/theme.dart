@@ -131,7 +131,12 @@ class MyTheme {
         foregroundColor: Colors.orangeAccent,
         backgroundColor: Colors.deepOrange,
       ),
-      textTheme: orangeTheme,
+      textTheme: lightTextTheme,
     );
 }
+  static TextStyle loginStyle() {
+    return TextStyle(color: Colors.black, fontStyle: FontStyle.normal,
+        height: 10, fontSize: 15);
+  }
+
 }

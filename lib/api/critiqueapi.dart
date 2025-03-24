@@ -1,0 +1,88 @@
+
+import 'package:flutter/material.dart';
+import 'package:saemobile/models/restaurant.dart';
+import 'package:saemobile/models/user.dart' as visiteur;
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../models/critique.dart';
+
+class CritiqueAPI {
+  final SupabaseClient database;
+
+  const CritiqueAPI({required this.database});
+
+  /// recupere toutes les critiques en base de donnees
+  Future<List<Critique>> getCritiques() async{
+    try {
+      final response = await this.database
+          .from('Critique')
+          .select('*, Restaurant(id_resto, adresse, nom), Visiteur(mail, prenom, nom_user)');
+      List<Critique> critiques = [];
+      if (response is List) {
+        debugPrint("Response contains ${response.length} rows.");
+        if (response.isNotEmpty) {
+          for (var row in response) {
+            Critique critique = new Critique(
+                row['id_critique'],
+                row['message']??"",
+                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
+                row['date_test']??"No date",
+                row['etoiles']??3
+            );
+            //restaurant.debugPrint();
+            critiques.add(critique);
+          }
+          debugPrint("Critiques count: ${critiques.length}");
+        } else {
+          debugPrint("Response is a List, but it's EMPTY! ❌");
+        }
+      } else {
+        debugPrint("Unexpected response type: ${response.runtimeType} ❌");
+      }
+      return critiques;
+    } catch (e) {
+      debugPrint("Error fetching data: $e ❌");
+      return [];
+    }
+  }
+
+  /// get les critiques d'un utilisateur
+  Future<List<Critique>> getCritiqueForUser(mail) async{
+    try {
+      final response = await this.database
+          .from('Critique')
+          .select('*, Restaurant(id_resto, adresse, nom)')
+          .eq('mail_user', mail);
+      List<Critique> critiques = [];
+      if (response is List) {
+        debugPrint("Response contains ${response.length} rows.");
+        if (response.isNotEmpty) {
+          for (var row in response) {
+            debugPrint(row.toString());
+            Critique critique = new Critique(
+
+                row['id_critique'],
+                row['message']??"",
+                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                new visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
+                row['date_test']??"No date",
+                row['etoiles']??3
+            );
+            //restaurant.debugPrint();
+            critiques.add(critique);
+          }
+          debugPrint("Critiques count: ${critiques.length}");
+        } else {
+          debugPrint("Response is a List, but it's EMPTY! ❌");
+        }
+      } else {
+        debugPrint("Unexpected response type: ${response.runtimeType} ❌");
+      }
+      return critiques;
+    } catch (e) {
+      debugPrint("Error fetching data: $e ❌");
+      return [];
+    }
+  }
+}

@@ -73,6 +73,7 @@ class RestaurantAPI {
     }
   }
 
+
   Future<Restaurant?> getRestaurantById(int id) async {
     try {
       final response = await database
