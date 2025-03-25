@@ -4,20 +4,28 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 import 'global/header.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+    final SupabaseClient database;
+   SignIn({super.key, required this.database});
 
   @override
   State<SignIn> createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
+
   final _formKey = GlobalKey<FormBuilderState>();
-  final UserTools loginState = UserTools();
+  late final UserTools loginState;
+
+  @override
+  void initState() {
+    this.loginState = UserTools(supabase: this.widget.database);
+  }
 
   Future<void> _signin() async {
     try {

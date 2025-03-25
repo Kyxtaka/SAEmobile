@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:saemobile/UI/forms/editForm.dart';
-import 'package:saemobile/api/critiqueapi.dart';
-import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
+import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
+import 'package:saemobile/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -21,6 +20,9 @@ import 'UI/signIn.dart';
 import 'UI/login.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'api/viewsmodel/critiquesviewmodel.dart'; // Detects if running on Web
 
 Future<void> initSupabase() async{
   try {
@@ -37,49 +39,107 @@ Future<void> initSupabase() async{
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfiWeb;
+  try {
+    if (kIsWeb) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfiWeb;
+    }
+  } catch (e) {
+    print(e);
+  }
   var database = new SqlfliteDatabase();
   final db = await database.database;
   runApp(MyApp(database: db));
 }
 
-final GoRouter _router = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      name:'home',
-      path: '/',
-      builder: (context, state) => Home(),
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => Login(),
-    ),
-    GoRoute(
-      path:'/signIn',
-      builder: (context, state) => SignIn(),
-    ),
-    GoRoute(
-      path: '/decouverte',
-      builder: (context, state) => Decouverte(database: Supabase.instance.client),
-    ),
-    GoRoute(
-      path: '/accueil',
-      builder: (context, state) => Accueil(database: Supabase.instance.client),
-    ),
-    GoRoute(
-      path: '/avis',
-      builder: (context, state) => Avis(),
-       routes: <RouteBase>[
-         GoRoute(
-           path: '/avis/:id',
-           builder: (context,state) => EditForm(avis:state.pathParameters['id']),
-         ),
-       ]
-    )
-  ],
-);
+GoRouter _router(UserViewModel userViewModel) {
+  return GoRouter(
+    initialLocation: '/',
+
+    routes: [
+      GoRoute(
+        name:'home',
+        path: '/',
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+        builder: (context, state) => Home(),
+      ),
+      GoRoute(
+          path: '/login',
+          builder: (context, state) => Login(userViewModel: userViewModel, database: Supabase.instance.client,),
+          redirect: (BuildContext context, GoRouterState state) {
+            if (userViewModel.isConnected()) {
+              return '/accueil';
+            } else {
+              return null;
+            }
+          },
+      ),
+      GoRoute(
+        path:'/signIn',
+        builder: (context, state) => SignIn(database: Supabase.instance.client,),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/decouverte',
+        builder: (context, state) => Decouverte(database: Supabase.instance.client),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/accueil',
+        builder: (context, state) => Accueil(database: Supabase.instance.client),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/avis',
+        builder: (context, state) => Avis(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => SettingsScreen(userViewModel: userViewModel),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      )
+    ],
+  );
+}
+
+
 class MyApp extends StatelessWidget {
   final Database database;
   MyApp({required this.database});
@@ -103,10 +163,22 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
+
           return MultiProvider(
             providers: [
               Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
               Provider<int>(create: (_) => 42),
+              //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
+              //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+
+              ChangeNotifierProvider<UserViewModel> (
+                  create: (_)  {
+
+                    UserViewModel userViewModel = UserViewModel(database: Supabase.instance.client, context: context);
+                    userViewModel.autoLoginInit();
+                    return userViewModel;
+                  },
+                ),
               ChangeNotifierProvider(
                 create: (context) {
                   final critiquesViewModel = CritiqueViewModel();
@@ -116,16 +188,15 @@ class MyApp extends StatelessWidget {
                   return critiquesViewModel;
                 },
               ),
-              //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-              //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+
             ],
-            child: Consumer<int>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-              builder: (context, number, child) {
+            child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+              builder: (context, userViewModel, child) {
                 return MaterialApp.router(
                   debugShowCheckedModeBanner: false,
                   theme: theme,
                   title: 'My App',
-                  routerConfig: _router,
+                  routerConfig: _router(userViewModel),
                 );
               },
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/boutonDegrade.dart';
 import 'package:saemobile/api/restaurantapi.dart';
@@ -32,6 +33,7 @@ class _DecouverteState extends State<Decouverte> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.header.create(),
+      bottomNavigationBar: new Footer().create(context),
       body: Column(
         children: [
           Expanded(

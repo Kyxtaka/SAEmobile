@@ -37,43 +37,43 @@ class _EditFormState extends State<EditForm> {
       bottomNavigationBar: footer.create(context),
       body : FutureBuilder<Critique?>(
         future: CritiqueAPI.getCritique(widget.id),
-        builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }else if (snapshot.hasError) {
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+
+        } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         } else if (snapshot.hasData) {
-          return FormBuilder(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            key: _formKey,
-            children: [
-              FormBuilderTextField(
-                name: 'Avis',
-                initialValue: avis.message??"",
-                decoration: InputDecoration(
-                  labelText: 'Avis',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
-                ),
-                validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
-              ),
-              ElevatedButton(
-                  onPressed: () => {
-                  if (_formKey.currentState!.validate()) {
-                    context.read<CritiqueViewModel>().editCritique(
-                        avis.id, avis.message, avis.note)
-                    },
-                  Navigator.pop(context)
-                  },
-                  child: Text("Sauvegarder"))
+    return FormBuilder(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      key: _formKey,
+      children: [
+      FormBuilderTextField(
+        name: 'Avis',
+        initialValue: "",
+        decoration: InputDecoration(
+          labelText: 'Avis',
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
+          ),
+        validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
+      ),
+    ElevatedButton(
+      onPressed: () => {
+      if (_formKey.currentState!.validate()) {
+        context.read<CritiqueViewModel>().editCritique(
+        0, "avis.message", "avis.note")
+        },
+        Navigator.pop(context)
+        },
+      child: Text("Sauvegarder"))
+    ],
 
-            ],
-
-          ))
+    ));
+    }
+          return Text("Error");})
 
     );
     }
   }
 
-
-}
