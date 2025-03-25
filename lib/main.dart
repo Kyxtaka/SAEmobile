@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:saemobile/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
@@ -116,6 +117,17 @@ GoRouter _router(UserViewModel userViewModel) {
       GoRoute(
         path: '/avis',
         builder: (context, state) => Avis(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => SettingsScreen(userViewModel: userViewModel),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';

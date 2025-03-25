@@ -79,8 +79,6 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   Future<void> setDisconnection() async {
     final SharedPreferences prefs =  await SharedPreferences.getInstance();
     await prefs.remove('identifier');

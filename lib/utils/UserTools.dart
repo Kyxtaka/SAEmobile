@@ -7,16 +7,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class UserTools {
   late SupabaseClient supabase = Supabase.instance.client;
 
-  /// Vérifie si un utilisateur est connecté
-  bool isConnected() {
-    return supabase.auth.currentSession != null;
-  }
+  UserTools({required this.supabase}) {}
 
   SupabaseClient get client {
     return supabase;
   }
 
-  UserTools({required this.supabase}) {}
   /// Connexion avec email et mot de passe
   Future<String?> login(String email, String password) async {
     try {
@@ -27,25 +23,14 @@ class UserTools {
           .maybeSingle();
 
       if (result != null && result['mail']==email && result['password']==password) {
-        print(result);
-        print(password);
         print("connected");
         return null;
-        /*
-        if(result['mail']==email && result['password']==password){
-          print("connected");
-          return null;
-        }
-        else {
-          throw new Exception("Email ou mot de passe incorrect");
-        }
-         */
       }
       else {
         throw new Exception("Email ou mot de passe incorrect");
       }
     } catch (error) {
-      print(error);
+      print("login error $error");
       return error.toString();
     }
   }
@@ -55,30 +40,28 @@ class UserTools {
       if (!field){
         throw new Exception("Le mot de passe est différent");
       }
-      //final supabase = _initDb();
-      final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
-      if (result.isNotEmpty) {
-        if(result[0]['mail']==email){
+      final result = await supabase
+          .from("Visiteur")
+          .select('mail, password')
+          .eq('mail', email)
+          .maybeSingle();
+
+      if (result != null && result['mail'] == email) {
           throw new Exception("Vous avez déjà un compte");
-        }
       }
       else {
-        final result = await this.supabase.from("Visiteur").insert({'mail':email, 'password': password, 'prenom': prenom, 'nom_user': nom}).select();
-        if (result.isNotEmpty){
-          print("connected");
-          return null;
-        }
+        final result = await this.supabase
+            .from("Visiteur")
+            .insert({'mail':email, 'password': password, 'prenom': prenom, 'nom_user': nom})
+            .select()
+            .maybeSingle();
+        if (result != null){ print("connected") ; return null;}
         throw new Exception("Le compte n'a pas pu être crée");
       }
     } catch (error) {
       print(error);
       return error.toString();
     }
-  }
-
-  /// Déconnexion de l'utilisateur
-  Future<void> logout() async {
-    await supabase.auth.signOut();
   }
 }
 
