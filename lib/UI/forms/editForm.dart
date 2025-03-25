@@ -22,16 +22,28 @@ class EditForm extends StatefulWidget {
 class _EditFormState extends State<EditForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
+  Future<Critique?> getCritique(id) async {
+    Critique? avis = await CritiqueAPI.getCritique(widget.id);
+    return avis;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Critique? avis = await CritiqueAPI.getCritique(widget.id);
+    var avis = getCritique(widget.id);
     Header header = new Header();
     Footer footer = new Footer();
     return Scaffold(
       appBar: header.create(),
       bottomNavigationBar: footer.create(context),
-      body : FormBuilder(
+      body : FutureBuilder<Critique?>(
+        future: CritiqueAPI.getCritique(widget.id),
+        builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        }else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        } else if (snapshot.hasData) {
+          return FormBuilder(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             key: _formKey,
@@ -60,6 +72,8 @@ class _EditFormState extends State<EditForm> {
           ))
 
     );
+    }
   }
+
 
 }
