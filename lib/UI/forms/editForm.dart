@@ -3,14 +3,15 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
 import 'package:saemobile/UI/global/header.dart';
+import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:saemobile/models/critique.dart';
 
 import '../global/footer.dart';
 
 class EditForm extends StatefulWidget {
-  final Critique avis;
-  const EditForm({super.key, required this.avis});
+  final int id;
+  const EditForm({super.key, required this.id});
 
   @override
   State<EditForm> createState() {
@@ -21,8 +22,10 @@ class EditForm extends StatefulWidget {
 class _EditFormState extends State<EditForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
+
   @override
   Widget build(BuildContext context) {
+    Critique? avis = await CritiqueAPI.getCritique(widget.id);
     Header header = new Header();
     Footer footer = new Footer();
     return Scaffold(
@@ -35,7 +38,7 @@ class _EditFormState extends State<EditForm> {
             children: [
               FormBuilderTextField(
                 name: 'Avis',
-                initialValue: widget.avis.message??"",
+                initialValue: avis.message??"",
                 decoration: InputDecoration(
                   labelText: 'Avis',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
@@ -46,7 +49,7 @@ class _EditFormState extends State<EditForm> {
                   onPressed: () => {
                   if (_formKey.currentState!.validate()) {
                     context.read<CritiqueViewModel>().editCritique(
-                      widget.avis.id, widget.avis.message, widget.avis.note)
+                        avis.id, avis.message, avis.note)
                     },
                   Navigator.pop(context)
                   },

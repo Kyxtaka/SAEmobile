@@ -109,9 +109,7 @@ class MyApp extends StatelessWidget {
               Provider<int>(create: (_) => 42),
               ChangeNotifierProvider(
                 create: (context) {
-                  final critiquesViewModel = CritiqueViewModel.api(
-                    CritiqueAPI(database: Supabase.instance.client),
-                  );
+                  final critiquesViewModel = CritiqueViewModel();
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     critiquesViewModel.generateCritiques("mail@mail");
                   });

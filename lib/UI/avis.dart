@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:saemobile/models/critique.dart';
 import 'package:saemobile/utils/UserTools.dart';
@@ -17,7 +16,6 @@ class Avis extends StatefulWidget {
 }
 
 class _AvisState extends State<Avis> {
-  CritiqueAPI critiqueAPI = new CritiqueAPI(database: Supabase.instance.client);
   final header = new Header();
 
   @override

@@ -7,14 +7,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/critique.dart';
 
 class CritiqueAPI {
-  final SupabaseClient database;
-
-  const CritiqueAPI({required this.database});
 
   /// recupere toutes les critiques en base de donnees
-  Future<List<Critique>> getCritiques() async{
+  static Future<List<Critique>> getCritiques() async{
     try {
-      final response = await this.database
+      final response = await Supabase.instance.client
           .from('Critique')
           .select('*, Restaurant(id_resto, adresse, nom), Visiteur(mail, prenom, nom_user)');
       List<Critique> critiques = [];
@@ -47,10 +44,30 @@ class CritiqueAPI {
     }
   }
 
+  static Future<Critique?> getCritique(id) async {
+    try{
+      final result = await Supabase.instance.client
+          .from("Critique")
+          .select('*')
+          .eq('id_critique', id)
+          .single();
+      if (result.isNotEmpty){
+        return new Critique(
+            result['id_critique'],
+            result['message'],
+            new Restaurant(result['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+            new visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
+      }
+    } catch (error){
+      debugPrint("Error while modify : $error ❌");
+      return null;
+    }
+  }
+
   /// get les critiques d'un utilisateur
-  Future<List<Critique>> getCritiqueForUser(mail) async{
+  static Future<List<Critique>> getCritiqueForUser(mail) async{
     try {
-      final response = await this.database
+      final response = await Supabase.instance.client
           .from('Critique')
           .select('*, Restaurant(id_resto, adresse, nom)')
           .eq('mail_user', mail);
@@ -87,9 +104,9 @@ class CritiqueAPI {
   }
 
   /// suppression d'une critique
-  Future<bool> deleteCritique(critique) async {
+  static Future<bool> deleteCritique(critique) async {
     try {
-      final result = await this.database
+      final result = await Supabase.instance.client
           .from('Critique')
           .delete()
           .eq('id_critique', critique.id);
@@ -106,9 +123,9 @@ class CritiqueAPI {
     }
   }
   
-  Future<bool> modifyCritique(id, message, etoiles) async {
+  static Future<bool> modifyCritique(id, message, etoiles) async {
     try{
-      final result = await this.database
+      final result = await Supabase.instance.client
           .from('Critique')
           .update({ "id_critique": id, "message": message, "etoiles": etoiles})
           .select();
