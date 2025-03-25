@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
+import 'package:saemobile/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -18,59 +19,116 @@ import 'UI/signIn.dart';
 import 'UI/login.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // Detects if running on Web
 
-Future<void> initSupabase() async{
+
+Future<SupabaseClient> initSupabase() async{
   try {
     await dotenv.load(fileName: ".env");
     await Supabase.initialize(
         url: dotenv.env['SUPABASE_DB_API_URL']??'',
         anonKey: dotenv.env['SUPABASE_ANON_KEY']??''
     );
+    print('SUPABASE INITIALIZED');
+    return Supabase.instance.client;
   } catch (e) {
     debugPrint("Error lors de l'initialisation de supabase $e");
-    return;
   }
+  return Supabase.instance.client;
 
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfiWeb;
+  try {
+    if (kIsWeb) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfiWeb;
+    }
+  } catch (e) {
+    print(e);
+  }
   var database = new SqlfliteDatabase();
   final db = await database.database;
   runApp(MyApp(database: db));
 }
 
-final GoRouter _router = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      name:'home',
-      path: '/',
-      builder: (context, state) => Home(),
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => Login(),
-    ),
-    GoRoute(
-      path:'/signIn',
-      builder: (context, state) => SignIn(),
-    ),
-    GoRoute(
-      path: '/decouverte',
-      builder: (context, state) => Decouverte(database: Supabase.instance.client),
-    ),
-    GoRoute(
-      path: '/accueil',
-      builder: (context, state) => Accueil(database: Supabase.instance.client),
-    ),
-    GoRoute(
-      path: '/avis',
-      builder: (context, state) => Avis(),
-    )
-  ],
-);
+GoRouter _router(UserViewModel userViewModel) {
+  return GoRouter(
+    initialLocation: '/',
+
+    routes: [
+      GoRoute(
+        name:'home',
+        path: '/',
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+        builder: (context, state) => Home(),
+      ),
+      GoRoute(
+          path: '/login',
+          builder: (context, state) => Login(userViewModel: userViewModel, database: Supabase.instance.client,),
+          redirect: (BuildContext context, GoRouterState state) {
+            if (userViewModel.isConnected()) {
+              return '/accueil';
+            } else {
+              return null;
+            }
+          },
+      ),
+      GoRoute(
+        path:'/signIn',
+        builder: (context, state) => SignIn(database: Supabase.instance.client,),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/decouverte',
+        builder: (context, state) => Decouverte(database: Supabase.instance.client),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/accueil',
+        builder: (context, state) => Accueil(database: Supabase.instance.client),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/avis',
+        builder: (context, state) => Avis(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      )
+    ],
+  );
+}
+
+
 class MyApp extends StatelessWidget {
   final Database database;
   MyApp({required this.database});
@@ -94,20 +152,28 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
+
           return MultiProvider(
             providers: [
-              Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
-              Provider<int>(create: (_) => 42),
               //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
               //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+
+              ChangeNotifierProvider<UserViewModel> (
+                  create: (_)  {
+
+                    UserViewModel userViewModel = UserViewModel(database: Supabase.instance.client, context: context);
+                    userViewModel.autoLoginInit();
+                    return userViewModel;
+                  },
+                )
             ],
-            child: Consumer<int>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-              builder: (context, number, child) {
+            child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+              builder: (context, userViewModel, child) {
                 return MaterialApp.router(
                   debugShowCheckedModeBanner: false,
                   theme: theme,
                   title: 'My App',
-                  routerConfig: _router,
+                  routerConfig: _router(userViewModel),
                 );
               },
             ),

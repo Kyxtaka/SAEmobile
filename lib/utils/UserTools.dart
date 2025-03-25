@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 ///  gestion de la connexion, de l'inscription et déconnexion
 class UserTools {
@@ -15,10 +16,11 @@ class UserTools {
     return supabase;
   }
 
+  UserTools({required this.supabase}) {}
   /// Connexion avec email et mot de passe
   Future<String?> login(String email, String password) async {
     try {
-      final supabase = _initDb();
+      //final supabase = _initDb();
       final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
       if (result.isNotEmpty) {
         print(result[0]);
@@ -39,6 +41,7 @@ class UserTools {
       return error.toString();
     }
   }
+  /*
   Future<SupabaseClient> _initDb() async {
     try {
       await dotenv.load(fileName: ".env");
@@ -55,12 +58,14 @@ class UserTools {
 
   }
 
+   */
+
   Future<String?> signin(String nom, String prenom, String email, String password, field) async {
     try {
       if (!field){
         throw new Exception("Le mot de passe est différent");
       }
-      final supabase = _initDb();
+      //final supabase = _initDb();
       final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
       if (result.isNotEmpty) {
         if(result[0]['mail']==email){
