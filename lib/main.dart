@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/forms/editForm.dart';
 import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
@@ -70,6 +71,12 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/avis',
       builder: (context, state) => Avis(),
+       routes: <RouteBase>[
+         GoRoute(
+           path: '/avis/:id',
+           builder: (context,state) => EditForm(avis:state.pathParameters['id']),
+         ),
+       ]
     )
   ],
 );

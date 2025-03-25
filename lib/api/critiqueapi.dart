@@ -105,4 +105,21 @@ class CritiqueAPI {
       return false;
     }
   }
-}
+  
+  Future<bool> modifyCritique(id, message, etoiles) async {
+    try{
+      final result = await this.database
+          .from('Critique')
+          .update({ "id_critique": id, "message": message, "etoiles": etoiles})
+          .select();
+      if (result.isNotEmpty){
+        debugPrint("modify");
+        return true;
+      }
+
+      return false;
+    } catch (error){
+        debugPrint("Error while modify : $error ❌");
+        return false;
+      }
+  }}

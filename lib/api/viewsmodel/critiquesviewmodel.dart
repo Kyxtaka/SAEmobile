@@ -10,6 +10,7 @@ class CritiqueViewModel extends ChangeNotifier{
 
   CritiqueViewModel.api(this.api){
     this.api = api;
+    this.generateCritiques("mail@mail");
   }
   CritiqueViewModel() {
     liste = [];
@@ -26,6 +27,17 @@ class CritiqueViewModel extends ChangeNotifier{
       return true;
     } else {
       debugPrint("La suppression a échoué");
+      return false;
+    }
+  }
+  Future<bool> editCritique(id, message, etoiles) async {
+    bool isModify = await api.modifyCritique(id, message, etoiles);
+    if (isModify) {
+      generateCritiques("mail@mail");
+      notifyListeners();
+      return true;
+    } else {
+      debugPrint("La modification a échoué");
       return false;
     }
   }
