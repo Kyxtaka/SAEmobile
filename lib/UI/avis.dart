@@ -1,12 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
-import 'package:saemobile/models/critique.dart';
-import 'package:saemobile/utils/UserTools.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'forms/editForm.dart';
 import 'global/footer.dart';
 import 'global/header.dart';
 
@@ -84,9 +81,7 @@ class _AvisState extends State<Avis> {
                             iconSize: 20,
                             color: Colors.grey,
                             icon: const Icon(Icons.edit),
-                            onPressed: () {
-
-                            }
+                            onPressed: () => context.go('/avis/${critique.id}'),
                         ),
                       ]
                     ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
@@ -10,7 +11,7 @@ import 'package:saemobile/models/critique.dart';
 import '../global/footer.dart';
 
 class EditForm extends StatefulWidget {
-  final int id;
+  final String? id;
   const EditForm({super.key, required this.id});
 
   @override
@@ -21,15 +22,10 @@ class EditForm extends StatefulWidget {
 
 class _EditFormState extends State<EditForm> {
   final _formKey = GlobalKey<FormBuilderState>();
-
-  Future<Critique?> getCritique(id) async {
-    Critique? avis = await CritiqueAPI.getCritique(widget.id);
-    return avis;
-  }
+  late var _noteController;
 
   @override
   Widget build(BuildContext context) {
-    var avis = getCritique(widget.id);
     Header header = new Header();
     Footer footer = new Footer();
     return Scaffold(
@@ -44,33 +40,52 @@ class _EditFormState extends State<EditForm> {
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         } else if (snapshot.hasData) {
+            _noteController = snapshot.data?.note.toDouble();
     return FormBuilder(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      key: _formKey,
-      children: [
-      FormBuilderTextField(
-        name: 'Avis',
-        initialValue: "",
-        decoration: InputDecoration(
-          labelText: 'Avis',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
-          ),
-        validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
-      ),
-    ElevatedButton(
-      onPressed: () => {
-      if (_formKey.currentState!.validate()) {
-        context.read<CritiqueViewModel>().editCritique(
-        0, "avis.message", "avis.note")
-        },
-        Navigator.pop(context)
-        },
-      child: Text("Sauvegarder"))
-    ],
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FormBuilderTextField(
+                name: 'Avis',
+                initialValue: snapshot.data?.message,
+                decoration: InputDecoration(
+                  labelText: 'Avis',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
+                  ),
+                validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
+              ),
 
-    ));
-    }
+                RatingBar.builder(
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (rating) {
+                    _noteController = rating;
+                  },
+                ),
+              ElevatedButton(
+                onPressed: () => {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState?.save(),
+                  context.read<CritiqueViewModel>().editCritique(
+                      snapshot.data?.id ?? 3,
+                      _formKey.currentState?.fields['Avis']?.value,
+                      _noteController)
+                  },
+                  context.go('/avis')
+                  },
+                child: Text("Sauvegarder"))
+              ],
+
+              ));
+          }
           return Text("Error");})
 
     );

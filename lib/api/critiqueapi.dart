@@ -30,7 +30,6 @@ class CritiqueAPI {
             //restaurant.debugPrint();
             critiques.add(critique);
           }
-          debugPrint("Critiques count: ${critiques.length}");
         } else {
           debugPrint("Response is a List, but it's EMPTY! ❌");
         }
@@ -127,7 +126,8 @@ class CritiqueAPI {
     try{
       final result = await Supabase.instance.client
           .from('Critique')
-          .update({ "id_critique": id, "message": message, "etoiles": etoiles})
+          .update({ "id_critique": id, "message": message, "etoiles": etoiles.round()})
+          .eq('id_critique', id)
           .select();
       if (result.isNotEmpty){
         debugPrint("modify");

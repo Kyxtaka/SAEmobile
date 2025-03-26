@@ -15,6 +15,7 @@ import 'UI/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
+import 'UI/forms/editForm.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
@@ -134,7 +135,15 @@ GoRouter _router(UserViewModel userViewModel) {
             return null;
           }
         },
-      )
+      ),
+      GoRoute(
+        path: ('/avis/:id'),
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return EditForm(
+            id: id,
+          );
+        },)
     ],
   );
 }
