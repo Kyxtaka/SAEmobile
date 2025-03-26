@@ -46,6 +46,8 @@ class _EditFormState extends State<EditForm> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text("Modifier votre critique", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30), ),
+            SizedBox(height: 20),
             FormBuilderTextField(
                 name: 'Avis',
                 initialValue: snapshot.data?.message,
@@ -55,6 +57,8 @@ class _EditFormState extends State<EditForm> {
                   ),
                 validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
               ),
+            SizedBox(height: 20),
+                Text("Votre note"),
 
                 RatingBar.builder(
                   minRating: 1,
@@ -70,6 +74,7 @@ class _EditFormState extends State<EditForm> {
                     _noteController = rating;
                   },
                 ),
+            SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => {
                 if (_formKey.currentState!.validate()) {
