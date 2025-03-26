@@ -83,6 +83,13 @@ class _AvisState extends State<Avis> {
                             icon: const Icon(Icons.edit),
                             onPressed: () => context.go('/avis/${critique.id}'),
                         ),
+                        IconButton(
+                            iconSize: 20,
+                            color: Colors.grey,
+                            onPressed: () {
+                              context.go('/details/${critique.restaurant?.id}');
+                            },
+                            icon: Icon(Icons.restaurant))
                       ]
                     ),
                   ],

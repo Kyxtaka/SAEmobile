@@ -26,10 +26,9 @@ class _EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
-    Header header = new Header();
     Footer footer = new Footer();
     return Scaffold(
-      appBar: header.create(),
+      appBar: Header.create(),
       bottomNavigationBar: footer.create(context),
       body : FutureBuilder<Critique?>(
         future: CritiqueAPI.getCritique(widget.id),

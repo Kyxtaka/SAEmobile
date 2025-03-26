@@ -144,7 +144,14 @@ GoRouter _router(UserViewModel userViewModel) {
           return EditForm(
             id: id,
           );
-        },)
+        },),
+      GoRoute(
+        path: ('/details/:id'),
+        builder: (BuildContext context, GoRouterState state){
+          final id = state.pathParameters['id']!;
+          return DetailsPage(restaurantId: id);
+        }
+      )
     ],
   );
 }

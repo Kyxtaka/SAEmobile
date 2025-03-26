@@ -8,7 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/restaurant.dart';
 
 class Decouverte extends StatefulWidget{
-  final Header header = new Header();
   final SupabaseClient database;
 
   Decouverte({super.key, required this.database});
@@ -32,7 +31,7 @@ class _DecouverteState extends State<Decouverte> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.header.create(),
+      appBar: Header.create(),
       bottomNavigationBar: new Footer().create(context),
       body: Column(
         children: [

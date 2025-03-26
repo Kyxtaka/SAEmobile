@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: new Header().create(),
+      appBar: Header.create(),
       bottomNavigationBar: new Footer().create(context),
       body: Center(
         child: Padding(

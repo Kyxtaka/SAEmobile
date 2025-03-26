@@ -82,7 +82,7 @@ class RestaurantAPI {
           .eq('id_resto', id)
           .single(); // Permet de récupérer un seul élément
 
-      if (response != null) {
+      if (response.isNotEmpty) {
         return Restaurant(
           response['id_resto'],
           response['nom'] ?? 'None',
