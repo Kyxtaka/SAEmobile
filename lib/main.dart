@@ -135,7 +135,12 @@ GoRouter _router(UserViewModel userViewModel) {
             return null;
           }
         },
-      )
+      ),
+      /*
+      GoRoute(
+          path: '/loginLoading'
+      ),
+      */
     ],
   );
 }
@@ -148,6 +153,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
+
+    final Widget loadingSceen = CircularProgressIndicator();
     return FutureBuilder(
         future: initSupabase(),
         builder: (context, snapshot) {
@@ -171,16 +178,19 @@ class MyApp extends StatelessWidget {
               //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
               ChangeNotifierProvider<UserViewModel> (
-                  create: (_)  {
-
-                    UserViewModel userViewModel = UserViewModel(database: Supabase.instance.client, context: context);
-                    userViewModel.autoLoginInit();
-                    return userViewModel;
-                  },
-                )
+                  create: (_)  => UserViewModel(database: Supabase.instance.client, context: context),
+                ),
             ],
             child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
               builder: (context, userViewModel, child) {
+                if (userViewModel.isLoading) {
+                  return MaterialApp(
+                    home: Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    ),
+                  );
+                }
+
                 return MaterialApp.router(
                   debugShowCheckedModeBanner: false,
                   theme: theme,
