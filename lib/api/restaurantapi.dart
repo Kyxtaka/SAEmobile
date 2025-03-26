@@ -73,4 +73,36 @@ class RestaurantAPI {
     }
   }
 
+
+  Future<Restaurant?> getRestaurantById(int id) async {
+    try {
+      final response = await database
+          .from('Restaurant')
+          .select()
+          .eq('id_resto', id)
+          .single(); // Permet de récupérer un seul élément
+
+      if (response != null) {
+        return Restaurant(
+          response['id_resto'],
+          response['nom'] ?? 'None',
+          response['adresse'] ?? 'None',
+          response['capacity'] ?? -1,
+          response['tel'] ?? 'None',
+          response['siret'] ?? 'None',
+          response['website'] ?? 'None',
+          response['photo'] ?? 'None',
+          response['id_cuisine'] ?? -1,
+          response['id_region'] ?? -1,
+          response['nb_etoile'] ?? -1,
+          response['horaires'] ?? 'None',
+          response['gps_lat'] ?? 0.0,
+          response['gps_long'] ?? 0.0,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    return null;
+  }
 }
