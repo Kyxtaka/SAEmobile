@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/critiquesRestaurant.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
-import 'package:saemobile/viewsmodel/userviewmodel.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -151,6 +152,13 @@ GoRouter _router(UserViewModel userViewModel) {
           final id = state.pathParameters['id']!;
           return DetailsPage(restaurantId: id);
         }
+      ),
+      GoRoute(
+          path: ('/details/:id/avis'),
+          builder: (BuildContext context, GoRouterState state){
+            final id = state.pathParameters['id']!;
+            return CritiqueRestaurants(restaurantId: id);
+          }
       )
     ],
   );
@@ -196,13 +204,17 @@ class MyApp extends StatelessWidget {
                     return userViewModel;
                   },
                 ),
-              ChangeNotifierProvider(
-                create: (context) {
-                  final critiquesViewModel = CritiqueViewModel();
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    critiquesViewModel.generateCritiques("mail@mail");
-                  });
-                  return critiquesViewModel;
+              FutureProvider<String>(
+                create: (context) => UserViewModel.getCurrentUser(),
+                initialData: "",
+              ),
+              ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                create: (context) => CritiqueViewModel(),
+                update: (context, email, critiquesViewModel) {
+                  if (email.isNotEmpty) {
+                    critiquesViewModel?.generateCritiques(email);
+                  }
+                  return critiquesViewModel ?? CritiqueViewModel();
                 },
               ),
 

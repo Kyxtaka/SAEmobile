@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/critiqueapi.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/critique.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -28,7 +29,7 @@ class CritiqueViewModel extends ChangeNotifier{
   Future<bool> editCritique(id, message, etoiles) async {
     bool isModify = await CritiqueAPI.modifyCritique(id, message, etoiles);
     if (isModify) {
-      generateCritiques("mail@mail");
+      generateCritiques(UserViewModel.getCurrentUser());
       notifyListeners();
       return true;
     } else {

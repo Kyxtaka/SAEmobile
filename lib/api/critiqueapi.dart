@@ -8,6 +8,36 @@ import '../models/critique.dart';
 
 class CritiqueAPI {
 
+  /// recupere toutes les critiques d'un restaurant
+  static Future<List<Critique>> getCritiquesForRestaurant(id) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('Critique')
+          .select('*, Visiteur(mail, prenom, nom_user)')
+          .eq('id_resto', id);
+      List<Critique> critiques = [];
+      debugPrint("Response contains ${response.length} rows.");
+      if (response.isNotEmpty) {
+        for (var row in response) {
+          Critique critique = new Critique(
+              row['id_critique'],
+              row['message'] ?? "",
+              new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+              new visiteur.User(
+                  row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
+              row['date_test'] ?? "No date",
+              row['etoiles'] ?? 3
+          );
+          //restaurant.debugPrint();
+          critiques.add(critique);
+        }
+      }
+      return critiques;
+    } catch (error){
+      debugPrint("Error fetching data: $error ❌");
+      return [];
+    }
+  }
   /// recupere toutes les critiques en base de donnees
   static Future<List<Critique>> getCritiques() async{
     try {
@@ -75,7 +105,6 @@ class CritiqueAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            debugPrint(row.toString());
             Critique critique = new Critique(
 
                 row['id_critique'],

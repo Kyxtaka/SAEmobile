@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 //import 'global/footer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'global/footer.dart';
@@ -25,7 +26,6 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI(database: Supabase.instance.client);
-  Restaurant? restaurant;
 
 
   @override
@@ -44,14 +44,14 @@ class _DetailsPageState extends State<DetailsPage> {
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
-          SingleChildScrollView(
+          return SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30.0),
                     child: Text(
-                      restaurant!.name,
+                      snapshot.data!.name,
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -71,13 +71,13 @@ class _DetailsPageState extends State<DetailsPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: Image.network(
-                          restaurant!.url_photo,
+                          snapshot.data!.url_photo,
                           width: 300,
                           height: 250,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Image.asset(
-                                '../../assets/img/default_image.png',
+                                '../../assets/img/default-image.png',
                                 width: 300,
                                 height: 250,
                               ),
@@ -88,7 +88,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         padding: EdgeInsets.all(5),
                         color: Colors.black54,
                         child: Text(
-                          restaurant!.name,
+                          snapshot.data!.name,
                           textAlign: TextAlign.center,
                           style:
                           TextStyle(color: Colors.white, fontSize: 12),
@@ -101,10 +101,10 @@ class _DetailsPageState extends State<DetailsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        infoSection("Adresse", restaurant!.address),
-                        infoSection("Origine", "Cuisine ID: ${restaurant!.id_cuisine}"),
-                        infoSection("Capacité", "${restaurant!.capacity} personnes"),
-                        infoSection("Contact", restaurant!.tel),
+                        infoSection("Adresse", snapshot.data!.address),
+                        infoSection("Origine", "Cuisine ID: ${snapshot.data!.id_cuisine}"),
+                        infoSection("Capacité", "${snapshot.data!.capacity} personnes"),
+                        infoSection("Contact", snapshot.data!.tel),
                       ],
                     ),
                   ),
@@ -118,7 +118,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     onPressed: () {
-                      // Ajouter navigation vers page Avis
+                      context.go('/details/'+snapshot.data!.id.toString()+'/avis');
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
                   ),

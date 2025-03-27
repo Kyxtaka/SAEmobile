@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
-import 'package:saemobile/viewsmodel/userviewmodel.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 
 class SettingsScreen extends StatefulWidget {
 

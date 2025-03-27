@@ -103,6 +103,7 @@ class RestaurantAPI {
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
+    debugPrint("Pas de restaurant trouvé $id");
     return null;
   }
 }

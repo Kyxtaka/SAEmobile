@@ -12,7 +12,7 @@ import 'package:saemobile/models/user.dart';
 
 import 'package:saemobile/utils/UserTools.dart';
 
-import 'package:saemobile/viewsmodel/userviewmodel.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
