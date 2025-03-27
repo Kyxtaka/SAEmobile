@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:saemobile/viewsmodel/userviewmodel.dart';
@@ -11,7 +12,7 @@ import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'UI/avis.dart';
-import 'UI/decouverte.dart';
+import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
@@ -93,8 +94,8 @@ GoRouter _router(UserViewModel userViewModel) {
         },
       ),
       GoRoute(
-        path: '/decouverte',
-        builder: (context, state) => Decouverte(database: Supabase.instance.client),
+        path: '/search',
+        builder: (context, state) => SearchScreen(),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
