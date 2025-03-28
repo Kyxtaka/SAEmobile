@@ -16,6 +16,7 @@ import 'package:path/path.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
+import 'UI/details.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -116,3 +117,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
