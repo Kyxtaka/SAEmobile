@@ -92,7 +92,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   foregroundColor: Colors.black,
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                 ),
-                                child: Text("Voir tous les restaurants"),
+                                child: Text("Voir tout les restaurants"),
                               ),
                             ),
                             DropdownButtonHideUnderline(
