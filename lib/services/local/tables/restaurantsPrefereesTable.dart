@@ -1,14 +1,16 @@
 
-
+import 'package:flutter/material.dart';
+import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsPrefereesDAO {
 
-  Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+    debugPrint("ajout local favoris pour ${email} avec ${restaurantId}");
+    var result = await db.insert(
       'restaurants_preferees',
       {
         'email': email,
@@ -18,21 +20,41 @@ class RestaurantsPrefereesDAO {
     );
   }
 
-  Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
+    var result = await db.delete(
       'restaurants_preferees',
       where: 'email = ? AND restaurant_id = ?',
       whereArgs: [email, restaurantId],
     );
+    debugPrint(result.toString());
   }
 
-  Future<List<Map<String, Object?>>> getRestaurantsPreferees(String email) async {
+  static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.query(
-      'restaurants_preferees',
-      where: 'email = ?',
-      whereArgs: [email],
-    );
+    var result = await db.rawQuery('''
+    SELECT * FROM restaurants_preferees ''');
+    List<Restaurant> restaurants = [];
+    debugPrint(result.toString());
+    for (var i =0;i<result.length;i++){
+      var restaurant = result[i];
+      debugPrint(restaurant.toString());
+      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+         "",
+          "",
+          0,
+          "",
+          "",
+          "",
+          "",
+          0,
+          45,
+          0,
+          "",
+          0.0,
+          0.0));
+    }
+    return restaurants;
   }
+
 }

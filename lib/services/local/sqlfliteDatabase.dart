@@ -34,7 +34,8 @@ class SqlfliteDatabase {
     CREATE TABLE restaurants(
       id INTEGER PRIMARY KEY,
       name TEXT,
-      address TEXT
+      address TEXT,
+      photo TEXT
     )
     '''
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
+import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 //import 'global/footer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'global/footer.dart';
@@ -107,6 +109,14 @@ class _DetailsPageState extends State<DetailsPage> {
                         infoSection("Contact", snapshot.data!.tel),
                       ],
                     ),
+                  ),
+                  SizedBox(height: 15),
+                  IconButton(
+                    icon: Icon(Icons.favorite, color: Colors.red),
+                    onPressed: () async {
+                      String email = await UserViewModel.getCurrentUser();
+                      RestaurantsPrefereesDAO.insertRestaurantPrefere(email, snapshot.data!.id);
+                    },
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(
