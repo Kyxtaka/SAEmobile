@@ -45,7 +45,7 @@ class Footer {
         context.go('/accueil');
         break;
       case 1:
-        context.go('/decouverte');
+        context.go('/search');
         break;
       case 2:
         context.go('/avis');

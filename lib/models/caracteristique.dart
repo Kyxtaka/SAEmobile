@@ -1,10 +1,10 @@
 class Caracteristique {
   final int _id;
-  final int _cuisine;
+  final String _carac;
 
-  const Caracteristique(this._id, this._cuisine);
+  const Caracteristique(this._id, this._carac);
 
-  int get cuisine => _cuisine;
+  String get carac => _carac;
 
   int get id => _id;
 }

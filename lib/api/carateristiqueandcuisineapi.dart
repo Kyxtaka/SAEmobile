@@ -14,11 +14,11 @@ class CaracteristiqueAndCuisineAPI {
     List<Caracteristique> result = [];
     try {
       final response = await database
-          .from('Caracteristique')
+          .from('Caractéristique')
           .select();
       if (response.isNotEmpty) {
         for (var row in response) {
-          Caracteristique carac = Caracteristique(row['id_carac'], row['carac']);
+          Caracteristique carac = Caracteristique(int.parse(row['id_carac']), row['carac']);
           result.add(carac);
         }
         debugPrint('all caracteristique added to the List');
