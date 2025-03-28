@@ -5,14 +5,9 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saemobile/UI/home.dart';
-import 'package:saemobile/UI/login.dart';
-
-import 'package:saemobile/main.dart';
 
 void main() {
   testWidgets('Vérifie si Login affiche le texte attendu', (WidgetTester tester) async {
