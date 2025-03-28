@@ -61,7 +61,7 @@ class _AccueilState extends State<Accueil> {
                         return const SizedBox();
                       }
                       return SizedBox(
-                        height: 80,
+                        height: 100,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: cuisines.length,
@@ -71,14 +71,26 @@ class _AccueilState extends State<Accueil> {
                             padding: const EdgeInsets.only(right: 12.0),
                             child: Column(
                               children: [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage(cuisine.img),                                  radius: 24,
+                                Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey, width: 1.0),
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    image: DecorationImage(
+                                      image: AssetImage(cuisine.img),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
-                              const SizedBox(height: 4),
-                              Text(
-                                cuisine.cuisine,
-                                style: const TextStyle(fontSize: 12),
-                              ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  cuisine.cuisine,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                             ],
                           ),
                         );
