@@ -32,7 +32,7 @@ class Footer {
   int _getSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/decouverte')) return 1;
+    if (location.startsWith('/search')) return 1;
     if (location.startsWith('/avis')) return 2;
     if (location.startsWith('/settings')) return 3;
     return 0;
@@ -45,7 +45,7 @@ class Footer {
         context.go('/accueil');
         break;
       case 1:
-        context.go('/decouverte');
+        context.go('/search');
         break;
       case 2:
         context.go('/avis');

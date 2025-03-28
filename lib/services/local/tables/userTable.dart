@@ -1,13 +1,13 @@
-import 'dart:ffi';
-
 import 'package:sqflite/sqflite.dart';
-
 import '../../../models/user.dart';
 import '../sqlfliteDatabase.dart';
 
+
 class UserTable {
 
-  Future<void> insertUser(User user) async {
+
+/*
+  static Future<void> insertUser(UserCredentials user) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
       'User',
@@ -15,6 +15,7 @@ class UserTable {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
 
   Future<void> updateUser(User user) async {
     final db = await SqlfliteDatabase.instance.database;
@@ -26,29 +27,28 @@ class UserTable {
     );
   }
 
-  Future<void> deleteUser(String email) async {
+
+
+  static Future<void> deleteUserCredentials() async {
     final db = await SqlfliteDatabase.instance.database;
+    final UserCredentials user  = await getUserCredentials() ;
     await db.delete(
       'User',
       where: 'email = ?',
-      whereArgs: [email],
+      whereArgs: [user.email],
     );
   }
 
-  Future<List<User>> getAllUsers() async {
+  static Future<UserCredentials> getUserCredentials() async {
     final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> usersMaps = await db.query('User');
-    return usersMaps.map((map) {
-      return User(
-        map['mail'] as String,
-        map['password'] = '',
-        map['nom'] = '',
-        map['prenom'] = '',
-        map['role'] = '',
-        map['tester'] = [],
-        map['connected'] as bool,
-        map['localisation'] as String,
-      );
-    }).toList();
-  }
+    UserCredentials credentials = UserCredentials("","","");
+    try {
+      credentials.email = usersMaps.first['email'].toString();
+      credentials.password = usersMaps.first['password'].toString();
+    }catch (e) {
+      print(e);
+    }
+    return credentials;
+  */
 }
