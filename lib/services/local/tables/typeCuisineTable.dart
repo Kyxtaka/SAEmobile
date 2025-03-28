@@ -36,8 +36,8 @@ class TypeCuisineTable {
     final List<Map<String, Object?>> typeCuisineMaps = await db.query('TypeCuisine');
     return typeCuisineMaps.map((map) {
       return TypeCuisine(
-        map['idTypeCuisine'] as int,
-        map['cuisine'] as String
+        map['idCuisine'] as int,
+        map['nomCuisine'] as String
       );
     }).toList();
   }

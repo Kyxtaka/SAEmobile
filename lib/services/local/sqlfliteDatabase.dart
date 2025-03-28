@@ -44,8 +44,8 @@ class SqlfliteDatabase {
     return db.execute(
         '''
     CREATE TABLE TypeCuisine(
-      id INTEGER PRIMARY KEY,
-      nom_cuisine TEXT
+      idCuisine INTEGER PRIMARY KEY,
+      nomCuisine TEXT
     )
     '''
     );

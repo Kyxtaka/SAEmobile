@@ -17,8 +17,8 @@ class TypeCuisine {
 
   Map<String, Object?> toMapLocal() {
     return {
-      'idTypeCuisine': _idTypeCuisine,
-      'cuisine': _cuisine
+      'idCuisine': _idTypeCuisine,
+      'nomCuisine': _cuisine
     };
   }
 }

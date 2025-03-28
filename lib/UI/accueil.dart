@@ -19,9 +19,14 @@ class Accueil extends StatefulWidget{
 class _AccueilState extends State<Accueil> {
   static Header header = new Header();
   static SearchBar barreRecherche = new SearchBar();
-  final TypeCuisineTable cuisineTable = TypeCuisineTable();
+  final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
   RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
 
+  @override
+  void initState() {
+    super.initState();
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais"));
+  }
   @override
   Widget build(BuildContext context) {
     Footer footer = new Footer();
@@ -38,7 +43,7 @@ class _AccueilState extends State<Accueil> {
                   barreRecherche,
                   const SizedBox(height: 16),
                     FutureBuilder<List<TypeCuisine>>(
-                      future: cuisineTable.getAllTypeCuisines(),
+                      future: typeCuisineLocal.getAllTypeCuisines(),
                       builder: (context, snapshot) {
                       if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: CircularProgressIndicator());
@@ -84,30 +89,7 @@ class _AccueilState extends State<Accueil> {
                 },
               ),
               const SizedBox(height: 20),
-              FutureBuilder<List<Restaurant>>(
-                future: apiRestaurant.getAllRestaurants(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
-                  }
-                  if (snapshot.hasData) {
-                    final restaurants = snapshot.data!;
-                    final first5 = restaurants.length >= 5 ? restaurants.sublist(0, 5) : restaurants;
-                    return ListView.builder(
-                      itemCount: first5.length,
-                      itemBuilder: (context, index) {
-                        final restaurant = first5[index];
-                        return ListTile(
-                          title: Text(restaurant.name),
-                        );
-                      },
-                    );
-                  }
-                  return Container();
-                },),],
+             ],
               )
           )
         ),
