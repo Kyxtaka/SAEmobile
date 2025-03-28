@@ -107,6 +107,20 @@ GoRouter _router(UserViewModel userViewModel) {
             return null;
           }
         },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'decouverte',
+            name: 'decouverte',
+            builder: (context, state) => Decouverte(database: Supabase.instance.client),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ]
       ),
       GoRoute(
         path: '/accueil',

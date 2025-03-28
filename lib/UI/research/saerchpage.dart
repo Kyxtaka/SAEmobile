@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/research/decouverte.dart';
@@ -78,6 +79,22 @@ class _SearchScreenState extends State<SearchScreen> {
                                 onPressed: () => {},
                                 child: Text("En attente de la barre de recherche")
                             ),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  context.goNamed('decouverte');
+                                  // Action
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                ),
+                                child: Text("Voir tous les restaurants"),
+                              ),
+                            ),
                             DropdownButtonHideUnderline(
                                 child: DropdownButton2<TypeCuisine>(
                                     isExpanded: true,
@@ -129,6 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   },
                                 )
                             ),
+
                             DropdownButtonHideUnderline(
                                 child: DropdownButton2<Caracteristique>(
                                   isExpanded: true,
