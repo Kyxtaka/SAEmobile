@@ -21,7 +21,7 @@ class Footer {
         ),
         BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Avis et favoris"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
+          icon: Icon(Icons.person),
           label: 'Settings',
         ),
       ],

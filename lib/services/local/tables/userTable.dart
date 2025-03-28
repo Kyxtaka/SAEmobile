@@ -35,6 +35,20 @@ class UserTable {
     );
   }
 
+  Future<User?> getUserByEmail(String email) async {
+    final db = await SqlfliteDatabase.instance.database;
+    final List<Map<String, Object?>> result = await db.query(
+      'User',
+      where: 'mail = ?',
+      whereArgs: [email],
+    );
+
+    if (result.isNotEmpty) {
+      return User.fromMap(result.first);
+    }
+    return null;
+  }
+
   Future<List<User>> getAllUsers() async {
     final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> usersMaps = await db.query('User');
