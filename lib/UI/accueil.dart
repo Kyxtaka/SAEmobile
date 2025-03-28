@@ -25,7 +25,12 @@ class _AccueilState extends State<Accueil> {
   @override
   void initState() {
     super.initState();
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","./../../assests/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","./../../assests/img/typeCuisine/italien.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","./../../assests/img/typeCuisine/coréen.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","./../../assests/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","./../../assests/img/typeCuisine/japonais.jpg"));
+
   }
   @override
   Widget build(BuildContext context) {

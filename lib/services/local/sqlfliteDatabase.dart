@@ -45,8 +45,7 @@ class SqlfliteDatabase {
         '''
     CREATE TABLE TypeCuisine(
       idCuisine INTEGER PRIMARY KEY,
-      nomCuisine TEXT,
-      imgCuisine TEXT
+      nomCuisine TEXT
     )
     '''
     );
