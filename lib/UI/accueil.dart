@@ -25,11 +25,11 @@ class _AccueilState extends State<Accueil> {
   @override
   void initState() {
     super.initState();
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","./../../assests/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","./../../assests/img/typeCuisine/italien.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","./../../assests/img/typeCuisine/coréen.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","./../../assests/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","./../../assests/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","./../../assets/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","./../../assets/img/typeCuisine/italien.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","./../../assets/img/typeCuisine/coreen.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","./../../assets/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","./../../assets/img/typeCuisine/japonais.jpg"));
 
   }
   @override
@@ -72,13 +72,7 @@ class _AccueilState extends State<Accueil> {
                             child: Column(
                               children: [
                                 CircleAvatar(
-                                // img
-                                  radius: 24,
-                                  backgroundColor: Colors.orangeAccent,
-                                  child: Text(
-                                    cuisine.cuisine.substring(0, 1).toUpperCase(),
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
+                                  backgroundImage: AssetImage(cuisine.img),                                  radius: 24,
                                 ),
                               const SizedBox(height: 4),
                               Text(
