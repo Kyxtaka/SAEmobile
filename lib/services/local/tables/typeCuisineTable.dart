@@ -3,7 +3,7 @@ import '../../../models/typeCuisine.dart';
 import '../sqlfliteDatabase.dart';
 
 class TypeCuisineTable {
-  Future<void> insertTypeCuisine(id,TypeCuisine typeCuisine) async {
+  Future<void> insertTypeCuisine(id,TypeCuisine typeCuisine, img) async {
     final db = await SqlfliteDatabase.instance.database;
      await db.insert(
       'TypeCuisine',
@@ -37,7 +37,8 @@ class TypeCuisineTable {
     return typeCuisineMaps.map((map) {
       return TypeCuisine(
         map['idCuisine'] as int,
-        map['nomCuisine'] as String
+        map['nomCuisine'] as String,
+        map['imgCuisine'] as String,
       );
     }).toList();
   }
