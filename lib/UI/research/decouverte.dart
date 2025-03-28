@@ -5,7 +5,7 @@ import 'package:saemobile/UI/themes/boutonDegrade.dart';
 import 'package:saemobile/api/restaurantapi.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/restaurant.dart';
+import '../../models/restaurant.dart';
 
 class Decouverte extends StatefulWidget{
   final SupabaseClient database;

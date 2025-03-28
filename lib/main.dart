@@ -4,15 +4,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/critiquesRestaurant.dart';
+import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
-import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'UI/avis.dart';
-import 'UI/decouverte.dart';
+import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
@@ -25,19 +25,22 @@ import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-import 'api/viewsmodel/critiquesviewmodel.dart'; // Detects if running on Web
+import 'api/viewsmodel/critiquesviewmodel.dart';
+import 'api/viewsmodel/userviewmodel.dart'; // Detects if running on Web
 
-Future<void> initSupabase() async{
+Future<SupabaseClient> initSupabase() async{
   try {
     await dotenv.load(fileName: ".env");
     await Supabase.initialize(
         url: dotenv.env['SUPABASE_DB_API_URL']??'',
         anonKey: dotenv.env['SUPABASE_ANON_KEY']??''
     );
+    print('SUPABASE INITIALIZED');
+    return Supabase.instance.client;
   } catch (e) {
     debugPrint("Error lors de l'initialisation de supabase $e");
-    return;
   }
+  return Supabase.instance.client;
 
 }
 Future<void> main() async {
@@ -95,8 +98,8 @@ GoRouter _router(UserViewModel userViewModel) {
         },
       ),
       GoRoute(
-        path: '/decouverte',
-        builder: (context, state) => Decouverte(database: Supabase.instance.client),
+        path: '/search',
+        builder: (context, state) => SearchScreen(),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
@@ -172,6 +175,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
+
+    final Widget loadingSceen = CircularProgressIndicator();
     return FutureBuilder(
         future: initSupabase(),
         builder: (context, snapshot) {
@@ -190,48 +195,51 @@ class MyApp extends StatelessWidget {
           }
 
           return MultiProvider(
-            providers: [
-              Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
-              Provider<int>(create: (_) => 42),
-              //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-              //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+              providers: [
+                Provider<SupabaseClient>(
+                    create: (_) => Supabase.instance.client),
+                Provider<int>(create: (_) => 42),
+                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
+                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
-              ChangeNotifierProvider<UserViewModel> (
-                  create: (_)  {
-
-                    UserViewModel userViewModel = UserViewModel(database: Supabase.instance.client, context: context);
-                    userViewModel.autoLoginInit();
-                    return userViewModel;
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
+                ),
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                      critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
                   },
                 ),
-              FutureProvider<String>(
-                create: (context) => UserViewModel.getCurrentUser(),
-                initialData: "",
-              ),
-              ChangeNotifierProxyProvider<String, CritiqueViewModel>(
-                create: (context) => CritiqueViewModel(),
-                update: (context, email, critiquesViewModel) {
-                  if (email.isNotEmpty) {
-                    critiquesViewModel?.generateCritiques(email);
-                  }
-                  return critiquesViewModel ?? CritiqueViewModel();
-                },
-              ),
+                ChangeNotifierProvider<UserViewModel>(
+                  create: (_) =>
+                      UserViewModel(
+                          database: Supabase.instance.client, context: context),
+                ),
+              ],
+              child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+                  builder: (context, userViewModel, child) {
+                    if (userViewModel.isLoading) {
+                      return MaterialApp(
+                        home: Scaffold(
+                          body: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                    }
+                        return MaterialApp.router(
+                          debugShowCheckedModeBanner: false,
+                          theme: theme,
+                          title: 'My App',
+                          routerConfig: _router(userViewModel),
+                        );
+                      })
 
-            ],
-            child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-              builder: (context, userViewModel, child) {
-                return MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  theme: theme,
-                  title: 'My App',
-                  routerConfig: _router(userViewModel),
-                );
-              },
-            ),
           );
-        }
-    );
+
+        });
   }
 }
-

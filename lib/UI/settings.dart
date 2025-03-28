@@ -46,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   await userViewModel.setDisconnection()
                 },
                 child: const Text(
-                  'Déconnection',
+                  'Déconnexion',
                   style: TextStyle(
                       fontSize: 30,
                       color: Colors.white
