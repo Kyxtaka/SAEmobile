@@ -36,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
 
     return Scaffold(
-      appBar: Header().create(),
+      appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
       body: FutureBuilder(
           future: allTypeCuisine,

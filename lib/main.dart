@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/critiquesRestaurant.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
-import 'package:saemobile/viewsmodel/userviewmodel.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -16,13 +16,17 @@ import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
+import 'UI/forms/editForm.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
+import 'UI/details.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter/foundation.dart' show kIsWeb; // Detects if running on Web
+import 'package:flutter/foundation.dart' show kIsWeb;
 
+import 'api/viewsmodel/critiquesviewmodel.dart';
+import 'api/viewsmodel/userviewmodel.dart'; // Detects if running on Web
 
 Future<SupabaseClient> initSupabase() async{
   try {
@@ -137,11 +141,28 @@ GoRouter _router(UserViewModel userViewModel) {
           }
         },
       ),
-      /*
       GoRoute(
-          path: '/loginLoading'
+        path: ('/avis/:id'),
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return EditForm(
+            id: id,
+          );
+        },),
+      GoRoute(
+        path: ('/details/:id'),
+        builder: (BuildContext context, GoRouterState state){
+          final id = state.pathParameters['id']!;
+          return DetailsPage(restaurantId:id);
+        }
       ),
-      */
+      GoRoute(
+          path: ('/details/:id/avis'),
+          builder: (BuildContext context, GoRouterState state){
+            final id = state.pathParameters['id']!;
+            return CritiqueRestaurants(restaurantId: id);
+          }
+      )
     ],
   );
 }
@@ -174,34 +195,51 @@ class MyApp extends StatelessWidget {
           }
 
           return MultiProvider(
-            providers: [
-              //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-              //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
+              providers: [
+                Provider<SupabaseClient>(
+                    create: (_) => Supabase.instance.client),
+                Provider<int>(create: (_) => 42),
+                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
+                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
-              ChangeNotifierProvider<UserViewModel> (
-                  create: (_)  => UserViewModel(database: Supabase.instance.client, context: context),
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
                 ),
-            ],
-            child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-              builder: (context, userViewModel, child) {
-                if (userViewModel.isLoading) {
-                  return MaterialApp(
-                    home: Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    ),
-                  );
-                }
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                      critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
+                  },
+                ),
+                ChangeNotifierProvider<UserViewModel>(
+                  create: (_) =>
+                      UserViewModel(
+                          database: Supabase.instance.client, context: context),
+                ),
+              ],
+              child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+                  builder: (context, userViewModel, child) {
+                    if (userViewModel.isLoading) {
+                      return MaterialApp(
+                        home: Scaffold(
+                          body: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                    }
+                        return MaterialApp.router(
+                          debugShowCheckedModeBanner: false,
+                          theme: theme,
+                          title: 'My App',
+                          routerConfig: _router(userViewModel),
+                        );
+                      })
 
-                return MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  theme: theme,
-                  title: 'My App',
-                  routerConfig: _router(userViewModel),
-                );
-              },
-            ),
           );
-        }
-    );
+
+        });
   }
 }

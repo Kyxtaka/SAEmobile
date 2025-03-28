@@ -60,9 +60,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    Header header = new Header();
     return Scaffold(
-      appBar: header.create(),
+      appBar: Header.create(),
         body: SingleChildScrollView(
           child: Padding(
           padding: const EdgeInsets.all(16.0),

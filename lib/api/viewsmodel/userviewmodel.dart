@@ -1,13 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../models/user.dart';
-
 
 class UserViewModel extends ChangeNotifier {
   late bool connectionStatus = false ;
@@ -79,5 +77,16 @@ class UserViewModel extends ChangeNotifier {
     connectionStatus = false;
     notifyListeners();
   }
+
+  static Future<String> getCurrentUser() async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    var mail = prefs.getString("identifier");
+    if (mail==null){
+      return "";
+    }
+    return mail;
+  }
+
+
 
 }
