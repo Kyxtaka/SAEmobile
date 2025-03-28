@@ -17,8 +17,10 @@ class CaracteristiqueAndCuisineAPI {
           .from('Caractéristique')
           .select();
       if (response.isNotEmpty) {
+        // debugPrint("Raw response from Supabase: ${response.toString()}");
         for (var row in response) {
-          Caracteristique carac = Caracteristique(int.parse(row['id_carac']), row['carac']);
+          int id = row['id_carac'] is int ? row['id_carac'] : int.parse(row['id_carac'].toString());
+          Caracteristique carac = Caracteristique(id, row['carac']);
           result.add(carac);
         }
         debugPrint('all caracteristique added to the List');
@@ -38,8 +40,10 @@ class CaracteristiqueAndCuisineAPI {
           .from('TypeCuisine')
           .select();
       if (response.isNotEmpty) {
+
         for (var row in response) {
-          TypeCuisine typeCuisine = TypeCuisine(row['id'], row['cuisine']);
+          int id = row['id'] is int ? row['id'] : int.parse(row['id'].toString());
+          TypeCuisine typeCuisine = TypeCuisine(id, row['cuisine']);
           result.add(typeCuisine);
         }
         debugPrint('all type cuisine added to the List');
