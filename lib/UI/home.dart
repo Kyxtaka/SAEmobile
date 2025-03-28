@@ -6,11 +6,10 @@ import 'package:saemobile/UI/themes/boutonDegrade.dart';
 import 'themes/theme.dart';
 
 class Home extends StatelessWidget{
-  static Header header = new Header();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header.create(),
+      appBar: Header.create(),
       body: Center(
         child:Column(
           mainAxisSize: MainAxisSize.min,

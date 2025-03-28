@@ -1,12 +1,8 @@
-import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:saemobile/models/restaurant.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /*
   Future<SupabaseClient> _initDb() async {
@@ -77,4 +73,37 @@ class RestaurantAPI {
     }
   }
 
+
+  Future<Restaurant?> getRestaurantById(int id) async {
+    try {
+      final response = await database
+          .from('Restaurant')
+          .select()
+          .eq('id_resto', id)
+          .single(); // Permet de récupérer un seul élément
+
+      if (response.isNotEmpty) {
+        return Restaurant(
+          response['id_resto'],
+          response['nom'] ?? 'None',
+          response['adresse'] ?? 'None',
+          response['capacity'] ?? -1,
+          response['tel'] ?? 'None',
+          response['siret'] ?? 'None',
+          response['website'] ?? 'None',
+          response['photo'] ?? 'None',
+          response['id_cuisine'] ?? -1,
+          response['id_region'] ?? -1,
+          response['nb_etoile'] ?? -1,
+          response['horaires'] ?? 'None',
+          response['gps_lat'] ?? 0.0,
+          response['gps_long'] ?? 0.0,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé $id");
+    return null;
+  }
 }

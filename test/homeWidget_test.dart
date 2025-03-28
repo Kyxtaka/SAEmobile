@@ -9,10 +9,20 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:saemobile/UI/home.dart';
+import 'package:saemobile/UI/login.dart';
 
 import 'package:saemobile/main.dart';
 
 void main() {
+  testWidgets('Vérifie si Login affiche le texte attendu', (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Home(),
+    ));
 
+    expect(find.text('Se connecter'), findsOneWidget);
+    expect(find.text('Inscrivez-vous !'), findsOneWidget);
+    expect(find.text('Pas de compte ?'), findsOneWidget);
 
+  });
 }

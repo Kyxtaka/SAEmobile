@@ -3,6 +3,8 @@ import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/SearchBar.dart' hide SearchBar;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'global/footer.dart';
+
 
 class Accueil extends StatefulWidget{
   final SupabaseClient database;
@@ -12,14 +14,15 @@ class Accueil extends StatefulWidget{
   State<Accueil> createState() => _AccueilState();
 }
 class _AccueilState extends State<Accueil> {
-  static Header header = new Header();
   static SearchBar barreRecherche = new SearchBar();
 
   @override
   Widget build(BuildContext context) {
+    Footer footer = new Footer();
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: header.create(),
+        appBar: Header.create(),
+        bottomNavigationBar: footer.create(context),
         body:
         Center(
           child:
