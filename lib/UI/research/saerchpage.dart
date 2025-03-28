@@ -101,7 +101,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
 
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.goNamed('searchResult');
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
                       foregroundColor: Colors.white,
