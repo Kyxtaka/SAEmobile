@@ -15,6 +15,7 @@ class CritiqueViewModel extends ChangeNotifier{
     liste = await CritiqueAPI.getCritiqueForUser(user);
     notifyListeners();
   }
+
   Future<bool> deleteCritique(Critique critique) async {
     bool isDeleted = await CritiqueAPI.deleteCritique(critique);
     if (isDeleted) {
@@ -29,7 +30,10 @@ class CritiqueViewModel extends ChangeNotifier{
   Future<bool> editCritique(id, message, etoiles) async {
     bool isModify = await CritiqueAPI.modifyCritique(id, message, etoiles);
     if (isModify) {
-      generateCritiques(UserViewModel.getCurrentUser());
+      var elem = liste.firstWhere((i) => i.id == id);
+      elem.message = message;
+      elem.note = etoiles.round();
+
       notifyListeners();
       return true;
     } else {
@@ -37,6 +41,4 @@ class CritiqueViewModel extends ChangeNotifier{
       return false;
     }
   }
-
-
 }
