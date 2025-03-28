@@ -8,9 +8,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/restaurant.dart';
 
 class Decouverte extends StatefulWidget{
-  final SupabaseClient database;
+  final SupabaseClient database = Supabase.instance.client;
 
-  Decouverte({super.key, required this.database});
+  Decouverte({super.key});
 
   @override
   State<Decouverte> createState() => _DecouverteState();

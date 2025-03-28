@@ -111,7 +111,7 @@ GoRouter _router(UserViewModel userViewModel) {
           GoRoute(
             path: 'decouverte',
             name: 'decouverte',
-            builder: (context, state) => Decouverte(database: Supabase.instance.client),
+            builder: (context, state) => Decouverte(),
             redirect: (BuildContext context, GoRouterState state) {
               if (!userViewModel.isConnected()) {
                 return '/login';

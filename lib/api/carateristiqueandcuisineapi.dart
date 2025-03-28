@@ -6,9 +6,9 @@ import 'package:saemobile/models/typeCuisine.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CaracteristiqueAndCuisineAPI {
-  final SupabaseClient database;
+  final SupabaseClient database = Supabase.instance.client;
 
-  const CaracteristiqueAndCuisineAPI({required this.database});
+  CaracteristiqueAndCuisineAPI();
 
   Future<List<Caracteristique>> getAllCaracterisque() async{
     List<Caracteristique> result = [];

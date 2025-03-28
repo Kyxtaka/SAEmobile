@@ -18,227 +18,203 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-
   late CaracteristiqueAndCuisineAPI caracAndCuisineAPI;
-  // late Future<List<TypeCuisine>> allTypeCuisine;
-  // late Future<List<Caracteristique>> allCaracteristique;
+  TypeCuisine? selectedType;
+  Caracteristique? selectedCarac;
 
+  late Future<List<TypeCuisine>> allTypeCuisine;
+  late Future<List<Caracteristique>> allCaracteristique;
 
   @override
   void initState() {
     super.initState();
-    caracAndCuisineAPI = CaracteristiqueAndCuisineAPI(database: this.widget.database);
-    // allTypeCuisine = caracAndCuisineAPI.getAllTypeCuisine();
-    // allCaracteristique = caracAndCuisineAPI.getAllCaracterisque();
+    caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
+    allTypeCuisine = caracAndCuisineAPI.getAllTypeCuisine();
+    allCaracteristique = caracAndCuisineAPI.getAllCaracterisque();
   }
-
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
       body: FutureBuilder(
-          future: caracAndCuisineAPI.getAllTypeCuisine(),
-          builder: (context, snapshotCuisine) {
-            if (snapshotCuisine.connectionState != ConnectionState.done && !snapshotCuisine.hasData) {
-              return const Center(child: CircularProgressIndicator(),);
-            }
-
-            if (snapshotCuisine.hasError) {
-              return Center(
-                child: Text(snapshotCuisine.error.toString()),
-              );
-            }
-
-            if (snapshotCuisine.data != null) {
-              return FutureBuilder(
-                  future: caracAndCuisineAPI.getAllCaracterisque(),
-                  builder: (context, snapshotCarac) {
-                    if (snapshotCarac.connectionState != ConnectionState.done && !snapshotCarac.hasData) {
-                      return Center(child: CircularProgressIndicator(),);
-                    }
-
-                    if (snapshotCarac.hasError) {
-                      return Center(
-                        child: Text(snapshotCarac.error.toString()),
-                      );
-                    }
-
-                    if (snapshotCarac != null) {
-                      //List<TypeCuisine> allTypeCuisine = (List<TypeCuisine>) allTypeCuisine,
-                      TypeCuisine? selectedType;
-                      Caracteristique? selectedCarac;
-
-                      return Center(
-                        child: Column(
-                          children: [
-                            OutlinedButton(
-                                onPressed: () => {},
-                                child: Text("En attente de la barre de recherche")
-                            ),
-
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  context.goNamed('decouverte');
-                                  // Action
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black,
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                ),
-                                child: Text("Voir tout les restaurants"),
-                              ),
-                            ),
-                            DropdownButtonHideUnderline(
-                                child: DropdownButton2<TypeCuisine>(
-                                    isExpanded: true,
-                                    hint: const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.list,
-                                          size: 16,
-                                          color: Colors.deepOrangeAccent,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            'Sélectionnez un type de cuisine',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    items: snapshotCuisine.data!
-                                        .map<DropdownMenuItem<TypeCuisine>>((TypeCuisine item) => DropdownMenuItem<TypeCuisine>(
-                                      value: item,
-                                      child: Text(
-                                        item.cuisine,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )).toList(),
-
-                                  value: selectedType,
-                                  onChanged: (TypeCuisine? valueType) {
-                                      debugPrint("value changed");
-                                    setState(() {
-                                      selectedType = valueType;
-                                      debugPrint("selected input: ${valueType.toString()} / id ${valueType?.id} type ${valueType?.id.runtimeType} / cuisine ${valueType?.cuisine} type ${valueType?.cuisine.runtimeType}");
-                                    });
-                                    debugPrint("current cuisine value ${selectedType?.cuisine}");
-                                  },
-                                )
-                            ),
-
-                            DropdownButtonHideUnderline(
-                                child: DropdownButton2<Caracteristique>(
-                                  isExpanded: true,
-                                  hint: selectedCarac == null ? Row(
-                                    children: [
-                                      Icon(
-                                        Icons.list,
-                                        size: 16,
-                                        color: Colors.deepOrangeAccent,
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          'Séléctionnez une caractéristique',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ) : Text(
-                                    selectedCarac.carac,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  items: snapshotCarac.data!
-                                      .map<DropdownMenuItem<Caracteristique>>((Caracteristique item) => DropdownMenuItem<Caracteristique>(
-                                    value: item,
-                                    child: Text(
-                                      item.carac,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )).toList(),
-
-                                  value: selectedCarac,
-                                  onChanged: (Caracteristique? valueCarac) {
-                                    debugPrint("value changed");
-                                    setState(()  {
-                                      selectedCarac = valueCarac;
-                                      debugPrint("selected input: ${valueCarac.toString()} / id ${valueCarac?.id} type ${valueCarac?.id.runtimeType} / cuisine ${valueCarac?.carac} type ${valueCarac?.carac.runtimeType}");
-                                    });
-                                    debugPrint("current carac value ${selectedCarac?.carac}");
-                                  },
-                                )
-                            ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orangeAccent,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 🔥 Ajuste l'espace intérieur
-                              ),
-                              child: Text(
-                                  "Rechercher",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ) ,
-                                  overflow: TextOverflow.ellipsis,
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    }
-
-                    return Container();
-                  }
-                );
-            }
-            return Container();
+        future: Future.wait([allTypeCuisine, allCaracteristique]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
           }
+
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          }
+
+
+          if (snapshot.hasData) {
+            List<TypeCuisine> typeCuisines = snapshot.data![0] as List<TypeCuisine>;
+            List<Caracteristique> caracteristiques = snapshot.data![1] as List<Caracteristique>;
+
+
+            return Center(
+              child: Column(
+                children: [
+                  OutlinedButton(
+                      onPressed: () => {},
+                      child: Text("En attente de la barre de recherche")),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.goNamed('decouverte');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text("Voir tous les restaurants"),
+                    ),
+                  ),
+
+                  // TypeCuisine Dropdown
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<TypeCuisine>(
+                      isExpanded: true,
+                      hint: const Row(
+                        children: [
+                          Icon(
+                            Icons.list,
+                            size: 16,
+                            color: Colors.deepOrangeAccent,
+                          ),
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              'Sélectionnez un type de cuisine',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      items: typeCuisines.map<DropdownMenuItem<TypeCuisine>>(
+                            (TypeCuisine item) {
+                          return DropdownMenuItem<TypeCuisine>(
+                            value: item,
+                            child: Text(
+                              item.cuisine,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
+                      ).toList(),
+                      value: selectedType,
+                      onChanged: (TypeCuisine? valueType) {
+                        setState(() {
+                          selectedType = valueType;
+                        });
+                      },
+                    ),
+                  ),
+
+
+                  // Caracteristique Dropdown
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<Caracteristique>(
+                      isExpanded: true,
+                      hint: selectedCarac == null
+                          ? const Row(
+                        children: [
+                          Icon(
+                            Icons.list,
+                            size: 16,
+                            color: Colors.deepOrangeAccent,
+                          ),
+                          SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              'Sélectionnez une caractéristique',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )
+                          : Text(
+                        selectedCarac!.carac,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      items: caracteristiques.map<DropdownMenuItem<Caracteristique>>(
+                            (Caracteristique item) {
+                          return DropdownMenuItem<Caracteristique>(
+                            value: item,
+                            child: Text(
+                              item.carac,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
+                      ).toList(),
+                      value: selectedCarac,
+                      onChanged: (Caracteristique? valueCarac) {
+                        setState(() {
+                          selectedCarac = valueCarac;
+                        });
+                      },
+                    ),
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    child: Text(
+                      "Rechercher",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Container();
+        },
       ),
     );
   }
-
 }
