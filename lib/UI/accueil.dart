@@ -20,7 +20,6 @@ class Accueil extends StatefulWidget{
   State<Accueil> createState() => _AccueilState();
 }
 class _AccueilState extends State<Accueil> {
-  static Header header = new Header();
   static SearchBar barreRecherche = new SearchBar();
   final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
   final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
@@ -61,7 +60,7 @@ class _AccueilState extends State<Accueil> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: header.create(),
+        appBar: Header.create(),
         bottomNavigationBar: footer.create(context),
         body: SingleChildScrollView(
           child: Padding(

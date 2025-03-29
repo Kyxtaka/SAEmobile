@@ -57,7 +57,7 @@ class SqlfliteDatabase {
         '''
     CREATE TABLE User(
       email TEXT PRIMARY KEY,
-      connected BOOLEAN,
+      password TEXT,
       localisation TEXT
     )
     '''
@@ -105,4 +105,5 @@ class SqlfliteDatabase {
     )
   ''');
   }
+
 }

@@ -4,20 +4,36 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:saemobile/UI/themes/boutonRetour.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:saemobile/models/user.dart';
 
 import 'package:saemobile/utils/UserTools.dart';
 
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+
+
 class Login extends StatefulWidget {
+  final SupabaseClient database;
+  final UserViewModel userViewModel;
+  const Login({super.key, required this.userViewModel, required this.database});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<Login> {
   final _formKey = GlobalKey<FormBuilderState>();
-  final UserTools loginState = UserTools();
+  late final UserTools loginState;
+
+  @override
+  void initState() {
+    this.loginState  = UserTools(supabase: this.widget.database);
+  }
 
   /// Connexion Supabse
   Future<void> _login() async {
@@ -30,6 +46,10 @@ class _LoginPageState extends State<Login> {
 
         final errorMessage = await loginState.login(email, digest);
         if (errorMessage == null) {
+          print("before call email is " + email + " and hash is " + digest);
+
+          await widget.userViewModel.setConnection(email, digest);
+          print("error msg: $errorMessage");
           context.go("/accueil");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

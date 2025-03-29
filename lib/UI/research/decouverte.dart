@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/boutonDegrade.dart';
 import 'package:saemobile/api/restaurantapi.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/restaurant.dart';
+import '../../models/restaurant.dart';
 
 class Decouverte extends StatefulWidget{
-  final Header header = new Header();
   final SupabaseClient database;
 
   Decouverte({super.key, required this.database});
@@ -31,7 +31,8 @@ class _DecouverteState extends State<Decouverte> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.header.create(),
+      appBar: Header.create(),
+      bottomNavigationBar: new Footer().create(context),
       body: Column(
         children: [
           Expanded(
