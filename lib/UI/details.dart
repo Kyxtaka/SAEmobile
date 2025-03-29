@@ -25,7 +25,7 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  RestaurantAPI api = RestaurantAPI(database: Supabase.instance.client);
+  RestaurantAPI api = RestaurantAPI();
 
 
   @override

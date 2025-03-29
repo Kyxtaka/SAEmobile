@@ -23,9 +23,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RestaurantAPI {
 
-  final SupabaseClient database;
+  final SupabaseClient database = Supabase.instance.client;
 
-  const RestaurantAPI({required this.database});
+  RestaurantAPI();
 
   Restaurant createRestant(Map<String, dynamic> row) {
     return Restaurant(

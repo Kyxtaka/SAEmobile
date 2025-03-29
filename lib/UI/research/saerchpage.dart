@@ -34,6 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     allTypeCuisine = caracAndCuisineAPI.getAllTypeCuisine();
     allCaracteristique = caracAndCuisineAPI.getAllCaracterisque();
+
   }
 
   @override

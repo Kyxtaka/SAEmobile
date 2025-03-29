@@ -11,7 +11,7 @@ class CaracteristiqueAndCuisineAPI {
   CaracteristiqueAndCuisineAPI();
 
   Future<List<Caracteristique>> getAllCaracterisque() async{
-    List<Caracteristique> result = [];
+    List<Caracteristique> result = [Caracteristique(-1, "Aucun choix")];
     try {
       final response = await database
           .from('Caractéristique')
@@ -34,7 +34,7 @@ class CaracteristiqueAndCuisineAPI {
   }
 
   Future<List<TypeCuisine>> getAllTypeCuisine() async{
-    List<TypeCuisine> result = [];
+    List<TypeCuisine> result = [TypeCuisine(-1, "Aucun choix")];
     try {
       final response = await database
           .from('TypeCuisine')

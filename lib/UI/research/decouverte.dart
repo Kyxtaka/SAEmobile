@@ -24,7 +24,7 @@ class _DecouverteState extends State<Decouverte> {
   @override
   void initState() {
     super.initState();
-    restaurantAPI = RestaurantAPI(database: widget.database);
+    restaurantAPI = RestaurantAPI();
     futureRestaurants = restaurantAPI.getAllRestaurants();
   }
 
