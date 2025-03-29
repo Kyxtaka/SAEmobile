@@ -34,16 +34,22 @@ class _FavorisState extends State<Favoris> {
             itemCount: favorisViewModel.favoris.length,
             itemBuilder: (context, index) {
               var fav = favorisViewModel.favoris[index];
-              var url = fav.url_photo;
-              if (fav.url_photo==""){
-                  url = "../../assets/img/default-image.png";
-              }
-              return ListTile(
-                leading: Image.network(url, width: 50, height: 50, fit: BoxFit.cover),
-                title: Text(fav.name),
-                trailing: IconButton(
-                  icon: Icon(Icons.favorite, color: Colors.red),
-                  onPressed: () => favorisViewModel.removeFavoris(UserViewModel.getCurrentUser(), fav.id),
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: EdgeInsets.all(8),
+                  title: Text(
+                    fav.name,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(fav.name ?? "Restaurant"),
+                  trailing: IconButton(
+                    icon: Icon(Icons.favorite, color: Colors.red),
+                    onPressed: () => favorisViewModel.removeFavoris(UserViewModel.getCurrentUser(), fav.id),
+                  ),
                 ),
               );
             },

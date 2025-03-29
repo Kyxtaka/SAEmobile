@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 //import 'global/footer.dart';
@@ -28,7 +29,36 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI(database: Supabase.instance.client);
+  bool isFavoris = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFavoris();
+    });
+  }
+
+  Future<void> _loadFavoris() async {
+    String userEmail = await UserViewModel.getCurrentUser();
+    bool favoris = await RestaurantsPrefereesDAO.isFavoris(
+        userEmail, widget.restaurantId);
+    setState(() {
+      isFavoris = favoris;
+    });
+  }
+
+  Future<void> _toggleFavoris() async {
+    String userEmail = await UserViewModel.getCurrentUser();
+    if (isFavoris) {
+      await RestaurantsPrefereesDAO.deleteRestaurantPrefere(userEmail, int.parse(widget.restaurantId??"0"));
+    } else {
+      await RestaurantsPrefereesDAO.insertRestaurantPrefere(userEmail, int.parse(widget.restaurantId??"0"));
+    }
+    setState(() {
+      isFavoris = !isFavoris;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,11 +142,11 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                   SizedBox(height: 15),
                   IconButton(
-                    icon: Icon(Icons.favorite, color: Colors.red),
-                    onPressed: () async {
-                      String email = await UserViewModel.getCurrentUser();
-                      RestaurantsPrefereesDAO.insertRestaurantPrefere(email, snapshot.data!.id);
-                    },
+                    icon: Icon(
+                      isFavoris ? Icons.favorite : Icons.favorite_border,
+                      color: isFavoris ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: _toggleFavoris,
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(

@@ -30,10 +30,25 @@ class RestaurantsPrefereesDAO {
     debugPrint(result.toString());
   }
 
+  static Future<bool> isFavoris(restaurantId, user) async {
+    final db = await SqlfliteDatabase.instance.database;
+    var result = await db.query(
+      'restaurants_preferees',
+      where: 'email = ?',
+      whereArgs: [user],
+    );
+    print("Résultat de la requête: $result");
+
+    return result.isNotEmpty;
+  }
+
   static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    var result = await db.rawQuery('''
-    SELECT * FROM restaurants_preferees ''');
+    var result = await db.query(
+      'restaurants_preferees',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
     List<Restaurant> restaurants = [];
     debugPrint(result.toString());
     for (var i =0;i<result.length;i++){
