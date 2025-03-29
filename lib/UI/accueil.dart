@@ -3,6 +3,7 @@ import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/SearchBar.dart' hide SearchBar;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/restaurantapi.dart';
+import '../api/typeCuisineapi.dart';
 import '../models/restaurant.dart';
 import '../services/local/tables/typeCuisineTable.dart';
 import '../models/typeCuisine.dart';
@@ -21,17 +22,33 @@ class _AccueilState extends State<Accueil> {
   static SearchBar barreRecherche = new SearchBar();
   final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
   RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
+  TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
+
+  Future<void> _fetchAndInsertTypeCuisines() async {
+
+    List<TypeCuisine> supaCuisines = await typeCuisineAPI.getAllTypeCuisines();
+    for (var cuisine in supaCuisines.take(5)) {
+      await typeCuisineLocal.insertTypeCuisine(1, cuisine);
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","./../../assets/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","./../../assets/img/typeCuisine/italien.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","./../../assets/img/typeCuisine/coreen.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","./../../assets/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","./../../assets/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","assets/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","assets/img/typeCuisine/italien.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","assets/img/typeCuisine/coreen.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","assets/img/typeCuisine/japonais.jpg"));
+    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","assets/img/typeCuisine/japonais.jpg"));
 
+    typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
+      if (localCuisines.isEmpty) {
+        _fetchAndInsertTypeCuisines();
+      }
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     Footer footer = new Footer();
@@ -78,7 +95,9 @@ class _AccueilState extends State<Accueil> {
                                     border: Border.all(color: Colors.grey, width: 1.0),
                                     borderRadius: BorderRadius.circular(12.0),
                                     image: DecorationImage(
-                                      image: AssetImage(cuisine.img),
+                                      image: cuisine.img == 'None'
+                                          ? AssetImage('assets/img/typeCuisine/defaut.jpeg')
+                                          : AssetImage(cuisine.img),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -107,3 +126,5 @@ class _AccueilState extends State<Accueil> {
     );
   }
 }
+
+

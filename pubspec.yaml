@@ -80,6 +80,12 @@ flutter:
     - assets/img/bouillon-chartier-montparnasse.jpg
     - assets/img/paella-orleans.png
     - assets/img/pizza-orleans.png
+    - assets/img/typeCuisine/defaut.jpeg
+    - assets/img/typeCuisine/japonais.jpg
+    - assets/img/typeCuisine/italien.jpg
+    - assets/img/typeCuisine/coreen.jpg
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

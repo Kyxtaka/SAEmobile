@@ -1,7 +1,7 @@
 class TypeCuisine {
   final int _idTypeCuisine;
   final String _cuisine;
-  final String? _img;
+  final String _img;
 
   const TypeCuisine(
       this._idTypeCuisine,
@@ -13,7 +13,7 @@ class TypeCuisine {
 
   String get cuisine => _cuisine;
 
-  String? get img => _img;
+  String get img => _img;
 
   void debugPrint() {
     String typeCuisine = "idTypeCuisine: $_idTypeCuisine, cuisine: $_cuisine";

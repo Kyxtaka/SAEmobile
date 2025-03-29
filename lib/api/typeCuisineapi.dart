@@ -13,13 +13,12 @@ class TypeCuisineAPI {
       List<TypeCuisine> cuisines = [];
       if (response is List) {
         for (var row in response) {
-          cuisines.add(
-            TypeCuisine(
-              row['id_cuisine'] ?? row['id'],
-              row['nom_cuisine'] ?? row['nom'],
-              null,
-            ),
-          );
+            TypeCuisine typeCuisine = new TypeCuisine(
+              row['id'] ?? row['id'] ?? -1,
+              row['cuisine'] ?? 'None',
+              row['imgCuisine'] ?? 'None'
+            );
+            cuisines.add(typeCuisine);
         }
       }
       return cuisines;
