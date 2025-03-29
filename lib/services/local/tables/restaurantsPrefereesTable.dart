@@ -1,10 +1,11 @@
 
 
+import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../sqlfliteDatabase.dart';
 
-class RestaurantsPrefereesDAO {
+class RestaurantsPreferees {
 
   Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
@@ -27,12 +28,30 @@ class RestaurantsPrefereesDAO {
     );
   }
 
-  Future<List<Map<String, Object?>>> getRestaurantsPreferees(String email) async {
+  Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.query(
+    final List<Map<String, Object?>> maps = await db.query(
       'restaurants_preferees',
       where: 'email = ?',
       whereArgs: [email],
     );
+    return maps.map((map) {
+      return Restaurant(
+        map['id'] as int,
+        map['name'] as String,
+        map['address'] as String,
+        map['capacity'] = 0,
+        map['tel'] = '',
+        map['siret'] = '',
+        map['website'] = '',
+        map['url_photo'] = '',
+        map['id_cuisine'] = 0,
+        map['id_region'] = 0,
+        map['nb_etoile'] = 0,
+        map['horaires'] = '',
+        map['gps_lat'] = 0.0,
+        map['gps_long'] = 0.0,
+      );
+    }).toList();
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/SearchBar.dart' hide SearchBar;
+import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/restaurantapi.dart';
 import '../api/typeCuisineapi.dart';
 import '../models/restaurant.dart';
+import '../services/local/tables/restaurantsPrefereesTable.dart';
 import '../services/local/tables/typeCuisineTable.dart';
 import '../models/typeCuisine.dart';
 import 'global/footer.dart';
@@ -21,6 +23,8 @@ class _AccueilState extends State<Accueil> {
   static Header header = new Header();
   static SearchBar barreRecherche = new SearchBar();
   final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
+  final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
+  final RestaurantsTable restaurants = RestaurantsTable();
   RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
   TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
 
@@ -52,6 +56,9 @@ class _AccueilState extends State<Accueil> {
   @override
   Widget build(BuildContext context) {
     Footer footer = new Footer();
+    final user = Supabase.instance.client.auth.currentUser!;
+    print(user);
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: header.create(),
@@ -118,6 +125,71 @@ class _AccueilState extends State<Accueil> {
                   );
                 },
               ),
+                  FutureBuilder<List<Restaurant>>(
+
+                    future: restaurantPrefLocal.getRestaurantsPreferees(userEmail!),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Text('Erreur : ${snapshot.error}');
+                      }
+                      final restaurantPref = snapshot.data ?? [];
+                      if (restaurantPref.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Vos restaurants préférés",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            height: 160,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: restaurantPref.length,
+                              itemBuilder: (context, index) {
+                                final Restaurant resto = restaurantPref[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 12.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 120,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          image: DecorationImage(
+                                            image: AssetImage(resto.url_photo ?? 'assets/img/restaurants/defaut.jpg'),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        resto.name,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  ),
+
               const SizedBox(height: 20),
              ],
               )

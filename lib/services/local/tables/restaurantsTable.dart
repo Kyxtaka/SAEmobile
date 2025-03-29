@@ -56,4 +56,33 @@ class RestaurantsTable {
       );
     }).toList();
   }
+
+  Future<Restaurant?> getRestaurantById(int id) async {
+    final db = await SqlfliteDatabase.instance.database;
+    final List<Map<String, Object?>> Restmaps = await db.query(
+      'restaurants',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (Restmaps.isNotEmpty) {
+      final map = Restmaps.first;
+      return Restaurant(
+        map['id'] as int,
+        map['name'] as String,
+        map['address'] as String,
+        map['capacity'] = 0,
+        map['tel'] = '',
+        map['siret'] = '',
+        map['website'] = '',
+        map['url_photo'] = '',
+        map['id_cuisine'] = 0,
+        map['id_region'] = 0,
+        map['nb_etoile'] = 0,
+        map['horaires'] = '',
+        map['gps_lat'] = 0.0,
+        map['gps_long'] = 0.0,
+      );
+    };
+  }
+
 }
