@@ -11,6 +11,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SearchScreen extends StatefulWidget {
   final SupabaseClient database = Supabase.instance.client;
+  TypeCuisine? selectedType;
+  Caracteristique? selectedCarac;
+
+
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
 
@@ -19,9 +23,8 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late CaracteristiqueAndCuisineAPI caracAndCuisineAPI;
-  TypeCuisine? selectedType;
-  Caracteristique? selectedCarac;
+  final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
+
 
   late Future<List<TypeCuisine>> allTypeCuisine;
   late Future<List<Caracteristique>> allCaracteristique;
@@ -29,7 +32,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
     allTypeCuisine = caracAndCuisineAPI.getAllTypeCuisine();
     allCaracteristique = caracAndCuisineAPI.getAllCaracterisque();
   }
@@ -81,21 +83,22 @@ class _SearchScreenState extends State<SearchScreen> {
                   // TypeCuisine Dropdown
                   DropdownTypeCuisine(
                     typeCuisines: typeCuisines,
-                    selectedType: selectedType,
+                    selectedType: widget.selectedType,
                     onChanged: (value) {
                       setState(() {
-                        selectedType = value;
+                        widget.selectedType = value;
                       });
+
                     },
                   ),
 
                   // Caracteristique Dropdown
                   DropdownCaracteristique(
                     caracteristiques: caracteristiques,
-                    selectedCarac: selectedCarac,
+                    selectedCarac: widget.selectedCarac,
                     onChanged: (value) {
                       setState(() {
-                        selectedCarac = value;
+                        widget.selectedCarac = value;
                       });
                     },
                   ),
@@ -134,7 +137,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class DropdownTypeCuisine extends StatefulWidget {
+
+class DropdownTypeCuisine extends StatelessWidget {
   final List<TypeCuisine> typeCuisines;
   final ValueChanged<TypeCuisine?> onChanged;
   final TypeCuisine? selectedType;
@@ -143,14 +147,8 @@ class DropdownTypeCuisine extends StatefulWidget {
     required this.typeCuisines,
     required this.onChanged,
     this.selectedType,
-    super.key,
   });
 
-  @override
-  _DropdownTypeCuisineState createState() => _DropdownTypeCuisineState();
-}
-
-class _DropdownTypeCuisineState extends State<DropdownTypeCuisine> {
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<TypeCuisine>(
@@ -176,7 +174,7 @@ class _DropdownTypeCuisineState extends State<DropdownTypeCuisine> {
             ),
           ],
         ),
-        items: widget.typeCuisines.map<DropdownMenuItem<TypeCuisine>>(
+        items: typeCuisines.map<DropdownMenuItem<TypeCuisine>>(
               (TypeCuisine item) {
             return DropdownMenuItem<TypeCuisine>(
               value: item,
@@ -192,14 +190,15 @@ class _DropdownTypeCuisineState extends State<DropdownTypeCuisine> {
             );
           },
         ).toList(),
-        value: widget.selectedType,
-        onChanged: widget.onChanged,
+        value: selectedType,
+        onChanged: onChanged,
       ),
     );
   }
 }
 
-class DropdownCaracteristique extends StatefulWidget {
+
+class DropdownCaracteristique extends StatelessWidget {
   final List<Caracteristique> caracteristiques;
   final ValueChanged<Caracteristique?> onChanged;
   final Caracteristique? selectedCarac;
@@ -208,20 +207,15 @@ class DropdownCaracteristique extends StatefulWidget {
     required this.caracteristiques,
     required this.onChanged,
     this.selectedCarac,
-    super.key,
   });
 
-  @override
-  _DropdownCaracteristiqueState createState() => _DropdownCaracteristiqueState();
-}
 
-class _DropdownCaracteristiqueState extends State<DropdownCaracteristique> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<Caracteristique>(
         isExpanded: true,
-        hint: widget.selectedCarac == null
+        hint: selectedCarac == null
             ? const Row(
           children: [
             Icon(
@@ -244,7 +238,7 @@ class _DropdownCaracteristiqueState extends State<DropdownCaracteristique> {
           ],
         )
             : Text(
-          widget.selectedCarac!.carac,
+          selectedCarac!.carac,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -252,7 +246,7 @@ class _DropdownCaracteristiqueState extends State<DropdownCaracteristique> {
           ),
           overflow: TextOverflow.ellipsis,
         ),
-        items: widget.caracteristiques.map<DropdownMenuItem<Caracteristique>>(
+        items: caracteristiques.map<DropdownMenuItem<Caracteristique>>(
               (Caracteristique item) {
             return DropdownMenuItem<Caracteristique>(
               value: item,
@@ -268,8 +262,8 @@ class _DropdownCaracteristiqueState extends State<DropdownCaracteristique> {
             );
           },
         ).toList(),
-        value: widget.selectedCarac,
-        onChanged: widget.onChanged,
+        value: selectedCarac,
+        onChanged: onChanged,
       ),
     );
   }
