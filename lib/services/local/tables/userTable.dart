@@ -6,8 +6,8 @@ import '../sqlfliteDatabase.dart';
 class UserTable {
 
 
-/*
-  static Future<void> insertUser(UserCredentials user) async {
+
+  static Future<void> insertUser(User user) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
       'User',
@@ -15,7 +15,7 @@ class UserTable {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-
+/*
 
   Future<void> updateUser(User user) async {
     final db = await SqlfliteDatabase.instance.database;

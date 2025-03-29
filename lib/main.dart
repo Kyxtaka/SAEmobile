@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:saemobile/UI/critiquesRestaurant.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/settings.dart';
+import 'package:saemobile/services/local/insert.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
@@ -55,6 +56,7 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
+  await insertData();
   runApp(MyApp(database: db));
 }
 

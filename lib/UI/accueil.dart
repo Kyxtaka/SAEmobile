@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/restaurantapi.dart';
 import '../api/typeCuisineapi.dart';
 import '../models/restaurant.dart';
+import '../services/local/tables/cuisinePrefereesTable.dart';
 import '../services/local/tables/restaurantsPrefereesTable.dart';
 import '../services/local/tables/typeCuisineTable.dart';
 import '../models/typeCuisine.dart';
@@ -20,43 +21,38 @@ class Accueil extends StatefulWidget{
   State<Accueil> createState() => _AccueilState();
 }
 class _AccueilState extends State<Accueil> {
+
   static SearchBar barreRecherche = new SearchBar();
+
   final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
+  final CuisinesPreferees typeCuisinePref = CuisinesPreferees();
   final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
   final RestaurantsTable restaurants = RestaurantsTable();
+
   RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
   TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
 
   Future<void> _fetchAndInsertTypeCuisines() async {
-
     List<TypeCuisine> supaCuisines = await typeCuisineAPI.getAllTypeCuisines();
     for (var cuisine in supaCuisines.take(5)) {
       await typeCuisineLocal.insertTypeCuisine(1, cuisine);
     }
-    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(1, "japonais","assets/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(2, "italien","assets/img/typeCuisine/italien.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(3, "coréen","assets/img/typeCuisine/coreen.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(4, "français","assets/img/typeCuisine/japonais.jpg"));
-    typeCuisineLocal.insertTypeCuisine(1, TypeCuisine(5, "indien","assets/img/typeCuisine/japonais.jpg"));
-
     typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
       if (localCuisines.isEmpty) {
         _fetchAndInsertTypeCuisines();
       }
     });
+
   }
 
   @override
   Widget build(BuildContext context) {
     Footer footer = new Footer();
-    final user = Supabase.instance.client.auth.currentUser!;
-    print(user);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -71,7 +67,7 @@ class _AccueilState extends State<Accueil> {
                   barreRecherche,
                   const SizedBox(height: 16),
                     FutureBuilder<List<TypeCuisine>>(
-                      future: typeCuisineLocal.getAllTypeCuisines(),
+                      future: typeCuisinePref.getCuisinesPreferees('a@mail.com'),
                       builder: (context, snapshot) {
                       if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: CircularProgressIndicator());
@@ -124,9 +120,9 @@ class _AccueilState extends State<Accueil> {
                   );
                 },
               ),
-                  FutureBuilder<List<Restaurant>>(
 
-                    future: restaurantPrefLocal.getRestaurantsPreferees(userEmail!),
+              FutureBuilder<List<Restaurant>>(
+                    future: restaurantPrefLocal.getRestaurantsPreferees('a@mail.com'),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: CircularProgressIndicator());

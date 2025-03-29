@@ -7,9 +7,9 @@ class Restaurant {
   final String _siret;
   final String _website;
   final String _url_photo;
-  final int _id_cuisine;
-  final int _id_region;
-  final int _nb_etoile;
+  final int? _id_cuisine;
+  final int? _id_region;
+  final int? _nb_etoile;
   final String _horaires;
   final double _gps_lat;
   final double _gps_long;
@@ -36,9 +36,9 @@ class Restaurant {
 
   String get horaire => _horaires;
 
-  int get id_region => _id_region;
+  int? get id_region => _id_region;
 
-  int get id_cuisine => _id_cuisine;
+  int? get id_cuisine => _id_cuisine;
 
   String get url_photo => _url_photo;
 
@@ -56,7 +56,7 @@ class Restaurant {
 
   int get id => _id;
 
-  int get nb_etoile => _nb_etoile;
+  int? get nb_etoile => _nb_etoile;
 
   void debugPrint() {
     String restaurant = "id: $_id, name: $_name, address: $_address, capacity: $_capacity, tel: $_tel, siret: $_siret, website: $_website, url_photo: $_url_photo, id_cuisine: $_id_cuisine, id_region: $_id_region, horraire: $_horaires, gps_lat: $_gps_lat, gps_long: $gps_long";

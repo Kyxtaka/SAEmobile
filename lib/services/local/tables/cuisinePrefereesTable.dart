@@ -1,7 +1,8 @@
 import 'package:sqflite/sqflite.dart';
+import '../../../models/typeCuisine.dart';
 import '../sqlfliteDatabase.dart';
 
-class CuisinesPrefereesTable {
+class CuisinesPreferees {
 
   Future<void> insertCuisinePrefere(String email, int cuisineId) async {
     final db = await SqlfliteDatabase.instance.database;
@@ -24,12 +25,31 @@ class CuisinesPrefereesTable {
     );
   }
 
-  Future<List<Map<String, Object?>>> getCuisinesPreferees(String email) async {
+  Future<List<TypeCuisine>> getCuisinesPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.query(
+    final List<Map<String, Object?>> cuisineMaps = await db.query(
       'cuisines_preferees',
       where: 'email = ?',
-      whereArgs: [email],
+      whereArgs: [email]
     );
+    return cuisineMaps.map((map) {
+      return TypeCuisine(
+          map['idCuisine'] as int,
+          map['nomCuisine'] as String,
+          map['imgCuisine'] as String
+      );
+    }).toList();
+  }
+
+  Future<List<TypeCuisine>> getAllTypeCuisines() async {
+    final db = await SqlfliteDatabase.instance.database;
+    final List<Map<String, Object?>> typeCuisineMaps = await db.query('cuisines_preferees');
+    return typeCuisineMaps.map((map) {
+      return TypeCuisine(
+          map['idCuisine'] as int,
+          map['nomCuisine'] as String,
+          map['imgCuisine'] as String
+      );
+    }).toList();
   }
 }

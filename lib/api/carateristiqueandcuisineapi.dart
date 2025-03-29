@@ -39,7 +39,7 @@ class CaracteristiqueAndCuisineAPI {
           .select();
       if (response.isNotEmpty) {
         for (var row in response) {
-          TypeCuisine typeCuisine = TypeCuisine(row['id'], row['cuisine']);
+          TypeCuisine typeCuisine = TypeCuisine(row['id'], row['cuisine'],row['imgCuisine']);
           result.add(typeCuisine);
         }
         debugPrint('all type cuisine added to the List');
