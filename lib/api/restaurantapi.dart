@@ -74,9 +74,9 @@ class RestaurantAPI {
   }
 
 
-  Future<Restaurant?> getRestaurantById(int id) async {
+  static Future<Restaurant?> getRestaurantById(int id) async {
     try {
-      final response = await database
+      final response = await Supabase.instance.client
           .from('Restaurant')
           .select()
           .eq('id_resto', id)

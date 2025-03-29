@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:saemobile/api/restaurantapi.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -27,19 +28,6 @@ class RestaurantsPrefereesDAO {
       where: 'email = ? AND restaurant_id = ?',
       whereArgs: [email, restaurantId],
     );
-    debugPrint(result.toString());
-  }
-
-  static Future<bool> isFavoris(restaurantId, user) async {
-    final db = await SqlfliteDatabase.instance.database;
-    var result = await db.query(
-      'restaurants_preferees',
-      where: 'email = ?',
-      whereArgs: [user],
-    );
-    print("Résultat de la requête: $result");
-
-    return result.isNotEmpty;
   }
 
   static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
@@ -50,10 +38,8 @@ class RestaurantsPrefereesDAO {
       whereArgs: [email],
     );
     List<Restaurant> restaurants = [];
-    debugPrint(result.toString());
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      debugPrint(restaurant.toString());
       restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
          "",
           "",

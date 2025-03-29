@@ -13,18 +13,30 @@ class FavorisViewModel extends ChangeNotifier {
   }
   Future<void> generateFavoris(user) async {
     favoris = await RestaurantsPrefereesDAO.getRestaurantsPreferees(user);
+    for (var i = 0;i<favoris.length; i++) {
+      favoris[i] = (await RestaurantAPI.getRestaurantById(favoris[i].id))!;
+    }
     notifyListeners();
   }
   Future<void> removeFavoris(user, fav) async {
     await RestaurantsPrefereesDAO.deleteRestaurantPrefere(user, fav);
-    favoris = List.from(favoris)..remove(fav);
+    await generateFavoris(user);
     notifyListeners();
   }
 
   Future<void> addFavoris(user, fav) async {
     await RestaurantsPrefereesDAO.insertRestaurantPrefere(user, fav);
-    generateFavoris(user);
+    await generateFavoris(user);
     notifyListeners();
+  }
+
+  Future<bool> isFavoris(fav) async {
+    for (var i = 0;i<favoris.length;i++){
+      if (favoris[i].id==fav){
+        return true;
+      }
+    }
+    return false;
   }
 
 

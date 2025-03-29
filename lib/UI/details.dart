@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
@@ -29,46 +30,17 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI(database: Supabase.instance.client);
-  bool isFavoris = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadFavoris();
-    });
-  }
-
-  Future<void> _loadFavoris() async {
-    String userEmail = await UserViewModel.getCurrentUser();
-    bool favoris = await RestaurantsPrefereesDAO.isFavoris(
-        userEmail, widget.restaurantId);
-    setState(() {
-      isFavoris = favoris;
-    });
-  }
-
-  Future<void> _toggleFavoris() async {
-    String userEmail = await UserViewModel.getCurrentUser();
-    if (isFavoris) {
-      await RestaurantsPrefereesDAO.deleteRestaurantPrefere(userEmail, int.parse(widget.restaurantId??"0"));
-    } else {
-      await RestaurantsPrefereesDAO.insertRestaurantPrefere(userEmail, int.parse(widget.restaurantId??"0"));
-    }
-    setState(() {
-      isFavoris = !isFavoris;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     Footer footer = Footer();
+    final favorisViewModel = context.watch<FavorisViewModel>();
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: footer.create(context),
       appBar: Header.create(),
       body: FutureBuilder<Restaurant?>(
-        future: api.getRestaurantById(int.parse(widget.restaurantId??"-1")),
+        future: RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1")),
           builder: (context, snapshot){
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -141,12 +113,14 @@ class _DetailsPageState extends State<DetailsPage> {
                     ),
                   ),
                   SizedBox(height: 15),
+                  Text("Ajouter en favoris", style: TextStyle(fontSize:15)),
                   IconButton(
-                    icon: Icon(
-                      isFavoris ? Icons.favorite : Icons.favorite_border,
-                      color: isFavoris ? Colors.red : Colors.grey,
-                    ),
-                    onPressed: _toggleFavoris,
+                    icon: Icon(Icons.favorite,),
+                    color: Colors.grey,
+                    onPressed:() async {
+                      var user = await  UserViewModel.getCurrentUser();
+                      favorisViewModel.addFavoris(user, snapshot.data?.id);
+                      context.go('/favoris');}
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(
