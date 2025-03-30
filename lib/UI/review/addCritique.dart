@@ -100,6 +100,27 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                             _noteController = rating;
                           },
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              icon: Icon(Icons.image),
+                              label: Text("Depuis la galerie"),
+                              onPressed: () => _pickImage(ImageSource.gallery),
+                            ),
+                            ElevatedButton.icon(
+                              icon: Icon(Icons.camera),
+                              label: Text("Prendre une photo"),
+                              onPressed: () => _pickImage(ImageSource.camera),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        if (_selectedImage != null)
+                          Image.file(_selectedImage!, height: 500, width: double.infinity, fit: BoxFit.cover),
+                        const SizedBox(height: 20),
+
+
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 textStyle: TextStyle(fontSize: 20),
@@ -107,13 +128,18 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState!.validate()){
+                                if (_selectedImage != null) {
+                                  print("Image sélectionnée : ${_selectedImage!.path}");
 
-                                CritiqueAPI.insertCritique(
-                                  widget.restID.toString(),
-                                  user_identifier,
-                                  _formKey.currentState?.fields['Message']?.value,
-                                  (_noteController + 0.5).toInt() ?? 3,
-                                );
+                                }else {
+                                  print("Image sélectionnée : nan");
+                                  CritiqueAPI.insertCritique(
+                                    widget.restID.toString(),
+                                    user_identifier,
+                                    _formKey.currentState?.fields['Message']?.value,
+                                    (_noteController + 0.5).toInt() ?? 3,
+                                  );
+                                }
                                 Navigator.pop(context);
                               }
                             },
