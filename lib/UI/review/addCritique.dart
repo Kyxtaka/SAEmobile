@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:saemobile/UI/global/footer.dart';
@@ -6,6 +7,7 @@ import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:image_picker/image_picker.dart';
 class AddCritiquePage extends StatefulWidget {
 
   final int restID;
@@ -20,6 +22,9 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
 
   late Future<void> _loadDataFuture;
   late String user_identifier;
+  final _formKey = GlobalKey<FormBuilderState>();
+  late var _noteController;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -32,9 +37,16 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
     user_identifier = identifier;
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
 
-  final _formKey = GlobalKey<FormBuilderState>();
-  late var _noteController;
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path); // Convertit en fichier pour l'affichage
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +124,6 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                   )
               ),
             );
-
           }
       ),
     );
