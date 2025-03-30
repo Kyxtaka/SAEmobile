@@ -87,9 +87,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 DropdownTypeCuisine(
                   typeCuisines: typeCuisines,
                   selectedType: selectedType,
-                  onChanged: (value) {
+                  onChanged: (TypeCuisine? value) {
                     setState(() {
+                      print(value);
                       selectedType = value;
+                      print(selectedType?.id);
                     });
                   },
                 ),
@@ -98,20 +100,27 @@ class _SearchScreenState extends State<SearchScreen> {
                 DropdownCaracteristique(
                   caracteristiques: caracteristiques,
                   selectedCarac: selectedCarac,
-                  onChanged: (value) {
+                  onChanged: (Caracteristique? value) {
                     setState(() {
+                      print(value);
                       selectedCarac = value;
+                      print(selectedCarac?.id);
                     });
                   },
                 ),
 
                 ElevatedButton(
                   onPressed: () {
+
+                    debugPrint("slected type id string ${selectedType?.id.toString()}");
+                    debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
+
+                    print(selectedCarac);
                     context.goNamed(
                       'searchResult',
                       queryParameters: {
-                        if (selectedType != null) 'cuisine': selectedType!.getGlobalId().toString(),
-                        if (selectedCarac != null) 'caracteristique': selectedCarac!.getGlobalId().toString(),
+                        if (selectedType != null) 'cuisine': selectedType?.id.toString(),
+                        if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
                       },
                     );
                   },
