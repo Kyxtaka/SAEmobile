@@ -203,8 +203,7 @@ GoRouter _router(UserViewModel userViewModel) {
             path: 'addcritique',
             name: 'addCritique',
             builder: (BuildContext context, GoRouterState state) => AddCritiquePage(
-              restID:int.parse(state.pathParameters['id'].toString()),
-              user_identifer: UserViewModel.getCurrentUser(),
+              restID:int.parse(state.pathParameters['id'].toString())
             )
           )
         ]
