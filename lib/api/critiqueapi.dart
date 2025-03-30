@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart' as visiteur;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -174,13 +175,11 @@ class CritiqueAPI {
   }
 
   // Ajoute une image d'un commentaire à la BD
-  static Future<bool> ajoutePhotoCommentaire(String idCritique, String username, File photo) async {
+  static Future<bool> ajoutePhotoCritique(String idCritique, String username, File photo) async {
 
     final fileName = DateTime.now().microsecondsSinceEpoch.toString();
-
     final path = "uploads/$fileName";
     final supabase = Supabase.instance.client;
-
 
     final response =
     await supabase // Gère automatiquement l'id de la photo gràce à l'option is identity mise sur la colone dans supabase
@@ -191,9 +190,8 @@ class CritiqueAPI {
       'photoid': path
     }).select();
 
-
     await Supabase.instance.client.storage
-        .from("imgstorqge")
+        .from("imgstorage")
         .upload(path, photo!)
         .then((value) {
       print("Image bien uploadée : $value");
@@ -205,8 +203,7 @@ class CritiqueAPI {
 
   }
 
-
-  static Future<bool> insertCritique( String id_resto, String username, String commentaire, int note) async {
+  static Future<int> insertCritique( String id_resto, String username, String commentaire, int note) async {
     final supabase = Supabase.instance.client;
     final response = await supabase
       .from('Critique')
@@ -217,24 +214,41 @@ class CritiqueAPI {
         'etoiles': note
     }).catchError((error) {
       print("Erreur lors de l'upload : $error");
-      return false;
+      return -1;
     });
+    return int.parse(response['id_critique'].toString());
+  }
+
+  static Future<bool> insertCritiquePhoto(
+    String username, String idResto, String message, int note, File? image) async {
+    final critiqueId = await CritiqueAPI.insertCritique(idResto, username, message, note);
+    if(critiqueId != -1) return false;
+    await ajoutePhotoCritique(critiqueId.toString(), username, image!);
     return true;
   }
 
-  static Future<bool> insertCommentairePhoto(
-    String username, String id_resto, String id_critique, String commentaire, int note, File? image) async {
+  static Future<List<String>> getPhotosCritique(int critiqueId, String identifier) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('photo_critique')
+        .select('photoid')
+        .eq('review_id', critiqueId)
+        .eq('user_identifier', identifier);
 
-    // ajouter le comm basique
-    bool addcomment = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
-
-    // verif comm basique
-    if(!addcomment){
-      return false;
+    if (response.isEmpty) {
+      return [];
     }
-
-    await ajoutePhotoCommentaire(id_critique,username, image! );
-
-    return true;
+    final result = response.map<String>((photo) => photo['photoid'].toString()).toList();
+    return result;
   }
+
+
+  static Future<List<Image>> getMesPhotos(int critiqueId) async {
+      final username  = await UserViewModel.getCurrentUser();
+      if (critiqueId != -1) {
+        List<String> urls = await CritiqueAPI.getPhotosCritique(critiqueId, username);
+        return urls.map((url) => Image.network(url)).toList();
+      }
+      return [];
+    }
 }

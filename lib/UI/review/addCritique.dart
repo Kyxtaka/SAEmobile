@@ -130,13 +130,19 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
                                   print("Image sélectionnée : ${_selectedImage!.path}");
-
+                                  CritiqueAPI.insertCritiquePhoto(
+                                    user_identifier,
+                                    widget.restID.toString(),
+                                    _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
+                                    (_noteController + 0.5).toInt() ?? 3,
+                                    _selectedImage
+                                  );
                                 }else {
                                   print("Image sélectionnée : nan");
                                   CritiqueAPI.insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
-                                    _formKey.currentState?.fields['Message']?.value,
+                                    _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
                                     (_noteController + 0.5).toInt() ?? 3,
                                   );
                                 }
