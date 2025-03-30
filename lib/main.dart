@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:saemobile/UI/critiquesRestaurant.dart';
 import 'package:saemobile/UI/favoris.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
+import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
@@ -109,6 +110,35 @@ GoRouter _router(UserViewModel userViewModel) {
             return null;
           }
         },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'decouverte',
+            name: 'decouverte',
+            builder: (context, state) => Decouverte(),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+          GoRoute(
+            path: 'result',
+            name: 'searchResult',
+            builder: (context, state) => SearchResult(
+                cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
+                carac:int.parse(state.uri.queryParameters['carac'].toString())
+            ),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ]
       ),
       GoRoute(
           path: '/favoris',

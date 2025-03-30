@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+import 'package:saemobile/UI/global/footer.dart';
+import 'package:saemobile/UI/global/header.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/models/restaurant.dart';
+
+class SearchResult extends StatefulWidget {
+  final int cuisine;
+  final int carac;
+
+  const SearchResult({required this.cuisine, required this.carac});
+
+  @override
+  _SearchResultState createState() => _SearchResultState();
+}
+
+class _SearchResultState extends State<SearchResult> {
+  final  RestaurantAPI  restAPI = RestaurantAPI();
+
+  late Future<void> _loadDataRestaurant;
+
+  List<Restaurant> restaurantsList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadDataRestaurant = _loadData();
+
+  }
+
+  Future<void> _loadData() async {
+    if (widget.carac != -1 && widget.cuisine != -1) {
+      final restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
+      setState(() {
+        restaurantsList = restaurants;
+      });
+    }else if (widget.carac != -1 && widget.cuisine == -1) {
+      final restaurants = await restAPI.getRestaurantByCarac(widget.carac);
+      setState(() {
+        restaurantsList = restaurants;
+      });
+    }else if (widget.carac == -1 && widget.cuisine != -1) {
+      final restaurants = await restAPI.getRestaurantByCuisine(widget.cuisine);
+      setState(() {
+        restaurantsList = restaurants;
+      });
+    }else {
+      final restaurants = await restAPI.getAllRestaurants();
+      setState(() {
+        restaurantsList = restaurants;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: Header.create(),
+      bottomNavigationBar: Footer().create(context),
+      // body: Center(
+      //   child: Text("Loded with cuisine: ${widget.cuisine} and carac: ${widget.carac}"),
+      // ),
+      body: FutureBuilder(
+          future: _loadDataRestaurant,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator(),);
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()),);
+            }
+            
+            if (restaurantsList.isEmpty) {
+              return Center(
+                child: Text("Aucun restaurants ne correspond à votre recherche"),
+              );
+            }
+
+            return Center(
+              child: ListView.builder(
+                itemCount: restaurantsList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                        elevation: 6,
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                              backgroundColor: Colors.amber,
+                              child: Text(restaurantsList[index].id.toString() ?? "")
+                          ),
+                          title: Text(restaurantsList[index].name ?? ""),
+                          subtitle: Text(restaurantsList[index].address ?? ""),
+                        )
+                    );
+                  },
+                ),
+            );
+          }
+      ),
+    );
+  }
+
+}
