@@ -175,7 +175,7 @@ class CritiqueAPI {
   }
 
   // Ajoute une image d'un commentaire à la BD
-  static Future<bool> ajoutePhotoCritique(String idCritique, String username, File photo) async {
+  static Future<bool> ajoutePhotoCritique(int idCritique, String username, File photo) async {
 
     final fileName = DateTime.now().microsecondsSinceEpoch.toString();
     final path = "uploads/$fileName";
@@ -203,32 +203,37 @@ class CritiqueAPI {
 
   }
 
-  static Future<int> insertCritique( String id_resto, String username, String commentaire, int note) async {
+  static Future<int> insertCritique(String id_resto, String username, String commentaire, int note) async {
     final supabase = Supabase.instance.client;
+
     final response = await supabase
-      .from('Critique')
-      .insert({
-        'message': commentaire,
-        'mail_user': username,
-        'id_resto': id_resto,
-        'etoiles': note
-    }).catchError((error) {
-      print("Erreur lors de l'upload : $error");
-      return -1;
-    });
-    return int.parse(response['id_critique'].toString());
+        .from('Critique')
+        .insert({
+      'message': commentaire,
+      'mail_user': username,
+      'id_resto': id_resto,
+      'etoiles': note
+    })
+        .select()
+        .single();
+
+    return response['id_critique'] as int;
   }
 
   static Future<bool> insertCritiquePhoto(
     String username, String idResto, String message, int note, File? image) async {
     final critiqueId = await CritiqueAPI.insertCritique(idResto, username, message, note);
     if(critiqueId != -1) return false;
-    await ajoutePhotoCritique(critiqueId.toString(), username, image!);
+    debugPrint("Critique ajouté, result critique $critiqueId");
+    debugPrint("========================================================================================================");
+    final result = await ajoutePhotoCritique(critiqueId, username, image!);
+    debugPrint("========================================================================================================");
+    print(result);
     return true;
   }
 
   static Future<List<String>> getPhotosCritique(int critiqueId, String identifier) async {
-    final supabase = Supabase.instance.client;
+    final SupabaseClient supabase = Supabase.instance.client;
     final response = await supabase
         .from('photo_critique')
         .select('photoid')
