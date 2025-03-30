@@ -51,7 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              DropdownTypeCuisine(typeCuisines: [],),
+              DropdownTypeCuisine(typeCuisines: [], onChanged: (TypeCuisine? value) {  },),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
