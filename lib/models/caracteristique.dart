@@ -7,4 +7,8 @@ class Caracteristique {
   String get carac => _carac;
 
   int get id => _id;
+
+  String getGlobalLabet() => _carac;
+  int getGlobalId() => _id;
+
 }
