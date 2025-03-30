@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
@@ -11,28 +10,38 @@ import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
   final SupabaseClient database = Supabase.instance.client;
-  TypeCuisine? selectedType;
-  Caracteristique? selectedCarac ;
-
-
-  @override
-  State<StatefulWidget> createState() => _SearchScreenState();
 
   SearchScreen({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
   final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
-  late Future<List<TypeCuisine>> allTypeCuisine;
-  late Future<List<Caracteristique>> allCaracteristique;
+
+  late Future<void> _loadDataFuture;
+
+  List<TypeCuisine> typeCuisines = [];
+  List<Caracteristique> caracteristiques = [];
+
+  TypeCuisine? selectedType;
+  Caracteristique? selectedCarac;
 
   @override
   void initState() {
     super.initState();
-    allTypeCuisine = caracAndCuisineAPI.getAllTypeCuisine();
-    allCaracteristique = caracAndCuisineAPI.getAllCaracterisque();
+    _loadDataFuture = _loadData();
+  }
 
+  Future<void> _loadData() async {
+    final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
+    final caracs = await caracAndCuisineAPI.getAllCaracterisque();
+
+    setState(() {
+      typeCuisines = cuisines;
+      caracteristiques = caracs;
+    });
   }
 
   @override
@@ -41,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
       body: FutureBuilder(
-        future: Future.wait([allTypeCuisine, allCaracteristique]),
+        future: _loadDataFuture, // On utilise le future une seule fois
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
@@ -51,95 +60,84 @@ class _SearchScreenState extends State<SearchScreen> {
             return Center(child: Text(snapshot.error.toString()));
           }
 
+          return Center(
+            child: Column(
+              children: [
+                OutlinedButton(
+                  onPressed: () => {},
+                  child: const Text("En attente de la barre de recherche"),
+                ),
 
-          if (snapshot.hasData) {
-            List<TypeCuisine> typeCuisines = snapshot.data![0] as List<TypeCuisine>;
-            List<Caracteristique> caracteristiques = snapshot.data![1] as List<Caracteristique>;
-
-
-
-            return Center(
-              child: Column(
-                children: [
-                  OutlinedButton(
-                      onPressed: () => {},
-                      child: Text("En attente de la barre de recherche")),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.goNamed('decouverte');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text("Voir tous les restaurants"),
-                    ),
-                  ),
-
-                  // TypeCuisine Dropdown
-                  DropdownTypeCuisine(
-                    typeCuisines: typeCuisines,
-                    selectedType: widget.selectedType,
-                    onChanged: (value) {
-                      setState(() {
-                        widget.selectedType = value!;
-                      });
-
-                    },
-                  ),
-
-                  // Caracteristique Dropdown
-                  DropdownCaracteristique(
-                    caracteristiques: caracteristiques,
-                    selectedCarac: widget.selectedCarac,
-                    onChanged: (value) {
-                      setState(() {
-                        widget.selectedCarac = value!;
-                      });
-                    },
-                  ),
-
-                  ElevatedButton(
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
                     onPressed: () {
-                      context.goNamed(
-                        'searchResult',
-                        queryParameters: {
-                          'cuisine': widget.selectedCarac?.getGlobalId().toString(),
-                          'caracteristique': widget.selectedCarac?.getGlobalId().toString(),
-                        },
-                      );
+                      context.goNamed('decouverte');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: Text(
-                      "Rechercher",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    child: const Text("Voir tous les restaurants"),
                   ),
-                ],
-              ),
-            );
-          }
-          return Container();
+                ),
+
+                // TypeCuisine Dropdown
+                DropdownTypeCuisine(
+                  typeCuisines: typeCuisines,
+                  selectedType: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value;
+                    });
+                  },
+                ),
+
+                // Caracteristique Dropdown
+                DropdownCaracteristique(
+                  caracteristiques: caracteristiques,
+                  selectedCarac: selectedCarac,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCarac = value;
+                    });
+                  },
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    context.goNamed(
+                      'searchResult',
+                      queryParameters: {
+                        if (selectedType != null) 'cuisine': selectedType!.getGlobalId().toString(),
+                        if (selectedCarac != null) 'caracteristique': selectedCarac!.getGlobalId().toString(),
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  child: const Text(
+                    "Rechercher",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );
   }
 }
-
-
