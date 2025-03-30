@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:saemobile/UI/critiquesRestaurant.dart';
+import 'package:saemobile/UI/review/addCritique.dart';
+import 'package:saemobile/UI/review/critiquesRestaurant.dart';
 import 'package:saemobile/UI/favoris.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/research/searchresult.dart';
@@ -14,7 +15,7 @@ import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'UI/avis.dart';
+import 'UI/review/avis.dart';
 import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
@@ -196,7 +197,17 @@ GoRouter _router(UserViewModel userViewModel) {
         builder: (BuildContext context, GoRouterState state){
           final id = state.pathParameters['id']!;
           return DetailsPage(restaurantId:id);
-        }
+        },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'addcritique',
+            name: 'addCritique',
+            builder: (BuildContext context, GoRouterState state) => AddCritiquePage(
+              restID:int.parse(state.pathParameters['id'].toString()),
+              user_identifer: UserViewModel.getCurrentUser(),
+            )
+          )
+        ]
       ),
       GoRoute(
           path: ('/details/:id/avis'),

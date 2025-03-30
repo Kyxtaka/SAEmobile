@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/restaurantapi.dart';
@@ -93,6 +94,9 @@ class _SearchResultState extends State<SearchResult> {
                           ),
                           title: Text(restaurantsList[index].name ?? ""),
                           subtitle: Text(restaurantsList[index].address ?? ""),
+                          onTap: () {
+                            context.go('/details/${restaurantsList[index].id}');
+                          }
                         )
                     );
                   },

@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'global/footer.dart';
-import 'global/header.dart';
+import '../global/footer.dart';
+import '../global/header.dart';
 
 class Avis extends StatefulWidget {
   @override
@@ -70,7 +70,7 @@ class _AvisState extends State<Avis> {
                             if (!isDeleted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text("Erreur : impossible de supprimer la critique"),
+                                  content: Text("Erreur : impossible de supprimer la review"),
                                   backgroundColor: Colors.red,
                                 ),
                               );

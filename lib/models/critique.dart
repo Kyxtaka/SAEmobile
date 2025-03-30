@@ -43,7 +43,7 @@ class Critique {
   }
 
   String toString(){
-    return "critique ${id}, message ${message}, ${date_test}, ${note}";
+    return "review ${id}, message ${message}, ${date_test}, ${note}";
   }
 
   set message(String value) {

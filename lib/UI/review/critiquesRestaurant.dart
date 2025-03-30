@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/critiqueapi.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../models/critique.dart';
-import 'global/footer.dart';
-import 'global/header.dart';
+import '../../models/critique.dart';
+import '../global/footer.dart';
+import '../global/header.dart';
 
 class CritiqueRestaurants extends StatelessWidget{
   final String restaurantId;
@@ -32,7 +32,7 @@ class CritiqueRestaurants extends StatelessWidget{
                 itemBuilder: (BuildContext context, int index) {
                   final critique = snapshot.data?[index];
                   if (critique == null) {
-                    return Text("Erreur dans la récupération d'une critique");
+                    return Text("Erreur dans la récupération d'une review");
                   }
                   return Card(
                       child: ListTile(
@@ -63,7 +63,7 @@ class CritiqueRestaurants extends StatelessWidget{
                   );
                 });
             }
-            return Text("Pas de critique");
+            return Text("Pas de review");
           }
         )
     );

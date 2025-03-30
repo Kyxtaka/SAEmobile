@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/boutonDegrade.dart';
@@ -66,7 +67,10 @@ class _DecouverteState extends State<Decouverte> {
                                 ),
                                 title: Text(snapshot.data?[index].name ?? ""),
                                 subtitle: Text(snapshot.data?[index].address ?? ""),
-                              )
+                                onTap: () {
+                                  context.go('/details/${snapshot.data?[index].id}');
+                                }
+                              ),
                           );
                         },
                       );

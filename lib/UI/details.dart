@@ -136,6 +136,20 @@ class _DetailsPageState extends State<DetailsPage> {
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
                   ),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    ),
+                    onPressed: () {
+                      context.go('/details/${widget.restaurantId}/addcritique');
+                    },
+                    child: Text("Donner un avis", style: TextStyle(color: Colors.white)),
+                  ),
               ],
             ),
           );}
