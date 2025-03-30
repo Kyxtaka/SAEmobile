@@ -1,4 +1,7 @@
 
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart' as visiteur;
@@ -168,4 +171,70 @@ class CritiqueAPI {
         debugPrint("Error while modify : $error ❌");
         return false;
       }
-  }}
+  }
+
+  // Ajoute une image d'un commentaire à la BD
+  static Future<bool> ajoutePhotoCommentaire(String idCritique, String username, File photo) async {
+
+    final fileName = DateTime.now().microsecondsSinceEpoch.toString();
+
+    final path = "uploads/$fileName";
+    final supabase = Supabase.instance.client;
+
+
+    final response =
+    await supabase // Gère automatiquement l'id de la photo gràce à l'option is identity mise sur la colone dans supabase
+        .from('photo_critique')
+        .insert({
+      'user_identifier': username,
+      'review_id': idCritique,
+      'photoid': path
+    }).select();
+
+
+    await Supabase.instance.client.storage
+        .from("imgstorqge")
+        .upload(path, photo!)
+        .then((value) {
+      print("Image bien uploadée : $value");
+    }).catchError((error) {
+      print("Erreur lors de l'upload : $error");
+      return false;
+    });
+    return response.isNotEmpty;
+
+  }
+
+
+  static Future<bool> insertCritique( String id_resto,String username, String commentaire, int note) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase
+      .from('Critique')
+      .insert({
+        'message': commentaire,
+        'mail_user': username,
+        'id_resto': id_resto,
+        'etoiles': note
+    }).catchError((error) {
+      print("Erreur lors de l'upload : $error");
+      return false;
+    });
+    return true;
+  }
+
+  static Future<bool> insertCommentairePhoto(
+    String username, String id_resto, String id_critique, String commentaire, int note, File? image) async {
+
+    // ajouter le comm basique
+    bool addcomment = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
+
+    // verif comm basique
+    if(!addcomment){
+      return false;
+    }
+
+    await ajoutePhotoCommentaire(id_critique,username, image! );
+
+    return true;
+  }
+}
