@@ -12,7 +12,7 @@ import 'package:saemobile/UI/research/dropdownbutton.dart';
 class SearchScreen extends StatefulWidget {
   final SupabaseClient database = Supabase.instance.client;
   TypeCuisine? selectedType;
-  Caracteristique? selectedCarac;
+  Caracteristique? selectedCarac ;
 
 
   @override
@@ -57,6 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
             List<Caracteristique> caracteristiques = snapshot.data![1] as List<Caracteristique>;
 
 
+
             return Center(
               child: Column(
                 children: [
@@ -85,7 +86,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     selectedType: widget.selectedType,
                     onChanged: (value) {
                       setState(() {
-                        widget.selectedType = value;
+                        widget.selectedType = value!;
                       });
 
                     },
@@ -97,14 +98,20 @@ class _SearchScreenState extends State<SearchScreen> {
                     selectedCarac: widget.selectedCarac,
                     onChanged: (value) {
                       setState(() {
-                        widget.selectedCarac = value;
+                        widget.selectedCarac = value!;
                       });
                     },
                   ),
 
                   ElevatedButton(
                     onPressed: () {
-                      context.goNamed('searchResult');
+                      context.goNamed(
+                        'searchResult',
+                        queryParameters: {
+                          'cuisine': widget.selectedCarac?.getGlobalId().toString(),
+                          'caracteristique': widget.selectedCarac?.getGlobalId().toString(),
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
