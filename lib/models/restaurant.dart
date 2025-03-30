@@ -34,7 +34,7 @@ class Restaurant {
 
   double get gps_lat => _gps_lat;
 
-  String get horraire => _horaires;
+  String get horaire => _horaires;
 
   int get id_region => _id_region;
 
@@ -61,6 +61,14 @@ class Restaurant {
   void debugPrint() {
     String restaurant = "id: $_id, name: $_name, address: $_address, capacity: $_capacity, tel: $_tel, siret: $_siret, website: $_website, url_photo: $_url_photo, id_cuisine: $_id_cuisine, id_region: $_id_region, horraire: $_horaires, gps_lat: $_gps_lat, gps_long: $gps_long";
     print(restaurant);
+  }
+
+  Map<String, Object?> toMapLocal() {
+    return {
+      'id': _id,
+      'name': _name,
+      'address': _address
+    };
   }
 
 }
