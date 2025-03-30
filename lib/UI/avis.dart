@@ -21,14 +21,14 @@ class _AvisState extends State<Avis> {
     final critiquesViewModel = context.watch<CritiqueViewModel>();
     if (critiquesViewModel.liste.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text('Mes Avis')),
+        appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: footer.create(context),
         body: Text("Pas d'avis"),
       );
     }
     else {
       return Scaffold(
-        appBar: header,
+        appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: footer.create(context),
         body: ListView.builder(
           itemCount: critiquesViewModel.liste.length,
