@@ -52,6 +52,7 @@ dependencies:
   shared_preferences: ^2.5.2
   dropdown_button2: ^2.3.9
   form_builder_validators: ^11.1.2
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:

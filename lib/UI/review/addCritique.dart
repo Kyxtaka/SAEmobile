@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:http/http.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 class AddCritiquePage extends StatefulWidget {
 
   final int restID;
@@ -34,6 +34,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
 
 
   final _formKey = GlobalKey<FormBuilderState>();
+  late var _noteController;
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +71,22 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                             FormBuilderValidators.required()
                           ]),
                         ),
-                        FormBuilderTextField(
-                          name: 'Note',
-                          decoration: const InputDecoration(labelText: 'Note'),
-                          validator:
-                          FormBuilderValidators.compose([
-                            FormBuilderValidators.required()
-                          ]),
+                        SizedBox(height: 20),
+                        Text("Votre note"),
+
+                        RatingBar.builder(
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            _noteController = rating;
+                          },
                         ),
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -90,7 +100,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   widget.restID.toString(),
                                   user_identifier,
                                   _formKey.currentState?.fields['Message']?.value,
-                                  int.parse(_formKey.currentState?.fields['Note']?.value),
+                                  (_noteController + 0.5).toInt() ?? 3,
                                 );
                                 Navigator.pop(context);
                               }

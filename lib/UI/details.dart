@@ -133,7 +133,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     onPressed: () {
-                      context.go('/details/'+snapshot.data!.id.toString()+'/avis');
+                      context.go('/details/${snapshot.data!.id}/avis');
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
                   ),
