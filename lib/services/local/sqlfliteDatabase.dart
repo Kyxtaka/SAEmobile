@@ -58,7 +58,8 @@ class SqlfliteDatabase {
     CREATE TABLE User(
       email TEXT PRIMARY KEY,
       password TEXT,
-      localisation TEXT
+      localisation TEXT,
+      id_type INTEGER
     )
     '''
     );
