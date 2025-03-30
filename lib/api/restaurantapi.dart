@@ -169,4 +169,26 @@ class RestaurantAPI {
     debugPrint("Pas de restaurant trouvé avec l id carac ${cuisineId}");
     return result;
   }
+
+  Future<List<Restaurant>> getRestaurantByCaracAndCuisine(int caracId, int cuisineId) async {
+    List<Restaurant> result = [];
+    try {
+      final responseCaracteriser = await database
+          .from('Caracteriser')
+          .select('id_resto')
+          .eq('id_carac', caracId); // Permet de récupérer un seul élément
+      if (responseCaracteriser.isNotEmpty) {
+        for (var rowIdResto in responseCaracteriser) {
+          Restaurant? rest = await getRestaurantById(int.parse(rowIdResto['id_resto'].toString()));
+          if (rest != null && rest.id_cuisine == cuisineId) {
+            result.add(rest);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
+    return result;
+  }
 }

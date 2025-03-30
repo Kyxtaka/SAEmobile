@@ -5,13 +5,11 @@ import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/carateristiqueandcuisineapi.dart';
 import 'package:saemobile/models/caracteristique.dart';
 import 'package:saemobile/models/typeCuisine.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
-  final SupabaseClient database = Supabase.instance.client;
 
-  SearchScreen({super.key});
+  const SearchScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
@@ -41,6 +39,8 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       typeCuisines = cuisines;
       caracteristiques = caracs;
+      selectedType = cuisines.first;
+      selectedCarac = caracs.first;
     });
   }
 
