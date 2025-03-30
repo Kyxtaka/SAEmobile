@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/restaurantapi.dart';
@@ -23,7 +24,6 @@ class _SearchResultState extends State<SearchResult> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataRestaurant = _loadData();
 
@@ -55,7 +55,6 @@ class _SearchResultState extends State<SearchResult> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
@@ -93,6 +92,12 @@ class _SearchResultState extends State<SearchResult> {
                           ),
                           title: Text(restaurantsList[index].name ?? ""),
                           subtitle: Text(restaurantsList[index].address ?? ""),
+                          trailing: IconButton(
+                            icon: Icon(Icons.restaurant, color: Colors.grey), // Icône en forme de cœur rouge
+                            onPressed: () {
+                              context.go('/details/${restaurantsList[index].id}');
+                            },
+                          ),
                         )
                     );
                   },
