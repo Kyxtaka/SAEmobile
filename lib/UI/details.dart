@@ -82,7 +82,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           errorBuilder: (context, error, stackTrace) =>
                           // '../../assets/img/default-image.png',
                               Image.asset(
-                                './assets/img/default-image.png',
+                                'assets/img/default-image.png',
                                 width: 300,
                                 height: 250,
                               ),

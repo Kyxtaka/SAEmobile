@@ -158,7 +158,7 @@ class CritiqueAPI {
     try{
       final result = await Supabase.instance.client
           .from('Critique')
-          .update({ "id_critique": id, "message": message, "etoiles": etoiles.round()})
+          .update({"message": message, "etoiles": etoiles.round()})
           .eq('id_critique', id)
           .select();
       if (result.isNotEmpty){
@@ -206,7 +206,7 @@ class CritiqueAPI {
   }
 
 
-  static Future<bool> insertCritique( String id_resto,String username, String commentaire, int note) async {
+  static Future<bool> insertCritique( String id_resto, String username, String commentaire, int note) async {
     final supabase = Supabase.instance.client;
     final response = await supabase
       .from('Critique')
