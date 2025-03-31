@@ -322,4 +322,44 @@ class CritiqueAPI {
       }
       return null;
     }
+
+    static Future<bool> deleteCritiquePhoto(Critique critique) async{
+      try {
+        final supabaseClient = Supabase.instance.client;
+        final supabaseStorage = Supabase.instance.client.storage;
+        final username = await UserViewModel.getCurrentUser();
+        // final Critique? critique = await getCritique(critique.id);
+        // if (critique == null) return false;
+        final photoId = await getPhotoCritiqueIdentifier(critique.id, username);
+        if (photoId == null) return false;
+        List<String> concernedSAOObjetId = [photoId];
+        final photoDeletion = await supabaseStorage
+            .from('imgstorage')
+            .remove(concernedSAOObjetId).catchError( (error) {
+              print("Erreur lors de la suppression de l'object image : $error");
+              return false;
+            }
+        );
+
+        final critPhotoLink = await supabaseClient
+          .from("photo_critique")
+          .delete()
+          .eq('photoid', photoId)
+          .eq('user_identifier', username)
+          .eq('review_id', critique.id)
+          .catchError( (error) {
+            print("Erreur lors de la suppression du lien Object / critique: $error");
+            return false;
+          }
+        );
+
+        await deleteCritique(critique);
+
+        return true;
+      } catch (e) {
+        debugPrint("critique with photo deletion on error: ${e.toString()}");
+        debugPrint("crit Pht del error stattrace: ${e.toString()}");
+      }
+      return false;
+    }
 }

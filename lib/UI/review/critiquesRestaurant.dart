@@ -34,33 +34,34 @@ class CritiqueRestaurants extends StatelessWidget{
                   if (critique == null) {
                     return Text("Erreur dans la récupération d'une review");
                   }
-                  return Card(
-                      child: ListTile(
-                          title: Text(
-                            '${critique.user?.prenom} ${critique.user?.nom} avez critiqué le ${critique
-                                .date_test}',
-                          ),
-
-                          /// cette partie a été généré à l'aide d'une IA générative
-                          subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RatingBarIndicator(
-                                  rating: critique.note.toDouble(),
-                                  itemBuilder: (context, index) =>
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                  itemCount: 5,
-                                  itemSize: 24.0,
-                                  direction: Axis.horizontal,
-                                ),
-                                SizedBox(height: 8),
-                                Text(critique.message)
-                              ])
-                      )
-                  );
+                  return critique.renderCard(context);
+                  // return Card(
+                  //     child: ListTile(
+                  //         title: Text(
+                  //           '${critique.user?.prenom} ${critique.user?.nom} avez critiqué le ${critique
+                  //               .date_test}',
+                  //         ),
+                  //
+                  //         /// cette partie a été généré à l'aide d'une IA générative
+                  //         subtitle: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               RatingBarIndicator(
+                  //                 rating: critique.note.toDouble(),
+                  //                 itemBuilder: (context, index) =>
+                  //                     Icon(
+                  //                       Icons.star,
+                  //                       color: Colors.amber,
+                  //                     ),
+                  //                 itemCount: 5,
+                  //                 itemSize: 24.0,
+                  //                 direction: Axis.horizontal,
+                  //               ),
+                  //               SizedBox(height: 8),
+                  //               Text(critique.message)
+                  //             ])
+                  //     )
+                  // );
                 });
             }
             return Text("Pas de review");

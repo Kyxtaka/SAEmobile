@@ -24,8 +24,14 @@ class CritiqueViewModel extends ChangeNotifier{
   }
 
 
-  Future<bool> deleteCritique(Critique critique) async {
-    bool isDeleted = await CritiqueAPI.deleteCritique(critique);
+  Future<bool> deleteCritique(Critique critique, bool imagePresent) async {
+    bool isDeleted;
+    if (imagePresent) {
+      isDeleted = await CritiqueAPI.deleteCritiquePhoto(critique);
+    }
+    else {
+      isDeleted = await CritiqueAPI.deleteCritique(critique);
+    }
     if (isDeleted) {
       liste = List.from(liste)..remove(critique);
       notifyListeners();
@@ -69,8 +75,7 @@ class CritiqueViewModel extends ChangeNotifier{
     try {
       final critique = await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
       if (critique != null) {
-        critique.getCritiqueImageIfExist();
-        liste.add(critique);
+        await generateCritiques(username);
         notifyListeners();
         return critique;
       }

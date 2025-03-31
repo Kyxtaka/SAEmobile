@@ -116,11 +116,11 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
-                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this);
+                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, true);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("Erreur : impossible de supprimer la review"),
+                            content: Text("Erreur : impossible de supprimer la review photo"),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -178,7 +178,7 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
-                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this);
+                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, false);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
