@@ -13,27 +13,36 @@ class Avis extends StatefulWidget {
 }
 
 class _AvisState extends State<Avis> {
-  final header = new Header();
+  // final header = Header();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    Footer footer = Footer();
     final critiquesViewModel = context.watch<CritiqueViewModel>();
+    print("Avis widget reconstruit !");
+    print("Avis page liste: ${critiquesViewModel.liste}");
+
     if (critiquesViewModel.liste.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
-        bottomNavigationBar: footer.create(context),
+        bottomNavigationBar: Footer().create(context),
         body: Text("Pas d'avis"),
       );
     }
     else {
+      print(" avis page liste ${critiquesViewModel.liste}");
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
-        bottomNavigationBar: footer.create(context),
+        bottomNavigationBar: Footer().create(context),
         body: ListView.builder(
           itemCount: critiquesViewModel.liste.length,
           itemBuilder: (BuildContext context, int index) {
-            final critique = critiquesViewModel.liste[index];
+            var critique = critiquesViewModel.liste[index];
             return Card(
               child: ListTile(
                 title: Text(

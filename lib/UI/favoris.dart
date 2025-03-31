@@ -18,19 +18,18 @@ class Favoris extends StatefulWidget {
 class _FavorisState extends State<Favoris> {
 
   Widget build(BuildContext context) {
-    var footer = Footer();
     final favorisViewModel = context.watch<FavorisViewModel>();
     if (favorisViewModel.favoris.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text('Mes Favoris')),
-        bottomNavigationBar: footer.create(context),
+        bottomNavigationBar: Footer().create(context),
         body: Text("Pas de favoris"),
       );
     }
     else {
     return Scaffold(
       appBar: AppBar(title: Text("Mes Favoris", style: TextStyle(color:Colors.black))),
-      bottomNavigationBar: footer.create(context),
+      bottomNavigationBar: Footer().create(context),
       body: ListView.builder(
             itemCount: favorisViewModel.favoris.length,
             itemBuilder: (context, index) {

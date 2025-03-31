@@ -249,33 +249,20 @@ class MyApp extends StatelessWidget {
 
           return MultiProvider(
               providers: [
-                Provider<SupabaseClient>(
-                    create: (_) => Supabase.instance.client),
-                Provider<int>(create: (_) => 42),
-                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
+                Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
                 FutureProvider<String>(
                   create: (context) => UserViewModel.getCurrentUser(),
                   initialData: "",
                 ),
-                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
-                  create: (context) => CritiqueViewModel(),
-                  update: (context, email, critiquesViewModel) {
-                    if (email.isNotEmpty) {
-                      critiquesViewModel?.generateCritiques(email);
-                    }
-                    return critiquesViewModel ?? CritiqueViewModel();
-                  },
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
                 ),
                 ChangeNotifierProvider<UserViewModel>(
                   create: (_) =>
                       UserViewModel(
                           database: Supabase.instance.client, context: context),
-                ),
-                FutureProvider<String>(
-                  create: (context) => UserViewModel.getCurrentUser(),
-                  initialData: "",
                 ),
                 ChangeNotifierProxyProvider<String, FavorisViewModel>(
                   create: (context) => FavorisViewModel(),
@@ -285,25 +272,35 @@ class MyApp extends StatelessWidget {
                     }
                     return favorisViewModel ?? FavorisViewModel();
                   },
+                  child: Avis(),
+                ),
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                       critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
+                  },
                 ),
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-                  builder: (context, userViewModel, child) {
-                    if (userViewModel.isLoading) {
-                      return MaterialApp(
-                        home: Scaffold(
-                          body: Center(child: CircularProgressIndicator()),
-                        ),
-                      );
-                    }
-                        return MaterialApp.router(
-                          debugShowCheckedModeBanner: false,
-                          theme: theme,
-                          title: 'My App',
-                          routerConfig: _router(userViewModel),
-                        );
-                      })
-
+                builder: (context, userViewModel, child) {
+                  if (userViewModel.isLoading) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
+                      ),
+                    );
+                  }
+                  return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    theme: theme,
+                    title: 'My App',
+                    routerConfig: _router(userViewModel),
+                  );
+                }
+              )
           );
 
         });

@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/critiqueapi.dart';
-import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/critique.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 class CritiqueViewModel extends ChangeNotifier{
@@ -13,10 +11,21 @@ class CritiqueViewModel extends ChangeNotifier{
   CritiqueViewModel() {
     liste = [];
   }
+
+
+
   Future<void> generateCritiques(user) async {
-    liste = await CritiqueAPI.getCritiqueForUser(user);
+    print("Avant récupération des critiques");
+    final newListe = await CritiqueAPI.getCritiqueForUser(user);
+    print("Nouvelles critiques récupérées: $newListe");
+
+    liste = List.from(newListe);
+    print("Liste après mise à jour: $liste");
+
     notifyListeners();
+    print("notifyListeners() appelé !");
   }
+
 
   Future<bool> deleteCritique(Critique critique) async {
     bool isDeleted = await CritiqueAPI.deleteCritique(critique);
@@ -44,32 +53,39 @@ class CritiqueViewModel extends ChangeNotifier{
     }
   }
 
-  Future<void> insertCritique(String id_resto, String username, String commentaire, int note) async {
+  Future<bool> insertCritique(String id_resto, String username, String commentaire, int note) async {
     try {
-      int critiqueId = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
+      Critique? critique = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
+      debugPrint("Critique value critique value insert");
+      print(critique);
+      print("critique is null 1: ${critique == null}");
+      if (critique != null) {
+        print("critique is null 2: ${critique == null}");
+        print("liste before: ${liste}");
+        await generateCritiques(username);
 
-      if (critiqueId != -1) {
-        Critique? critique = await CritiqueAPI.getCritique(critiqueId);
-        if (critique != null) {
-          liste.add(critique); // Ajout immédiat à la liste
-          notifyListeners();  // Mise à jour de l'affichage
-        }
+        // liste.add(critique); // Ajout immédiat à la liste
+        // await generateCritiques(username);
+        notifyListeners();
+        print("list after notified listeners ${liste}");
+        return true;
       }
     } catch (e) {
       debugPrint("La création a échoué : ${e.toString()}");
     }
+    return false;
   }
 
 
-  Future<void> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
+  Future<bool> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
     try {
       await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
+      notifyListeners();
+      return true;
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
     }
     print('====================================================notyfyListeners==================================');
-
-    notifyListeners();
-
+    return false;
   }
 }

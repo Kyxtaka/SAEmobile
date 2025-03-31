@@ -95,6 +95,7 @@ class CritiqueAPI {
       debugPrint("Error while modify : $error ❌");
       return null;
     }
+    return null;
   }
 
   /// get les critiques d'un utilisateur
@@ -203,7 +204,7 @@ class CritiqueAPI {
 
   }
 
-  static Future<int> insertCritique(String id_resto, String username, String commentaire, int note) async {
+  static Future<Critique?> insertCritique(String id_resto, String username, String commentaire, int note) async {
     final supabase = Supabase.instance.client;
 
     final response = await supabase
@@ -213,23 +214,33 @@ class CritiqueAPI {
       'mail_user': username,
       'id_resto': id_resto,
       'etoiles': note
-    })
-        .select()
-        .single();
+    }).select().single();
 
-    return response['id_critique'] as int;
+    return Critique(
+        response['id_critique'],
+        response['message'],
+        Restaurant(response['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+        visiteur.User(response['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
   }
+
 
   static Future<bool> insertCritiquePhoto(
     String username, String idResto, String message, int note, File? image) async {
-    final critiqueId = await CritiqueAPI.insertCritique(idResto, username, message, note);
-    if(critiqueId != -1) return false;
-    debugPrint("Critique ajouté, result critique $critiqueId");
-    debugPrint("========================================================================================================");
-    final result = await ajoutePhotoCritique(critiqueId, username, image!);
-    debugPrint("========================================================================================================");
-    print(result);
-    return true;
+    final response = await CritiqueAPI.insertCritique(idResto, username, message, note);
+    try {
+      if (response != null) {
+        debugPrint("================================================Crtitique Photo not null=================================================");
+        if(response.id != -1) return false;
+        debugPrint("Critique ajouté, result critique ${response.id}");
+        final result = await ajoutePhotoCritique(response.id, username, image!);
+        print(result);
+        return true;
+      }
+      debugPrint("========================================================================================================");
+    }catch (e) {
+      debugPrint("insert critique photo error: ${e.toString()}");
+    }
+    return false;
   }
 
   static Future<List<String>> getPhotosCritique(int critiqueId, String identifier) async {
