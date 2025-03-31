@@ -50,6 +50,7 @@ dependencies:
   path: ^1.9.1
   flutter_secure_storage: ^9.2.4
   shared_preferences: ^2.5.2
+  build_runner: ^2.4.6
 
 dev_dependencies:
   mockito: ^5.4.2
