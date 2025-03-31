@@ -128,27 +128,28 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                 textStyle: TextStyle(fontSize: 20),
                                 backgroundColor: Colors.purple
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
                                   print("Image sélectionnée : ${_selectedImage!.path}");
                                   CritiqueViewModel().insertCritiquePhoto(
                                     user_identifier,
                                     widget.restID.toString(),
-                                    _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
+                                    _formKey.currentState?.fields['Message']?.value ?? "Pas de message",
                                     (_noteController + 0.5).toInt() ?? 3,
                                     _selectedImage
                                   );
+                                  context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
-                                  CritiqueViewModel().insertCritique(
+                                  await CritiqueViewModel().insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
                                     (_noteController + 0.5).toInt() ?? 3,
                                   );
+                                  context.go('/avis');
                                 }
-                                context.go('/avis');
                               }
                             },
                             child: const Text('Ajouter')

@@ -15,15 +15,9 @@ class CritiqueViewModel extends ChangeNotifier{
 
 
   Future<void> generateCritiques(user) async {
-    print("Avant récupération des critiques");
     final newListe = await CritiqueAPI.getCritiqueForUser(user);
-    print("Nouvelles critiques récupérées: $newListe");
-
     liste = List.from(newListe);
-    print("Liste après mise à jour: $liste");
-
     notifyListeners();
-    print("notifyListeners() appelé !");
   }
 
 
@@ -56,18 +50,9 @@ class CritiqueViewModel extends ChangeNotifier{
   Future<bool> insertCritique(String id_resto, String username, String commentaire, int note) async {
     try {
       Critique? critique = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
-      debugPrint("Critique value critique value insert");
-      print(critique);
-      print("critique is null 1: ${critique == null}");
       if (critique != null) {
-        print("critique is null 2: ${critique == null}");
-        print("liste before: ${liste}");
         await generateCritiques(username);
-
-        // liste.add(critique); // Ajout immédiat à la liste
-        // await generateCritiques(username);
         notifyListeners();
-        print("list after notified listeners ${liste}");
         return true;
       }
     } catch (e) {
