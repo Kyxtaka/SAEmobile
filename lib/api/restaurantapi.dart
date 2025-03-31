@@ -1,8 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:saemobile/api/carateristiqueandcuisineapi.dart';
 import 'package:saemobile/models/restaurant.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../models/typeCuisine.dart';
 
 class RestaurantAPI {
 
@@ -168,5 +171,12 @@ class RestaurantAPI {
     }
     debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
     return result;
+  }
+
+  Future<TypeCuisine> getRestaurantType(int restaurantId) async {
+    final supabase = Supabase.instance.client;
+    Restaurant rest = RestaurantAPI.getRestaurantById(restaurantId) as Restaurant;
+    TypeCuisine type = CaracteristiqueAndCuisineAPI.getType(rest.id_cuisine) as TypeCuisine;
+    return type;
   }
 }

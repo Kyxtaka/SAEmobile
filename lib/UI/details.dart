@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
-//import 'global/footer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/carateristiqueandcuisineapi.dart';
 import '../models/typeCuisine.dart';
 import 'global/footer.dart';
@@ -32,19 +30,30 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI();
+  late TypeCuisine type;
+  late final _future;
+  // Future<Map<String, dynamic>> getDetailsRestaurant() async {
+  //   var api = RestaurantAPI();
+  //   var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
+  //   var type;
+  //   try {
+  //     type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
+  //   } catch (e) {
+  //     type = "Non renseigné";
+  //   }
+  //   return {"restaurant": restaurant, "typecuisine": type};
+  // }
 
-  Future<Map<String, dynamic>> getDetailsRestaurant() async {
-    var api = RestaurantAPI();
-    var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
-    var type;
-    try {
-      type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
-    } catch (e) {
-      type = "Non renseigné";
-    }
-    return {"restaurant": restaurant, "typecuisine": type};
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _future = _loadData;
   }
-
+  
+  Future<void> _loadData() async {
+    type = await RestaurantAPI().getRestaurantType(int.parse(widget.restaurantId.toString()));
+  }
 
   @override
   Widget build(BuildContext context) {

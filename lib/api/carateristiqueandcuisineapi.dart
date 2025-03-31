@@ -76,5 +76,27 @@ class CaracteristiqueAndCuisineAPI {
     return null;
   }
 
+  static Future<String> getTypeString(id) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('TypeCuisine')
+          .select()
+          .eq('id', id)
+          .maybeSingle();
+      if (response!.isNotEmpty) {
+        TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine']);
+        return typeCuisine.cuisine;
+
+      }else if (response!.isEmpty) {
+        debugPrint("Type cuisine result is empty");
+        return "Non renseigné";
+      }
+    }catch (e) {
+      debugPrint(e.toString());
+      return "Non renseigné";
+    }
+    return "Non renseigné";
+  }
+
 
 }
