@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/critiqueapi.dart';
+import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -130,7 +132,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
                                   print("Image sélectionnée : ${_selectedImage!.path}");
-                                  CritiqueAPI.insertCritiquePhoto(
+                                  CritiqueViewModel().insertCritiquePhoto(
                                     user_identifier,
                                     widget.restID.toString(),
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
@@ -139,14 +141,14 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   );
                                 }else {
                                   print("Image sélectionnée : nan");
-                                  CritiqueAPI.insertCritique(
+                                  CritiqueViewModel().insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
                                     (_noteController + 0.5).toInt() ?? 3,
                                   );
                                 }
-                                Navigator.pop(context);
+                                context.go('/avis');
                               }
                             },
                             child: const Text('Ajouter')
