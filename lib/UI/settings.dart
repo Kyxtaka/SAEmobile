@@ -31,42 +31,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadUserTypePreference();
   }
 
+  /// recupere le type preferee dans les shared preferences
   void _loadUserTypePreference() async {
     String? type = await userViewModel.getTypePreferee();
     setState(() {
-      selectedType = type ?? "";
+      selectedType = type ?? "non renseigné";
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+
     return Scaffold(
       appBar: Header.create(),
-      bottomNavigationBar: new Footer().create(context),
+      bottomNavigationBar: Footer().create(context),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(50.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              DropdownTypeCuisine(typeCuisines: [], onChanged: (TypeCuisine? value) {  },),
+              Text(
+                "Votre type favori est : $selectedType",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+
+              FutureBuilder<List<TypeCuisine>>(
+                future: apiTypes.getAllTypeCuisine(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text(
+                      "Erreur : ${snapshot.error}",
+                      style: const TextStyle(color: Colors.red),
+                    );
+                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    return DropdownTypeCuisine(
+                      typeCuisines: snapshot.data!,
+                      onChanged: (TypeCuisine? value) {
+                        if (value != null) {
+                          setState(() {
+                            selectedType = value.cuisine;
+                            userViewModel.setTypePreferee(selectedType);
+                          });
+                        }
+                      },
+                    );
+                  }
+                  return const Text("Aucune cuisine disponible.");
+                },
+              ),
+
+              const SizedBox(height: 40),
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    textStyle: TextStyle(fontSize: 20),
-                    backgroundColor: Colors.red
+                  textStyle: const TextStyle(fontSize: 20),
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                onPressed: () async => {
-                  await userViewModel.setDisconnection()
+                onPressed: () async {
+                  await userViewModel.setDisconnection();
                 },
                 child: const Text(
                   'Déconnexion',
-                  style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white
-                  ),
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ],
@@ -74,5 +111,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+
   }
 }
