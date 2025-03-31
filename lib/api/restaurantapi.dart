@@ -87,7 +87,7 @@ class RestaurantAPI {
           response['capacity'] ?? -1,
           response['tel'] ?? 'None',
           response['siret'] ?? 'None',
-          response['website'] ?? 'Pas de site renseigné',
+          response['website'] ?? 'Pas de site web',
           response['photo'] ?? 'None',
           response['id_cuisine'] ?? -1,
           response['id_region'] ?? -1,
