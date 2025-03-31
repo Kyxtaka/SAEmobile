@@ -10,6 +10,9 @@ class TypeCuisine {
 
   String get cuisine => _cuisine;
 
+  String getGlobalLabet() => _cuisine;
+  int getGlobalId() => _idTypeCuisine;
+
   void debugPrint() {
     String typeCuisine = "idTypeCuisine: $_idTypeCuisine, cuisine: $_cuisine";
     print(typeCuisine);

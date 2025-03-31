@@ -19,7 +19,8 @@ class Footer {
           icon: Icon(Icons.search),
           label: 'Search',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Avis et favoris"),
+        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favoris"),
+        BottomNavigationBarItem(icon: Icon(Icons.messenger_outline), label: "Avis"),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: 'Settings',
@@ -32,9 +33,10 @@ class Footer {
   int _getSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/home')) return 0;
-    if (location.startsWith('/decouverte')) return 1;
-    if (location.startsWith('/avis')) return 2;
-    if (location.startsWith('/settings')) return 3;
+    if (location.startsWith('/search')) return 1;
+    if (location.startsWith('/favoris')) return 2;
+    if (location.startsWith('/avis')) return 3;
+    if (location.startsWith('/settings')) return 4;
     return 0;
   }
 
@@ -45,12 +47,15 @@ class Footer {
         context.go('/accueil');
         break;
       case 1:
-        context.go('/decouverte');
+        context.go('/search');
         break;
       case 2:
-        context.go('/avis');
+        context.go('/favoris');
         break;
       case 3:
+        context.go('/avis');
+        break;
+      case 4:
         context.go('/settings');
         break;
     }

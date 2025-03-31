@@ -1,14 +1,17 @@
 
-
+import 'package:flutter/material.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsPrefereesDAO {
 
-  Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+    debugPrint("ajout local favoris pour ${email} avec ${restaurantId}");
+    var result = await db.insert(
       'restaurants_preferees',
       {
         'email': email,
@@ -18,21 +21,41 @@ class RestaurantsPrefereesDAO {
     );
   }
 
-  Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
+    var result = await db.delete(
       'restaurants_preferees',
       where: 'email = ? AND restaurant_id = ?',
       whereArgs: [email, restaurantId],
     );
   }
 
-  Future<List<Map<String, Object?>>> getRestaurantsPreferees(String email) async {
+  static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.query(
+    var result = await db.query(
       'restaurants_preferees',
       where: 'email = ?',
       whereArgs: [email],
     );
+    List<Restaurant> restaurants = [];
+    for (var i =0;i<result.length;i++){
+      var restaurant = result[i];
+      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+         "",
+          "",
+          0,
+          "",
+          "",
+          "",
+          "",
+          0,
+          45,
+          0,
+          "",
+          0.0,
+          0.0));
+    }
+    return restaurants;
   }
+
 }

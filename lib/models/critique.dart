@@ -3,13 +3,13 @@ import 'package:saemobile/models/user.dart';
 
 class Critique {
   final int _id;
-  final String _message;
+  String _message;
   final Restaurant? _restaurant;
   final User? _user;
   final String _date_test;
-  final int _note;
+  int _note;
 
-  const Critique(
+  Critique(
       this._id,
       this._message,
       this._restaurant,
@@ -40,5 +40,16 @@ class Critique {
       'message': _message,
       'note': _note
     };
+  }
+
+  String toString(){
+    return "critique ${id}, message ${message}, ${date_test}, ${note}";
+  }
+
+  set message(String value) {
+    _message = value;
+  }
+  set note(int value) {
+    _note = value;
   }
 }
