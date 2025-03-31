@@ -107,10 +107,9 @@ class Restaurant {
 
   Widget renderCard(BuildContext context) {
     
-    bool ableRedirecting = true;
-    if (website == "None") {
-      website = "Pas de site renseigné";
-      ableRedirecting = false;
+    bool ableRedirecting = false;
+    if (website != "Pas de site renseigné") {
+      ableRedirecting = true;
     }
 
     GestureDetector redirect = GestureDetector(
@@ -132,8 +131,8 @@ class Restaurant {
           website ?? "pas de site web",
           style: TextStyle(
             fontSize: 12,
-            color: website != null ? Colors.blue : Colors.grey,
-            decoration: website != null ? TextDecoration.underline : TextDecoration.none,
+            color: ableRedirecting ? Colors.blue : Colors.grey,
+            decoration: ableRedirecting ? TextDecoration.underline : TextDecoration.none,
           ),
         ),
       ),
@@ -154,33 +153,22 @@ class Restaurant {
                   height: 250,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
-                      Image.asset(
-                        'assets/img/default-image.png',
-                        width: 150,
-                        height: 350,
-                      ),
+                    Image.asset(
+                      'assets/img/default-image.png',
+                      width: 150,
+                      height: 350,
+                    ),
                 ),
               ),
               // hyperLink(context),
             ],
           ),
-
           title: Text(name ?? ""),
-          // subtitle: Text(
-          //   website ?? "pas de site web",
-          //   style: TextStyle(
-          //       fontSize: 12
-          //   ),
-          // ),
           subtitle: redirect,
           onTap: () {
             context.go('/details/$id');
           }
       ),
     );
-
   }
-
-
-
 }
