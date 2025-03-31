@@ -9,6 +9,8 @@ import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/typeCuisine.dart';
+import 'package:saemobile/models/user.dart';
+import 'package:saemobile/services/local/tables/cuisinePrefereesTable.dart';
 
 import '../api/carateristiqueandcuisineapi.dart';
 
@@ -39,7 +41,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// recupere le type preferee dans les shared preferences
   void _loadUserTypePreference() async {
-    String? type = await userViewModel.getTypePreferee();
+    var user = await UserViewModel.getCurrentUser();
+    String? type = await CuisinesPrefereesTable.getCuisinesPreferees(user);
     String pos = await userViewModel.getLocalisation();
     setState(() {
       selectedType = type ?? "non renseigné";
@@ -83,9 +86,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       typeCuisines: snapshot.data!,
                       onChanged: (TypeCuisine? value) {
                         if (value != null) {
-                          setState(() {
+                          setState(() async {
                             selectedType = value.cuisine;
-                            userViewModel.setTypePreferee(selectedType);
+                            var user = await UserViewModel.getCurrentUser();
+                            CuisinesPrefereesTable.insertCuisinePrefere(user, value.id, value.cuisine);
                           });
                         }
                       },
