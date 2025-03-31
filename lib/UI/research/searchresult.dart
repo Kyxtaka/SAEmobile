@@ -25,7 +25,6 @@ class _SearchResultState extends State<SearchResult> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadDataRestaurant = _loadData();
 
@@ -61,7 +60,6 @@ class _SearchResultState extends State<SearchResult> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),

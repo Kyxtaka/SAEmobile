@@ -152,7 +152,13 @@ class Restaurant {
           subtitle: redirect,
           onTap: () {
             context.go('/details/$id');
-          }
+          },
+          trailing: IconButton(
+            icon: Icon(Icons.restaurant, color: Colors.grey), // Icône en forme de cœur rouge
+            onPressed: () {
+              context.go('/details/${id}');
+            },
+          ),
       ),
     );
   }

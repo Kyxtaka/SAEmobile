@@ -6,6 +6,8 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 //import 'global/footer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../api/carateristiqueandcuisineapi.dart';
+import '../models/typeCuisine.dart';
 import 'global/footer.dart';
 import '../api/restaurantapi.dart';
 import '../models/restaurant.dart';
@@ -31,6 +33,19 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI();
 
+  Future<Map<String, dynamic>> getDetailsRestaurant() async {
+    var api = RestaurantAPI();
+    var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
+    var type;
+    try {
+      type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
+    } catch (e) {
+      type = "Non renseigné";
+    }
+    return {"restaurant": restaurant, "typecuisine": type};
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Footer footer = Footer();
@@ -44,7 +59,7 @@ class _DetailsPageState extends State<DetailsPage> {
           builder: (context, snapshot){
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
-            }
+          }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
