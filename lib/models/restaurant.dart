@@ -13,6 +13,7 @@ class Restaurant {
   final String _horaires;
   final double _gps_lat;
   final double _gps_long;
+  late bool _status_open;
 
   const Restaurant(
       this._id,
