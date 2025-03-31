@@ -25,6 +25,7 @@ class SqlfliteDatabase {
         _createCuisinePreferees(db);
       },
       version: 1,
+      readOnly: false,
     );
   }
 

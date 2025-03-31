@@ -159,30 +159,64 @@ class _AccueilState extends State<Accueil> {
                               itemCount: restaurantPref.length,
                               itemBuilder: (context, index) {
                                 final Restaurant resto = restaurantPref[index];
+                                print(resto.url_photo);
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 12.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        width: 120,
-                                        height: 100,
+                                      Container(width: 140, height: 140,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          image: DecorationImage(
-                                            image: AssetImage(resto.url_photo ?? 'assets/img/restaurants/defaut.jpg'),
+                                          borderRadius: BorderRadius.circular(12),
+                                            image: DecorationImage(
+                                            image: AssetImage(resto.url_photo ?? '../../../assets/img/paella-orleans.png'),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        resto.name!,
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                      child: Stack(
+                                      children: [
+                                        // Fond sombre dégradé
+                                        Positioned(bottom: 0, left: 0, right: 0,
+                                          child: Container(
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.only(
+                                                bottomLeft: Radius.circular(12),
+                                                bottomRight: Radius.circular(12),
+                                              ),
+                                              gradient: LinearGradient(
+                                                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                                                begin: Alignment.bottomCenter,
+                                                end: Alignment.topCenter,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // Nom du restaurant
+                                        Positioned(bottom: 8, left: 8, right: 8,
+                                          child: Text(
+                                            resto.name ?? '',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              shadows: [
+                                                Shadow(
+                                                  offset: Offset(0, 1),
+                                                  blurRadius: 2,
+                                                  color: Colors.black,
+                                                )
+                                              ],
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
+                                ],
+                                ),);
                               },
                             ),
                           ),
