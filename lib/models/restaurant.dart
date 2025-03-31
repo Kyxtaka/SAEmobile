@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hyperlink/hyperlink.dart';
+import 'package:url_launcher/url_launcher.dart';
 class Restaurant {
   final int _id;
   final String _name;
@@ -105,9 +106,38 @@ class Restaurant {
   }
 
   Widget renderCard(BuildContext context) {
+    
+    bool ableRedirecting = true;
     if (website == "None") {
       website = "Pas de site renseigné";
+      ableRedirecting = false;
     }
+
+    GestureDetector redirect = GestureDetector(
+      onTap: () async {
+        if (ableRedirecting) {
+          final Uri url = Uri.parse(website);
+          if ( await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Impossible d'ouvrir le lien")),
+            );
+          }
+        }
+      },
+      child: Container(
+        constraints: BoxConstraints(maxHeight: 20),
+        child: Text(
+          website ?? "pas de site web",
+          style: TextStyle(
+            fontSize: 12,
+            color: website != null ? Colors.blue : Colors.grey,
+            decoration: website != null ? TextDecoration.underline : TextDecoration.none,
+          ),
+        ),
+      ),
+    );
 
     return Card(
       elevation: 6,
@@ -134,13 +164,15 @@ class Restaurant {
               // hyperLink(context),
             ],
           ),
+
           title: Text(name ?? ""),
-          subtitle: Text(
-            website ?? "pas de site web",
-            style: TextStyle(
-                fontSize: 12
-            ),
-          ),
+          // subtitle: Text(
+          //   website ?? "pas de site web",
+          //   style: TextStyle(
+          //       fontSize: 12
+          //   ),
+          // ),
+          subtitle: redirect,
           onTap: () {
             context.go('/details/$id');
           }
