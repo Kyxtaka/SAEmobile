@@ -5,7 +5,7 @@ import '../utils/UserTools.dart';
 
 class Profile extends StatefulWidget {
   final String userEmail;
-  Profile({required this.userEmail});
+  const Profile({Key? key, required this.userEmail}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();

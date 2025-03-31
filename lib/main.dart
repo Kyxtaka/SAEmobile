@@ -17,6 +17,7 @@ import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
 import 'UI/details.dart';
+import 'UI/profile.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -69,7 +70,14 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/avis',
       builder: (context, state) => Avis(),
-    )
+    ),
+    GoRoute(
+      path: '/profile/:email',
+      builder: (context, state) {
+        final String email = state.pathParameters['email'] ?? '';
+        return Profile(userEmail: email);
+      },
+    ),
   ],
 );
 class MyApp extends StatelessWidget {
