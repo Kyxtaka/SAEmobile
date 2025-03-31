@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
@@ -28,19 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   var apiTypes = CaracteristiqueAndCuisineAPI();
   String selectedType = "non renseigné";
   String localisation = "non renseignée";
-  final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
 
   @override
   void initState() {
@@ -67,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
       body: Center(
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -110,15 +98,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 40),
               Text("Votre position actuelle est "),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.8, // 80% de la hauteur de l'écran
-                child:GoogleMap(
-                  mapType: MapType.hybrid,
-                  initialCameraPosition: _kGooglePlex,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                ),
-              ),
+                height: MediaQuery.of(context).size.height * 0.6, // 80% de la hauteur de l'écran
+                child:FlutterMap(
+                  options: const MapOptions(),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.app',
+                    ),
+                  ],
+                )),
               ElevatedButton(
                   onPressed: () async {
                     var position = await _determinePosition();
