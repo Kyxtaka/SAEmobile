@@ -1,5 +1,12 @@
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart';
+import 'package:flutter/material.dart';
+
+import '../api/viewsmodel/critiquesviewmodel.dart';
 
 class Critique {
   final int _id;
@@ -8,6 +15,7 @@ class Critique {
   final User? _user;
   final String _date_test;
   int _note;
+  Image? _image = null;
 
   Critique(
       this._id,
@@ -51,5 +59,154 @@ class Critique {
   }
   set note(int value) {
     _note = value;
+  }
+
+
+  Image get image => _image ?? Image.asset('assets/img/default-image.png');
+
+  set image(Image value) {
+    _image = value;
+  }
+
+  Future<void> getCritiqueImageIfExist() async {
+    final result = await CritiqueAPI.getPhotoCritique(id);
+    if (result != null) image = result;
+  }
+
+  Widget renderCard(BuildContext context) {
+    if (image != null) {
+      return renderCardImage(context);
+    }else {
+      return renderCardSimple(context);
+    }
+  }
+
+  Widget renderCardImage(BuildContext context) {
+    return Card(
+      elevation: 6,
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+        title: Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
+        leading: _image != null
+            ? Stack(
+          alignment: Alignment.bottomCenter,
+          children: [_image!],
+        ) : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RatingBarIndicator(
+              rating: note.toDouble(),
+              itemBuilder: (context, index) =>
+                  Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+              itemCount: 5,
+              itemSize: 24.0,
+              direction: Axis.horizontal,
+            ),
+            SizedBox(height: 8),
+            Text(message),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    iconSize: 20,
+                    color: Colors.red,
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this);
+                      if (!isDeleted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Erreur : impossible de supprimer la review"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  IconButton(
+                    iconSize: 20,
+                    color: Colors.grey,
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => context.go('/avis/${id}'),
+                  ),
+                  IconButton(
+                      iconSize: 20,
+                      color: Colors.grey,
+                      onPressed: () {
+                        context.go('/details/${restaurant?.id}');
+                      },
+                      icon: Icon(Icons.restaurant))
+                ]
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget renderCardSimple(BuildContext context) {
+    return Card(
+      elevation: 6,
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+        title: Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RatingBarIndicator(
+              rating: note.toDouble(),
+              itemBuilder: (context, index) =>
+                  Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+              itemCount: 5,
+              itemSize: 24.0,
+              direction: Axis.horizontal,
+            ),
+            SizedBox(height: 8),
+            Text(message),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    iconSize: 20,
+                    color: Colors.red,
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this);
+                      if (!isDeleted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Erreur : impossible de supprimer la review"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  IconButton(
+                    iconSize: 20,
+                    color: Colors.grey,
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => context.go('/avis/${id}'),
+                  ),
+                  IconButton(
+                      iconSize: 20,
+                      color: Colors.grey,
+                      onPressed: () {
+                        context.go('/details/${restaurant?.id}');
+                      },
+                      icon: Icon(Icons.restaurant))
+                ]
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

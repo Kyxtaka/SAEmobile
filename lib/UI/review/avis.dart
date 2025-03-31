@@ -43,67 +43,68 @@ class _AvisState extends State<Avis> {
           itemCount: critiquesViewModel.liste.length,
           itemBuilder: (BuildContext context, int index) {
             var critique = critiquesViewModel.liste[index];
-            return Card(
-              child: ListTile(
-                title: Text(
-                  'Vous avez critiqué ${critique.restaurant!.name} le ${critique.date_test}',
-                ),
-
-                /// cette partie a été généré à l'aide d'une IA générative
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RatingBarIndicator(
-                      rating: critique.note.toDouble(),
-                      itemBuilder: (context, index) =>
-                          Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                      itemCount: 5,
-                      itemSize: 24.0,
-                      direction: Axis.horizontal,
-                    ),
-                    SizedBox(height: 8),
-                    Text(critique.message),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          iconSize: 20,
-                          color: Colors.red,
-                          icon: const Icon(Icons.delete),
-                          onPressed: () async {
-                            bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(critique);
-                            if (!isDeleted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Erreur : impossible de supprimer la review"),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        IconButton(
-                            iconSize: 20,
-                            color: Colors.grey,
-                            icon: const Icon(Icons.edit),
-                            onPressed: () => context.go('/avis/${critique.id}'),
-                        ),
-                        IconButton(
-                            iconSize: 20,
-                            color: Colors.grey,
-                            onPressed: () {
-                              context.go('/details/${critique.restaurant?.id}');
-                            },
-                            icon: Icon(Icons.restaurant))
-                      ]
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return critique.renderCard(context);
+            // return Card(
+            //   child: ListTile(
+            //     title: Text(
+            //       'Vous avez critiqué ${critique.restaurant!.name} le ${critique.date_test}',
+            //     ),
+            //
+            //     /// cette partie a été généré à l'aide d'une IA générative
+            //     subtitle: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         RatingBarIndicator(
+            //           rating: critique.note.toDouble(),
+            //           itemBuilder: (context, index) =>
+            //               Icon(
+            //                 Icons.star,
+            //                 color: Colors.amber,
+            //               ),
+            //           itemCount: 5,
+            //           itemSize: 24.0,
+            //           direction: Axis.horizontal,
+            //         ),
+            //         SizedBox(height: 8),
+            //         Text(critique.message),
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //           children: [
+            //             IconButton(
+            //               iconSize: 20,
+            //               color: Colors.red,
+            //               icon: const Icon(Icons.delete),
+            //               onPressed: () async {
+            //                 bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(critique);
+            //                 if (!isDeleted) {
+            //                   ScaffoldMessenger.of(context).showSnackBar(
+            //                     SnackBar(
+            //                       content: Text("Erreur : impossible de supprimer la review"),
+            //                       backgroundColor: Colors.red,
+            //                     ),
+            //                   );
+            //                 }
+            //               },
+            //             ),
+            //             IconButton(
+            //                 iconSize: 20,
+            //                 color: Colors.grey,
+            //                 icon: const Icon(Icons.edit),
+            //                 onPressed: () => context.go('/avis/${critique.id}'),
+            //             ),
+            //             IconButton(
+            //                 iconSize: 20,
+            //                 color: Colors.grey,
+            //                 onPressed: () {
+            //                   context.go('/details/${critique.restaurant?.id}');
+            //                 },
+            //                 icon: Icon(Icons.restaurant))
+            //           ]
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // );
           },
         ),
       );

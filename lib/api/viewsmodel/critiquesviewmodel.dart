@@ -18,6 +18,7 @@ class CritiqueViewModel extends ChangeNotifier{
     liste = await CritiqueAPI.getCritiqueForUser(user);
     for (var i = 0;i<liste.length; i++) {
       liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
+      await liste[i].getCritiqueImageIfExist();
     }
     notifyListeners();
   }
@@ -64,13 +65,14 @@ class CritiqueViewModel extends ChangeNotifier{
   }
 
 
-  Future<bool> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
+  Future<Critique?> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
     try {
-      final response = await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
-      if (response != null) {
-        generateCritiques(username);
+      final critique = await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
+      if (critique != null) {
+        critique.getCritiqueImageIfExist();
+        liste.add(critique);
         notifyListeners();
-        return true;
+        return critique;
       }
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
@@ -78,6 +80,6 @@ class CritiqueViewModel extends ChangeNotifier{
     generateCritiques(username);
     notifyListeners();
     print('====================================================notyfyListeners==================================');
-    return false;
+    return null;
   }
 }

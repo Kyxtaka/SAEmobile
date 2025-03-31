@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:saemobile/api/restaurantapi.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/restaurant.dart';
@@ -256,48 +257,69 @@ class CritiqueAPI {
   }
 
 
-  static Future<bool> insertCritiquePhoto(
+  static Future<Critique?> insertCritiquePhoto(
     String username, String idResto, String message, int note, File? image) async {
-    final response = await CritiqueAPI.insertCritique(idResto, username, message, note);
+    final critique = await CritiqueAPI.insertCritique(idResto, username, message, note);
     try {
-      if (response != null) {
+      if (critique != null) {
         debugPrint("================================================Crtitique Photo not null=================================================");
-        print("critique photo id critique ${response.id}");
-        if(response.id == -1) return false;
-        debugPrint("Critique ajouté, result critique ${response.id}");
-        final result = await ajoutePhotoCritique(response.id, username, image!);
+        print("critique photo id critique ${critique.id}");
+        if(critique.id == -1) return null;
+        debugPrint("Critique ajouté, result critique ${critique.id}");
+        final result = await ajoutePhotoCritique(critique.id, username, image!);
         print(result);
-        return true;
+        return critique;
       }
       debugPrint("========================================================================================================");
     }catch (e) {
       debugPrint("insert critique photo error: ${e.toString()}");
     }
-    return false;
+    return null;
   }
 
-  static Future<List<String>> getPhotosCritique(int critiqueId, String identifier) async {
+  static Future<String?> getPhotoCritiqueIdentifier(int critiqueId, String identifier) async {
     final SupabaseClient supabase = Supabase.instance.client;
     final response = await supabase
         .from('photo_critique')
         .select('photoid')
         .eq('review_id', critiqueId)
-        .eq('user_identifier', identifier);
+        .eq('user_identifier', identifier)
+        .maybeSingle();
 
-    if (response.isEmpty) {
-      return [];
+    if (response != null) {
+      return response['photoid'];
     }
-    final result = response.map<String>((photo) => photo['photoid'].toString()).toList();
-    return result;
+    return null;
   }
 
 
-  static Future<List<Image>> getMesPhotos(int critiqueId) async {
+  static Future<Image?> getPhotoCritique(int critiqueId) async {
+      String? supa_base_url = await dotenv.env['SUPABASE_DB_API_URL'];
+      String bucketName = 'imgstorage';
+      String storageUrl = "${supa_base_url}/storage/v1/object/public/${bucketName}";
       final username  = await UserViewModel.getCurrentUser();
       if (critiqueId != -1) {
-        List<String> urls = await CritiqueAPI.getPhotosCritique(critiqueId, username);
-        return urls.map((url) => Image.network(url)).toList();
+        String? url = await CritiqueAPI.getPhotoCritiqueIdentifier(critiqueId, username);
+        if (url != null){
+          return Image.network(
+            storageUrl+"/"+url,
+            width: 300,
+            height: 250,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              debugPrint("getPhotoCritique error : ${error.toString()}");
+              debugPrint("getPhotoCritique stackTrace : ${stackTrace.toString()}");
+
+              return Image.asset(
+                'assets/img/default-image.png',
+                width: 150,
+                height: 350,
+              );
+            }
+
+          );
+        }
       }
-      return [];
+      return null;
     }
 }
