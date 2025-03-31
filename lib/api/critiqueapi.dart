@@ -262,7 +262,8 @@ class CritiqueAPI {
     try {
       if (response != null) {
         debugPrint("================================================Crtitique Photo not null=================================================");
-        if(response.id != -1) return false;
+        print("critique photo id critique ${response.id}");
+        if(response.id == -1) return false;
         debugPrint("Critique ajouté, result critique ${response.id}");
         final result = await ajoutePhotoCritique(response.id, username, image!);
         print(result);

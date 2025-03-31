@@ -54,6 +54,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
   @override
   Widget build(BuildContext context) {
     final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
+    critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),

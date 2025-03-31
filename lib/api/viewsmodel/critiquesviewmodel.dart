@@ -66,12 +66,17 @@ class CritiqueViewModel extends ChangeNotifier{
 
   Future<bool> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
     try {
-      await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
-      notifyListeners();
-      return true;
+      final response = await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
+      if (response != null) {
+        generateCritiques(username);
+        notifyListeners();
+        return true;
+      }
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
     }
+    generateCritiques(username);
+    notifyListeners();
     print('====================================================notyfyListeners==================================');
     return false;
   }
