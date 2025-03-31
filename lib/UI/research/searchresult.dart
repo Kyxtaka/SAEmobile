@@ -8,8 +8,9 @@ import 'package:saemobile/models/restaurant.dart';
 class SearchResult extends StatefulWidget {
   final int cuisine;
   final int carac;
+  final String search;
 
-  const SearchResult({required this.cuisine, required this.carac});
+  const SearchResult({super.key, required this.cuisine, required this.carac, required this.search});
 
   @override
   _SearchResultState createState() => _SearchResultState();
@@ -31,27 +32,31 @@ class _SearchResultState extends State<SearchResult> {
   }
 
   Future<void> _loadData() async {
+    List<Restaurant> restaurants;
     if (widget.carac != -1 && widget.cuisine != -1) {
-      final restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
+
     }else if (widget.carac != -1 && widget.cuisine == -1) {
-      final restaurants = await restAPI.getRestaurantByCarac(widget.carac);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCarac(widget.carac);
+
     }else if (widget.carac == -1 && widget.cuisine != -1) {
-      final restaurants = await restAPI.getRestaurantByCuisine(widget.cuisine);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCuisine(widget.cuisine);
+
     }else {
-      final restaurants = await restAPI.getAllRestaurants();
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getAllRestaurants();
     }
+
+    print('=========================================> seach = ${widget.search}');
+    print(widget.search.runtimeType);
+
+    if (widget.search != "null") {
+      restaurants.removeWhere((rest) => !rest.name.contains(widget.search));
+      // restaurants = restaurants.where((rest) => rest.name.contains(widget.search)).toList();
+    }
+
+    setState(() {
+      restaurantsList = restaurants;
+    });
   }
 
   @override

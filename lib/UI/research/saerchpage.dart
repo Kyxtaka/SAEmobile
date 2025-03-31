@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
@@ -19,6 +20,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
 
   late Future<void> _loadDataFuture;
+  final _formKey = GlobalKey<FormBuilderState>();
 
   List<TypeCuisine> typeCuisines = [];
   List<Caracteristique> caracteristiques = [];
@@ -63,10 +65,10 @@ class _SearchScreenState extends State<SearchScreen> {
           return Center(
             child: Column(
               children: [
-                OutlinedButton(
-                  onPressed: () => {},
-                  child: const Text("En attente de la barre de recherche"),
-                ),
+                // OutlinedButton(
+                //   onPressed: () => {},
+                //   child: const Text("En attente de la barre de recherche"),
+                // ),
 
                 SizedBox(
                   width: double.infinity,
@@ -81,6 +83,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     child: const Text("Voir tous les restaurants"),
                   ),
+                ),
+
+                FormBuilder(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.all(15.5),
+                    child: Column(
+                      children: [
+                        FormBuilderTextField(
+                          name: 'search',
+                          decoration: const InputDecoration(labelText: 'Rechercher'),
+                        )
+                      ],
+                    ),
+                  )
                 ),
 
                 // TypeCuisine Dropdown
@@ -115,12 +132,15 @@ class _SearchScreenState extends State<SearchScreen> {
                     debugPrint("slected type id string ${selectedType?.id.toString()}");
                     debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
 
-                    print(selectedCarac);
+                    final searchValue = _formKey.currentState?.fields['search']?.value;
+
                     context.goNamed(
                       'searchResult',
                       queryParameters: {
                         if (selectedType != null) 'cuisine': selectedType?.id.toString(),
                         if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
+                        if (searchValue != null && searchValue.toString().trim().isNotEmpty)
+                          'search': searchValue.toString(),
                       },
                     );
                   },

@@ -129,7 +129,8 @@ GoRouter _router(UserViewModel userViewModel) {
             name: 'searchResult',
             builder: (context, state) => SearchResult(
                 cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
-                carac:int.parse(state.uri.queryParameters['carac'].toString())
+                carac:int.parse(state.uri.queryParameters['carac'].toString()),
+                search: state.uri.queryParameters['search'].toString()
             ),
             redirect: (BuildContext context, GoRouterState state) {
               if (!userViewModel.isConnected()) {
