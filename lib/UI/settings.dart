@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   late UserViewModel userViewModel;
   var apiTypes = CaracteristiqueAndCuisineAPI();
-  late String selectedType;
+  String selectedType = "non renseigné";
 
   @override
   void initState() {
