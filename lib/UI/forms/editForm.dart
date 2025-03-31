@@ -31,7 +31,7 @@ class _EditFormState extends State<EditForm> {
       appBar: Header.create(),
       bottomNavigationBar: footer.create(context),
       body : FutureBuilder<Critique?>(
-        future: CritiqueAPI.getCritique(widget.id),
+        future: CritiqueAPI.getCritique(int.parse(widget.id.toString())),
         builder: (context, snapshot){
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
