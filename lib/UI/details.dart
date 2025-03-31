@@ -13,14 +13,6 @@ import '../api/restaurantapi.dart';
 import '../models/restaurant.dart';
 import 'global/header.dart';
 
-// Ajouter ce script à l'accueil pour envoyer l'id du restaurant cliqué à DetailsPage
-//Navigator.push(
-//   context,
-//   MaterialPageRoute(
-//     builder: (context) => DetailsPage(restaurantId: restaurant.id_resto),
-//   ),
-// );
-
 class DetailsPage extends StatefulWidget {
   final String? restaurantId;
 

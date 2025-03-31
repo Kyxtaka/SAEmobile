@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:saemobile/services/local/tables/userTable.dart';
 import 'package:saemobile/models/user.dart';
 import '../utils/UserTools.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Profile extends StatefulWidget {
   final String userEmail;
@@ -14,6 +15,11 @@ class Profile extends StatefulWidget {
 class _ProfilePageState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
   final UserTable _userTable = UserTable();
+  late SupabaseClient supabase = Supabase.instance.client;
+  SupabaseClient get client {
+    return supabase;
+  }
+
 
   TextEditingController _nomController = TextEditingController();
   TextEditingController _prenomController = TextEditingController();
@@ -59,7 +65,7 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _logout() async {
-    await UserTools().logout();
+    await supabase.auth.signOut();
     Navigator.pushReplacementNamed(context, '/home');
   }
 

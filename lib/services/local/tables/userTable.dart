@@ -1,68 +1,88 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/user.dart';
-import '../sqlfliteDatabase.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+///  gestion de la connexion, de l'inscription et déconnexion
+class UserTools {
+  late SupabaseClient supabase = Supabase.instance.client;
 
-class UserTable {
-
-/*
-  static Future<void> insertUser(UserCredentials user) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
-      'User',
-      user.toMapLocal(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  /// Vérifie si un utilisateur est connecté
+  bool isConnected() {
+    return supabase.auth.currentSession != null;
   }
 
-
-  Future<void> updateUser(User user) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.update(
-      'User',
-      user.toMapLocal(),
-      where: 'email = ?',
-      whereArgs: [user.mail],
-    );
+  SupabaseClient get client {
+    return supabase;
   }
 
-
-
-  static Future<void> deleteUserCredentials() async {
-    final db = await SqlfliteDatabase.instance.database;
-    final UserCredentials user  = await getUserCredentials() ;
-    await db.delete(
-      'User',
-      where: 'email = ?',
-      whereArgs: [user.email],
-    );
-  }
-*/
-    Future<User?> getUserByEmail(String email) async {
-      final db = await SqlfliteDatabase.instance.database;
-      final List<Map<String, Object?>> result = await db.query(
-        'User',
-        where: 'mail = ?',
-        whereArgs: [email],
-      );
-
-      if (result.isNotEmpty) {
-        return User.fromMap(result.first);
-      }
-      return null;
-  }
-
-  /*
-  Future<List<User>> getAllUsers() async {
-    final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, Object?>> usersMaps = await db.query('User');
-    UserCredentials credentials = UserCredentials("","","");
+  /// Connexion avec email et mot de passe
+  Future<String?> login(String email, String password) async {
     try {
-      credentials.email = usersMaps.first['email'].toString();
-      credentials.password = usersMaps.first['password'].toString();
-    }catch (e) {
-      print(e);
+      final supabase = _initDb();
+      final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
+      if (result.isNotEmpty) {
+        print(result[0]);
+        print(password);
+        if(result[0]['mail']==email && result[0]['password']==password){
+          print("connected");
+          return null;
+        }
+        else {
+          throw new Exception("Email ou mot de passe incorrect");
+        }
+      }
+      else {
+        throw new Exception("Erreur avec la base de données");
+      }
+    } catch (error) {
+      print(error);
+      return error.toString();
     }
-    return credentials;
+  }
+  Future<SupabaseClient> _initDb() async {
+    try {
+      await dotenv.load(fileName: ".env");
+      await Supabase.initialize(
+          url: dotenv.env['SUPABASE_DB_API_URL']??'',
+          anonKey: dotenv.env['SUPABASE_ANON_KEY']??''
+      );
+      this.supabase = Supabase.instance.client;
+      return Supabase.instance.client;
+    } catch (e) {
+      debugPrint("supabase and are already initialized");
+      return Supabase.instance.client;
+    }
+
+  }
+
+  Future<String?> signin(String nom, String prenom, String email, String password, field) async {
+    try {
+      if (!field){
+        throw new Exception("Le mot de passe est différent");
+      }
+      final supabase = _initDb();
+      final result = await this.supabase.from("Visiteur").select('mail, password').eq('mail', email);
+      if (result.isNotEmpty) {
+        if(result[0]['mail']==email){
+          throw new Exception("Vous avez déjà un compte");
+        }
+      }
+      else {
+        final result = await this.supabase.from("Visiteur").insert({'mail':email, 'password': password, 'prenom': prenom, 'nom_user': nom}).select();
+        if (result.isNotEmpty){
+          print("connected");
+          return null;
+        }
+        throw new Exception("Le compte n'a pas pu être crée");
+      }
+    } catch (error) {
+      print(error);
+      return error.toString();
+    }
+  }
+
+  /// Déconnexion de l'utilisateur
+  Future<void> logout() async {
+    await supabase.auth.signOut();
+  }
 }
-*/
