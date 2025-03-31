@@ -85,6 +85,16 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setLocalisation(position) async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    await prefs.setString("position", position);
+  }
+  Future<String> getLocalisation() async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    var pos = await prefs.getString("position")??"non renseignée";
+    return pos;
+  }
+
   Future<void> setDisconnection() async {
     final SharedPreferences prefs =  await SharedPreferences.getInstance();
     await prefs.remove('identifier'); debugPrint("identifier removed ");
