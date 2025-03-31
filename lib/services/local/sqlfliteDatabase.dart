@@ -34,7 +34,8 @@ class SqlfliteDatabase {
     CREATE TABLE restaurants(
       id INTEGER PRIMARY KEY,
       name TEXT,
-      address TEXT
+      address TEXT,
+      photo TEXT
     )
     '''
     );
@@ -57,7 +58,8 @@ class SqlfliteDatabase {
     CREATE TABLE User(
       email TEXT PRIMARY KEY,
       password TEXT,
-      localisation TEXT
+      localisation TEXT,
+      id_type INTEGER
     )
     '''
     );

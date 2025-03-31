@@ -1,15 +1,17 @@
 
-
+import 'package:flutter/material.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsPrefereesDAO {
-  final db;
-  RestaurantsPrefereesDAO({required this.db});
 
-  Future<int> insertRestaurantPrefere(String email, int restaurantId) async {
-    return await db.insert(
+  static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
+    final db = await SqlfliteDatabase.instance.database;
+    debugPrint("ajout local favoris pour ${email} avec ${restaurantId}");
+    var result = await db.insert(
       'restaurants_preferees',
       {
         'email': email,
@@ -19,19 +21,41 @@ class RestaurantsPrefereesDAO {
     );
   }
 
-  Future<int> deleteRestaurantPrefere(String email, int restaurantId) async {
-    return await db.delete(
+  static Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
+    final db = await SqlfliteDatabase.instance.database;
+    var result = await db.delete(
       'restaurants_preferees',
       where: 'email = ? AND restaurant_id = ?',
       whereArgs: [email, restaurantId],
     );
   }
 
-  Future<List<Map<String, Object?>>> getRestaurantsPreferees(String email) async {
-    return await db.query(
+  static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
+    final db = await SqlfliteDatabase.instance.database;
+    var result = await db.query(
       'restaurants_preferees',
       where: 'email = ?',
       whereArgs: [email],
     );
+    List<Restaurant> restaurants = [];
+    for (var i =0;i<result.length;i++){
+      var restaurant = result[i];
+      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+         "",
+          "",
+          0,
+          "",
+          "",
+          "",
+          "",
+          0,
+          45,
+          0,
+          "",
+          0.0,
+          0.0));
+    }
+    return restaurants;
   }
+
 }

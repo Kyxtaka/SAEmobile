@@ -4,8 +4,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/critiquesRestaurant.dart';
+import 'package:saemobile/UI/favoris.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
+import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
@@ -107,7 +110,46 @@ GoRouter _router(UserViewModel userViewModel) {
             return null;
           }
         },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'decouverte',
+            name: 'decouverte',
+            builder: (context, state) => Decouverte(),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+          GoRoute(
+            path: 'result',
+            name: 'searchResult',
+            builder: (context, state) => SearchResult(
+                cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
+                carac:int.parse(state.uri.queryParameters['carac'].toString())
+            ),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ]
       ),
+      GoRoute(
+          path: '/favoris',
+        builder: (context, state) => Favoris(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },),
       GoRoute(
         path: '/accueil',
         builder: (context, state) => Accueil(database: Supabase.instance.client),
@@ -219,6 +261,19 @@ class MyApp extends StatelessWidget {
                   create: (_) =>
                       UserViewModel(
                           database: Supabase.instance.client, context: context),
+                ),
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
+                ),
+                ChangeNotifierProxyProvider<String, FavorisViewModel>(
+                  create: (context) => FavorisViewModel(),
+                  update: (context, email, favorisViewModel) {
+                    if (email.isNotEmpty) {
+                      favorisViewModel?.generateFavoris(email);
+                    }
+                    return favorisViewModel ?? FavorisViewModel();
+                  },
                 ),
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
