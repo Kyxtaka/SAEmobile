@@ -49,8 +49,8 @@ class _SearchResultState extends State<SearchResult> {
     print('=========================================> seach = ${widget.search}');
     print(widget.search.runtimeType);
 
-    if (widget.search != "null") {
-      restaurants.removeWhere((rest) => !rest.name.contains(widget.search));
+    if (widget.search.toLowerCase() != "null") {
+      restaurants.removeWhere((rest) => !rest.name.toLowerCase().contains(widget.search.toLowerCase()));
       // restaurants = restaurants.where((rest) => rest.name.contains(widget.search)).toList();
     }
 
