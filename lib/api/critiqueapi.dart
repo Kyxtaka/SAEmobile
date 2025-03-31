@@ -77,7 +77,7 @@ class CritiqueAPI {
     }
   }
 
-  static Future<Critique?> getCritique(id) async {
+  static Future<Critique?> getCritique(int id) async {
     try{
       final result = await Supabase.instance.client
           .from("Critique")
@@ -85,7 +85,7 @@ class CritiqueAPI {
           .eq('id_critique', id)
           .single();
       if (result.isNotEmpty){
-        return new Critique(
+        return Critique(
             result['id_critique'],
             result['message'],
             new Restaurant(result['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),

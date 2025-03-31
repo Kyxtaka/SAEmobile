@@ -46,13 +46,20 @@ class CritiqueViewModel extends ChangeNotifier{
 
   Future<void> insertCritique(String id_resto, String username, String commentaire, int note) async {
     try {
-      await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
-    }catch (e) {
-      debugPrint("La creation a échoué ${e.toString()}");
+      int critiqueId = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
+
+      if (critiqueId != -1) {
+        Critique? critique = await CritiqueAPI.getCritique(critiqueId);
+        if (critique != null) {
+          liste.add(critique); // Ajout immédiat à la liste
+          notifyListeners();  // Mise à jour de l'affichage
+        }
+      }
+    } catch (e) {
+      debugPrint("La création a échoué : ${e.toString()}");
     }
-    await generateCritiques(username);
-    notifyListeners();
   }
+
 
   Future<void> insertCritiquePhoto(String username, String idResto, String message, int note, File? image) async {
     try {
@@ -60,7 +67,8 @@ class CritiqueViewModel extends ChangeNotifier{
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
     }
-    await generateCritiques(username);
+    print('====================================================notyfyListeners==================================');
+
     notifyListeners();
 
   }
