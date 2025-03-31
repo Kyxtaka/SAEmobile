@@ -3,6 +3,10 @@ import '../../../models/typeCuisine.dart';
 import '../sqlfliteDatabase.dart';
 
 class TypeCuisineTable {
+
+  final Database db;
+  TypeCuisineTable({required this.db});
+
   Future<void> insertTypeCuisine(id,TypeCuisine typeCuisine) async {
     final db = await SqlfliteDatabase.instance.database;
      await db.insert(

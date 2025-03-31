@@ -56,11 +56,12 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
-  await insertData();
+  await Insert.insertData(db);
+  print("données bien inserées");
   runApp(MyApp(database: db));
 }
 
-GoRouter _router(UserViewModel userViewModel) {
+GoRouter _router(UserViewModel userViewModel, Database db) {
   return GoRouter(
     initialLocation: '/',
 
@@ -112,7 +113,7 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/accueil',
-        builder: (context, state) => Accueil(database: Supabase.instance.client),
+        builder: (context, state) => Accueil(database: Supabase.instance.client, db: db),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
@@ -236,7 +237,7 @@ class MyApp extends StatelessWidget {
                           debugShowCheckedModeBanner: false,
                           theme: theme,
                           title: 'My App',
-                          routerConfig: _router(userViewModel),
+                          routerConfig: _router(userViewModel, database),
                         );
                       })
 

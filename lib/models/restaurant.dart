@@ -1,12 +1,12 @@
 class Restaurant {
   final int _id;
-  final String _name;
+  final String? _name;
   final String _address;
   final int _capacity;
   final String _tel;
   final String _siret;
   final String _website;
-  final String _url_photo;
+  final String? _url_photo;
   final int? _id_cuisine;
   final int? _id_region;
   final int? _nb_etoile;
@@ -40,7 +40,7 @@ class Restaurant {
 
   int? get id_cuisine => _id_cuisine;
 
-  String get url_photo => _url_photo;
+  String? get url_photo => _url_photo;
 
   String get website => _website;
 
@@ -52,7 +52,7 @@ class Restaurant {
 
   String get address => _address;
 
-  String get name => _name;
+  String? get name => _name;
 
   int get id => _id;
 

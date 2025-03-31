@@ -51,7 +51,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30.0),
                       child: Text(
-                        snapshot.data!.name,
+                        snapshot.data!.name!,
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -71,7 +71,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Image.network(
-                            snapshot.data!.url_photo,
+                            snapshot.data!.url_photo!,
                             width: 300,
                             height: 250,
                             fit: BoxFit.cover,
@@ -88,7 +88,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           padding: EdgeInsets.all(5),
                           color: Colors.black54,
                           child: Text(
-                            snapshot.data!.name,
+                            snapshot.data!.name!,
                             textAlign: TextAlign.center,
                             style:
                             TextStyle(color: Colors.white, fontSize: 12),

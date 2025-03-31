@@ -4,6 +4,9 @@ import '../sqlfliteDatabase.dart';
 
 class CuisinesPreferees {
 
+  final Database db;
+  CuisinesPreferees({required this.db});
+
   Future<void> insertCuisinePrefere(String email, int cuisineId) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
@@ -27,11 +30,12 @@ class CuisinesPreferees {
 
   Future<List<TypeCuisine>> getCuisinesPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, Object?>> cuisineMaps = await db.query(
-      'cuisines_preferees',
-      where: 'email = ?',
-      whereArgs: [email]
-    );
+    final cuisineMaps = await db.rawQuery('''
+    SELECT c.*
+    FROM cuisines_preferees cp
+    INNER JOIN TypeCuisine c ON cp.cuisine_id = c.idCuisine
+    WHERE cp.email = ?
+  ''', [email]);
     return cuisineMaps.map((map) {
       return TypeCuisine(
           map['idCuisine'] as int,

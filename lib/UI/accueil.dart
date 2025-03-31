@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/SearchBar.dart' hide SearchBar;
 import 'package:saemobile/services/local/tables/restaurantsTable.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/restaurantapi.dart';
 import '../api/typeCuisineapi.dart';
@@ -15,7 +16,8 @@ import 'global/footer.dart';
 
 class Accueil extends StatefulWidget{
   final SupabaseClient database;
-  const Accueil({super.key, required this.database});
+  final Database db; //bd sqlflite
+  const Accueil({super.key, required this.database, required this.db});
 
   @override
   State<Accueil> createState() => _AccueilState();
@@ -24,10 +26,10 @@ class _AccueilState extends State<Accueil> {
 
   static SearchBar barreRecherche = new SearchBar();
 
-  final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
-  final CuisinesPreferees typeCuisinePref = CuisinesPreferees();
-  final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
-  final RestaurantsTable restaurants = RestaurantsTable();
+  late final TypeCuisineTable typeCuisineLocal;
+  late final CuisinesPreferees typeCuisinePref;
+  late final RestaurantsPreferees restaurantPrefLocal;
+  late final RestaurantsTable restaurants;
 
   RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
   TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
@@ -42,12 +44,17 @@ class _AccueilState extends State<Accueil> {
   @override
   void initState() {
     super.initState();
+
+    typeCuisineLocal = TypeCuisineTable(db: widget.db);
+    typeCuisinePref = CuisinesPreferees(db: widget.db);
+    restaurantPrefLocal = RestaurantsPreferees(db: widget.db);
+    restaurants = RestaurantsTable(db: widget.db);
+
     typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
       if (localCuisines.isEmpty) {
         _fetchAndInsertTypeCuisines();
       }
     });
-
   }
 
   @override
@@ -69,7 +76,7 @@ class _AccueilState extends State<Accueil> {
                     FutureBuilder<List<TypeCuisine>>(
                       future: typeCuisinePref.getCuisinesPreferees('a@mail.com'),
                       builder: (context, snapshot) {
-                      if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
+                        if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError) {
@@ -170,7 +177,7 @@ class _AccueilState extends State<Accueil> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        resto.name,
+                                        resto.name!,
                                         style: const TextStyle(fontWeight: FontWeight.bold),
                                       ),
                                     ],

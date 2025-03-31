@@ -7,6 +7,9 @@ import '../sqlfliteDatabase.dart';
 
 class CritiqueTable {
 
+  final Database db;
+  CritiqueTable({required this.db});
+
   Future<void> insertCritique(Critique critique) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(

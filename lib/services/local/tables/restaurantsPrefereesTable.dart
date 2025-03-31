@@ -7,6 +7,9 @@ import '../sqlfliteDatabase.dart';
 
 class RestaurantsPreferees {
 
+  final Database db;
+  RestaurantsPreferees({required this.db});
+
   Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
@@ -30,11 +33,12 @@ class RestaurantsPreferees {
 
   Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, Object?>> maps = await db.query(
-      'restaurants_preferees',
-      where: 'email = ?',
-      whereArgs: [email],
-    );
+    final maps = await db.rawQuery('''
+    SELECT r.*
+    FROM restaurants_preferees rp
+    INNER JOIN restaurants r ON rp.restaurant_id = r.id
+    WHERE rp.email = ?
+  ''', [email]);
     return maps.map((map) {
       return Restaurant(
         map['id'] as int,
