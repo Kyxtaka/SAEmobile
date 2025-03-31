@@ -15,8 +15,10 @@ class CritiqueViewModel extends ChangeNotifier{
 
 
   Future<void> generateCritiques(user) async {
-    final newListe = await CritiqueAPI.getCritiqueForUser(user);
-    liste = List.from(newListe);
+    liste = await CritiqueAPI.getCritiqueForUser(user);
+    for (var i = 0;i<liste.length; i++) {
+      liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
+    }
     notifyListeners();
   }
 

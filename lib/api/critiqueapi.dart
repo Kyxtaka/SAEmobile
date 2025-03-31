@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:saemobile/api/restaurantapi.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart' as visiteur;
@@ -14,24 +15,34 @@ class CritiqueAPI {
 
   /// recupere toutes les critiques d'un restaurant
   static Future<List<Critique>> getCritiquesForRestaurant(id) async {
+    List<Critique> critiques = [];
     try {
       final response = await Supabase.instance.client
           .from('Critique')
           .select('*, Visiteur(mail, prenom, nom_user)')
           .eq('id_resto', id);
-      List<Critique> critiques = [];
+
       debugPrint("Response contains ${response.length} rows.");
+
       if (response.isNotEmpty) {
+        final responResto = await Supabase.instance.client
+            .from("Restaurant")
+            .select()
+            .eq("id_resto", id)
+            .single();
+
         for (var row in response) {
+
           Critique critique = new Critique(
               row['id_critique'],
               row['message'] ?? "",
-              new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+              // new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+              RestaurantAPI().createRestant(responResto),
               new visiteur.User(
-                  row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
-              row['date_test'] ?? "No date",
-              row['etoiles'] ?? 3
-          );
+                row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
+                row['date_test'] ?? "No date",
+                row['etoiles'] ?? 3
+              );
           //restaurant.debugPrint();
           critiques.add(critique);
         }
@@ -52,6 +63,7 @@ class CritiqueAPI {
       if (response is List) {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
+
           for (var row in response) {
             Critique critique = new Critique(
                 row['id_critique'],
@@ -85,10 +97,17 @@ class CritiqueAPI {
           .eq('id_critique', id)
           .single();
       if (result.isNotEmpty){
+
+        final responResto = await Supabase.instance.client
+            .from("Restaurant")
+            .select()
+            .eq("id_resto", result['id_resto'])
+            .single();
+
         return Critique(
             result['id_critique'],
             result['message'],
-            new Restaurant(result['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+            new RestaurantAPI().createRestant(responResto),
             new visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
       }
     } catch (error){
@@ -111,11 +130,10 @@ class CritiqueAPI {
         if (response.isNotEmpty) {
           for (var row in response) {
             Critique critique = new Critique(
-
                 row['id_critique'],
                 row['message']??"",
-                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-                new visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
+                Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
                 row['date_test']??"No date",
                 row['etoiles']??3
             );
@@ -216,10 +234,18 @@ class CritiqueAPI {
       'etoiles': note
     }).select().single();
 
+    final responResto = await Supabase.instance.client
+      .from("Restaurant")
+      .select()
+      .eq("id_resto", response['id_resto'])
+      .single();
+
+    RestaurantAPI().createRestant(responResto);
+
     return Critique(
         response['id_critique'],
         response['message'],
-        Restaurant(response['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+        RestaurantAPI().createRestant(responResto),
         visiteur.User(response['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
   }
 

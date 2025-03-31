@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/critiqueapi.dart';
@@ -25,7 +26,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
   late Future<void> _loadDataFuture;
   late String user_identifier;
   final _formKey = GlobalKey<FormBuilderState>();
-  late var _noteController;
+  late var _noteController = 3.0;
   File? _selectedImage;
 
   @override
@@ -52,6 +53,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
 
   @override
   Widget build(BuildContext context) {
+    final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
@@ -132,7 +134,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
                                   print("Image sélectionnée : ${_selectedImage!.path}");
-                                  CritiqueViewModel().insertCritiquePhoto(
+                                  critiquesViewModel.insertCritiquePhoto(
                                     user_identifier,
                                     widget.restID.toString(),
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de message",
@@ -142,7 +144,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
-                                  await CritiqueViewModel().insertCritique(
+                                  await critiquesViewModel.insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",

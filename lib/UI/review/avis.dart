@@ -46,8 +46,7 @@ class _AvisState extends State<Avis> {
             return Card(
               child: ListTile(
                 title: Text(
-                  'Vous avez critiqué ${critique.restaurant!.name} le ${critique
-                      .date_test}',
+                  'Vous avez critiqué ${critique.restaurant!.name} le ${critique.date_test}',
                 ),
 
                 /// cette partie a été généré à l'aide d'une IA générative
