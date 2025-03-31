@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 class Restaurant {
   final int _id;
   final String _name;
-  final String _address;
+  late  String _address;
   final int _capacity;
   final String _tel;
   final String _siret;
-  final String _website;
-  final String _url_photo;
+  late  String _website;
+  late  String _url_photo;
   final int _id_cuisine;
   final int _id_region;
   final int _nb_etoile;
@@ -16,7 +16,7 @@ class Restaurant {
   final double _gps_lat;
   final double _gps_long;
 
-  const Restaurant(
+   Restaurant(
       this._id,
       this._name,
       this._address,
@@ -60,6 +60,19 @@ class Restaurant {
 
   int get nb_etoile => _nb_etoile;
 
+
+  set address(String value) {
+    _address = value;
+  }
+
+  set website(String value) {
+    _website = value;
+  }
+
+  set url_photo(String value) {
+    _url_photo = value;
+  }
+
   void debugPrint() {
     String restaurant = "id: $_id, name: $_name, address: $_address, capacity: $_capacity, tel: $_tel, siret: $_siret, website: $_website, url_photo: $_url_photo, id_cuisine: $_id_cuisine, id_region: $_id_region, horraire: $_horaires, gps_lat: $_gps_lat, gps_long: $gps_long";
     print(restaurant);
@@ -74,6 +87,10 @@ class Restaurant {
   }
 
   Widget renderCard(BuildContext context) {
+    if (website == "None") {
+      website = "Pas de site renseigné";
+    }
+
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(10),
@@ -112,5 +129,7 @@ class Restaurant {
     );
 
   }
+
+
 
 }

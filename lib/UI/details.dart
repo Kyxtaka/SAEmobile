@@ -48,7 +48,12 @@ class _DetailsPageState extends State<DetailsPage> {
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
-          return SingleChildScrollView(
+
+              String capacity = (snapshot.data!.capacity == -1)
+                  ? "Capacité inconnue"
+                  : "${snapshot.data!.capacity} personnes";
+
+              return SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(height: 10),
@@ -107,7 +112,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       children: [
                         infoSection("Adresse", snapshot.data!.address),
                         infoSection("Origine", "Cuisine ID: ${snapshot.data!.id_cuisine}"),
-                        infoSection("Capacité", "${snapshot.data!.capacity} personnes"),
+                        infoSection("Capacité", capacity),
                         infoSection("Contact", snapshot.data!.tel),
                       ],
                     ),
