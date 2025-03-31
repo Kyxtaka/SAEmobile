@@ -80,7 +80,6 @@ class _DetailsPageState extends State<DetailsPage> {
                           height: 250,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                          // '../../assets/img/default-image.png',
                               Image.asset(
                                 'assets/img/default-image.png',
                                 width: 300,

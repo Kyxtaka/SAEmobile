@@ -89,21 +89,7 @@ class _SearchResultState extends State<SearchResult> {
               child: ListView.builder(
                 itemCount: restaurantsList.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                        elevation: 6,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                              backgroundColor: Colors.amber,
-                              child: Text(restaurantsList[index].id.toString() ?? "")
-                          ),
-                          title: Text(restaurantsList[index].name ?? ""),
-                          subtitle: Text(restaurantsList[index].address ?? ""),
-                          onTap: () {
-                            context.go('/details/${restaurantsList[index].id}');
-                          }
-                        )
-                    );
+                    return restaurantsList[index].renderCard(context);
                   },
                 ),
             );

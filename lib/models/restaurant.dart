@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 class Restaurant {
   final int _id;
   final String _name;
@@ -69,6 +71,46 @@ class Restaurant {
       'name': _name,
       'address': _address
     };
+  }
+
+  Widget renderCard(BuildContext context) {
+    return Card(
+      elevation: 6,
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+          leading: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(
+                  url_photo,
+                  width: 300,
+                  height: 250,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Image.asset(
+                        'assets/img/default-image.png',
+                        width: 150,
+                        height: 350,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          title: Text(name ?? ""),
+          subtitle: Text(
+            website ?? "pas de site web",
+            style: TextStyle(
+                fontSize: 12
+            ),
+          ),
+          onTap: () {
+            context.go('/details/$id');
+          }
+      ),
+    );
+
   }
 
 }
