@@ -349,6 +349,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  hyperlink:
+    dependency: "direct main"
+    description:
+      name: hyperlink
+      sha256: "2c750165b76924b56e7a28b7f7f17252ba701309546d64900814d41c807715a4"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   image_picker:
     dependency: "direct main"
     description:

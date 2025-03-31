@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hyperlink/hyperlink.dart';
 class Restaurant {
   final int _id;
   final String _name;
@@ -86,6 +87,23 @@ class Restaurant {
     };
   }
 
+  Widget hyperLink(context) {
+    return HyperLink(
+        textStyle: TextStyle(color: Colors.black, fontSize: 15),
+        linkStyle: TextStyle(
+            color: Colors.red,
+            fontWeight:
+            FontWeight.w700,
+            fontSize: 20
+        ),
+        // text: 'Cliquez here to visit [Google](https://www.google.com) or Click here to visit [Apple](https://www.apple.com)\t Happy Coding!!',
+        text: website,
+        linkCallBack: (link) {
+          //the clicked link
+        }
+    );
+  }
+
   Widget renderCard(BuildContext context) {
     if (website == "None") {
       website = "Pas de site renseigné";
@@ -113,6 +131,7 @@ class Restaurant {
                       ),
                 ),
               ),
+              // hyperLink(context),
             ],
           ),
           title: Text(name ?? ""),

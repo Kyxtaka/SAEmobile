@@ -80,6 +80,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Supprime le border radius
+                      ),
                     ),
                     child: const Text("Voir tous les restaurants"),
                   ),
