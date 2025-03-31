@@ -36,13 +36,11 @@ class CritiqueAPI {
           Critique critique = new Critique(
               row['id_critique'],
               row['message'] ?? "",
-              // new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
               RestaurantAPI().createRestant(responResto),
-              new visiteur.User(
-                row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
-                row['date_test'] ?? "No date",
-                row['etoiles'] ?? 3
-              );
+              new visiteur.User(row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
+              row['date_test'] ?? "No date",
+              int.parse(row['etoiles'].toString())
+            );
           //restaurant.debugPrint();
           critiques.add(critique);
         }
@@ -71,7 +69,7 @@ class CritiqueAPI {
                 new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
                 new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['etoiles']??3
+                int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
             critiques.add(critique);
@@ -96,8 +94,8 @@ class CritiqueAPI {
           .select('*')
           .eq('id_critique', id)
           .single();
-      if (result.isNotEmpty){
 
+      if (result.isNotEmpty){
         final responResto = await Supabase.instance.client
             .from("Restaurant")
             .select()
@@ -107,11 +105,14 @@ class CritiqueAPI {
         return Critique(
             result['id_critique'],
             result['message'],
-            new RestaurantAPI().createRestant(responResto),
-            new visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
+            RestaurantAPI().createRestant(responResto),
+            visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""),
+            result['date_test']??"No date",
+            int.parse(result['etoiles'].toString())
+        );
       }
     } catch (error){
-      debugPrint("Error while modify : $error ❌");
+      debugPrint("Error getting critic id ${id} : $error ❌");
       return null;
     }
     return null;
@@ -119,6 +120,7 @@ class CritiqueAPI {
 
   /// get les critiques d'un utilisateur
   static Future<List<Critique>> getCritiqueForUser(mail) async{
+
     try {
       final response = await Supabase.instance.client
           .from('Critique')
@@ -129,13 +131,14 @@ class CritiqueAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            Critique critique = new Critique(
-                row['id_critique'],
+            print("runtype etoile ${row['etoiles'].runtimeType}");
+            Critique critique = Critique(
+                int.parse(row['id_critique'].toString()),
                 row['message']??"",
                 Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
                 visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['etoiles']??3
+                int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
             critiques.add(critique);
@@ -149,9 +152,9 @@ class CritiqueAPI {
       }
       return critiques;
     } catch (e) {
-      debugPrint("Error fetching data: $e ❌");
-      return [];
+      debugPrint("Error fetching data: ${e.toString()} ❌");
     }
+    return [];
   }
 
   /// suppression d'une critique
@@ -246,7 +249,10 @@ class CritiqueAPI {
         response['id_critique'],
         response['message'],
         RestaurantAPI().createRestant(responResto),
-        visiteur.User(response['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
+        visiteur.User(response['mail_user'],"","", "", "Visiteur", [], false, ""), 
+        response['date_test']??"No date",
+        int.parse(response['etoiles'].toString())
+    );
   }
 
 
