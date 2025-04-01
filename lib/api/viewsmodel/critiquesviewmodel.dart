@@ -18,6 +18,7 @@ class CritiqueViewModel extends ChangeNotifier{
 
   Future<void> generateCritiques(user) async {
     _onLoading = true;
+    notifyListeners();
     liste = await CritiqueAPI.getCritiqueForUser(user);
     for (var i = 0;i<liste.length; i++) {
       liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
@@ -66,7 +67,6 @@ class CritiqueViewModel extends ChangeNotifier{
       Critique? critique = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
       if (critique != null) {
         await generateCritiques(username);
-        notifyListeners();
         return true;
       }
     } catch (e) {
@@ -81,14 +81,11 @@ class CritiqueViewModel extends ChangeNotifier{
       final critique = await CritiqueAPI.insertCritiquePhoto(username, idResto, message, note, image);
       if (critique != null) {
         await generateCritiques(username);
-        notifyListeners();
         return critique;
       }
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
     }
-    generateCritiques(username);
-    notifyListeners();
     print('====================================================notyfyListeners==================================');
     return null;
   }

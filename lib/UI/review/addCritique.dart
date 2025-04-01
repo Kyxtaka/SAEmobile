@@ -54,7 +54,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
   @override
   Widget build(BuildContext context) {
     final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
-    critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
+    // critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
@@ -135,7 +135,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
                                   print("Image sélectionnée : ${_selectedImage!.path}");
-                                  critiquesViewModel.insertCritiquePhoto(
+                                  await critiquesViewModel.insertCritiquePhoto(
                                     user_identifier,
                                     widget.restID.toString(),
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de message",
@@ -145,6 +145,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
+
                                   await critiquesViewModel.insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
