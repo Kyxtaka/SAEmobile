@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../../models/critique.dart';
 import '../global/footer.dart';
 import '../global/header.dart';
 
@@ -15,6 +16,7 @@ class Avis extends StatefulWidget {
 class _AvisState extends State<Avis> {
   // final header = Header();
   bool _loading = true;
+  late List<Critique> critliste;
 
   @override
   void initState() {
@@ -39,6 +41,9 @@ class _AvisState extends State<Avis> {
       );
     }
     else {
+      setState(() {
+        _loading = false;
+      });
       print(" avis page liste ${critiquesViewModel.liste}");
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
