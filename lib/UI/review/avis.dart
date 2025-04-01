@@ -20,7 +20,6 @@ class _AvisState extends State<Avis> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -32,7 +31,11 @@ class _AvisState extends State<Avis> {
 
     if (critiquesViewModel.liste.isEmpty) {
       if (_loading) {
-        return Center(child: CircularProgressIndicator());
+        return Scaffold(
+          appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
+          bottomNavigationBar: Footer().create(context),
+          body: Center(child: CircularProgressIndicator(),),
+        );
       }
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
@@ -45,6 +48,8 @@ class _AvisState extends State<Avis> {
         _loading = false;
       });
       print(" avis page liste ${critiquesViewModel.liste}");
+
+
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: Footer().create(context),

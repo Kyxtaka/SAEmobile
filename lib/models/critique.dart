@@ -1,6 +1,7 @@
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saemobile/UI/review/imagedetails.dart';
 import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart';
@@ -94,16 +95,31 @@ class Critique {
   }
 
   Widget renderCardImage(BuildContext context) {
+    // FutureBuilder<List<Image>>(
+    //   future: commentaire.getMesPhotos(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return const CircularProgressIndicator();
+    //     } else if (snapshot.hasError ||
+    //         !snapshot.hasData ||
+    //         snapshot.data!.isEmpty) {
+    //       return const SizedBox();
+    //     }
+    //     return ImageCommentaireDetail(snapshot: snapshot);
+    //   },
+    // ),
+
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(10),
       child: ListTile(
         title: Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
-        leading: _image != null
-            ? Stack(
-          alignment: Alignment.bottomCenter,
-          children: [_image!],
-        ) : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        // leading: _image != null
+        //     ? Stack(
+        //   alignment: Alignment.bottomCenter,
+        //   children: [_image!],
+        // ) : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        leading: ImageDetail(image: image,),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -167,6 +183,8 @@ class Critique {
   }
 
   Widget renderCardSimple(BuildContext context) {
+
+
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(10),
