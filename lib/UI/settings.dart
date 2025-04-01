@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
@@ -6,6 +7,8 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/typeCuisine.dart';
 
 import '../api/carateristiqueandcuisineapi.dart';
+import '../api/viewsmodel/critiquesviewmodel.dart';
+import '../api/viewsmodel/favorisviewmodel.dart';
 
 class SettingsScreen extends StatefulWidget {
 
@@ -42,6 +45,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
+    final favorisViewModel = Provider.of<FavorisViewModel>(context, listen: false);
 
     return Scaffold(
       appBar: Header.create(),
@@ -99,6 +104,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 onPressed: () async {
+                  await critiquesViewModel.generateCritiques("");
+                  await favorisViewModel.generateFavoris("");
                   await userViewModel.setDisconnection();
                 },
                 child: const Text(
