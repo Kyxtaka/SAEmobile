@@ -169,7 +169,7 @@ class _AccueilState extends State<Accueil> {
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(12),
                                             image: DecorationImage(
-                                            image: AssetImage(resto.url_photo ?? '../../../assets/img/paella-orleans.png'),
+                                            image: AssetImage(resto.url_photo ?? 'assets/img/paella-orleans.png'),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
