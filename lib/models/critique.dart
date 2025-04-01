@@ -103,12 +103,7 @@ class Critique {
       elevation: 6,
       margin: const EdgeInsets.all(10),
       child: ListTile(
-        title: Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
-        // leading: _image != null
-        //     ? Stack(
-        //   alignment: Alignment.bottomCenter,
-        //   children: [_image!],
-        // ) : Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le ${date_test}") : Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
         leading: ImageDetail(image: image,),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +173,7 @@ class Critique {
       elevation: 6,
       margin: const EdgeInsets.all(10),
       child: ListTile(
-        title: Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
+        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le ${date_test}") : Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
