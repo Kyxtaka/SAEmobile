@@ -178,6 +178,7 @@ class CritiqueAPI {
       return false;
     }
   }
+
   
   static Future<bool> modifyCritique(id, message, etoiles) async {
     try{

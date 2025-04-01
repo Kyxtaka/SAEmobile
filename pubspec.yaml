@@ -51,6 +51,9 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   shared_preferences: ^2.5.2
   dropdown_button2: ^2.3.9
+  geolocator: ^13.0.4
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
   form_builder_validators: ^11.1.2
   flutter_rating_bar: ^4.0.1
   image_picker: ^1.1.2

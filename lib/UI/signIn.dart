@@ -74,7 +74,6 @@ class _SignInState extends State<SignIn> {
                 Column(
                   children: <Widget>[
                     const SizedBox(height: 30.0),
-
                     const Text(
                       "Inscription",
                       style: TextStyle(

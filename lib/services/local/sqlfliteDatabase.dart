@@ -100,6 +100,7 @@ class SqlfliteDatabase {
     CREATE TABLE cuisines_preferees(
       email TEXT,
       cuisine_id INTEGER,
+      cuisine TEXT,
       PRIMARY KEY (email, cuisine_id),
       FOREIGN KEY (email) REFERENCES User(email),
       FOREIGN KEY (cuisine_id) REFERENCES TypeCuisine(id)
