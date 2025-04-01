@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import '../../models/critique.dart';
 import '../global/footer.dart';
 import '../global/header.dart';

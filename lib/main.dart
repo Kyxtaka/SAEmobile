@@ -294,6 +294,10 @@ class MyApp extends StatelessWidget {
                       ),
                     );
                   }
+                  // final CritiqueViewModel critiqueViewModel = Provider.of(context, listen: false);
+                  // final FavorisViewModel favorisViewModel = Provider.of(context, listen: false);
+                  // critiqueViewModel.generateCritiques(userViewModel.identifier);
+                  // favorisViewModel.generateFavoris(userViewModel.);
                   return MaterialApp.router(
                     debugShowCheckedModeBanner: false,
                     theme: theme,
