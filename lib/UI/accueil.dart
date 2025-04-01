@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/restaurantapi.dart';
 import '../api/typeCuisineapi.dart';
+import '../api/viewsmodel/userviewmodel.dart';
 import '../models/restaurant.dart';
 import '../services/local/tables/cuisinePrefereesTable.dart';
 import '../services/local/tables/restaurantsPrefereesTable.dart';
@@ -31,7 +32,8 @@ class _AccueilState extends State<Accueil> {
   late final RestaurantsTable restaurants;
 
   RestaurantAPI apiRestaurant = RestaurantAPI();
-  TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
+  TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(
+      database: Supabase.instance.client);
 
   Future<void> _fetchAndInsertTypeCuisines() async {
     List<TypeCuisine> supaCuisines = await typeCuisineAPI.getAllTypeCuisines();
@@ -58,180 +60,219 @@ class _AccueilState extends State<Accueil> {
 
   @override
   Widget build(BuildContext context) {
-    Footer footer = new Footer();
+    Footer footer = Footer();
 
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: Header.create(),
-        bottomNavigationBar: footer.create(context),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child:Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children:[
-                  barreRecherche,
-                  const SizedBox(height: 16),
-                    FutureBuilder<List<TypeCuisine>>(
-                      future: typeCuisinePref.getCuisinesPreferees('a@mail.com'),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Text('Erreur : ${snapshot.error}');
-                      }
-                      final cuisines = snapshot.data ?? [];
-                      if (cuisines.isEmpty) {
-                        return const SizedBox();
-                      }
-                      return SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: cuisines.length,
-                          itemBuilder: (context, index) {
-                          final cuisine = cuisines[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey, width: 1.0),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    image: DecorationImage(
-                                      image: cuisine.img == 'None'
-                                          ? AssetImage('assets/img/typeCuisine/defaut.jpeg')
-                                          : AssetImage(cuisine.img),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  cuisine.cuisine,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+    return FutureBuilder<String>(
+      future: UserViewModel.getCurrentUser(),
+      builder: (context, userSnapshot) {
+        if (userSnapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (userSnapshot.hasError) {
+          return Text('Erreur utilisateur : ${userSnapshot.error}');
+        }
 
-              FutureBuilder<List<Restaurant>>(
-                    future: RestaurantsPreferees.getRestaurantsPreferees('a@mail.com'),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return Text('Erreur : ${snapshot.error}');
-                      }
-                      final restaurantPref = snapshot.data ?? [];
-                      if (restaurantPref.isEmpty) {
-                        return const SizedBox.shrink();
-                      }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Vos restaurants préférés",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            height: 160,
+        final user = userSnapshot.data!;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: Header.create(),
+          bottomNavigationBar: footer.create(context),
+          body: SingleChildScrollView(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      barreRecherche,
+                      const SizedBox(height: 16),
+                      FutureBuilder<List<TypeCuisine>>(
+                        future: typeCuisinePref.getCuisinesPreferees(user),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData && snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Erreur : ${snapshot.error}');
+                          }
+                          final cuisines = snapshot.data ?? [];
+                          if (cuisines.isEmpty) {
+                            return const SizedBox();
+                          }
+                          return SizedBox(
+                            height: 100,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: restaurantPref.length,
+                              itemCount: cuisines.length,
                               itemBuilder: (context, index) {
-                                final Restaurant resto = restaurantPref[index];
-                                print(resto.url_photo);
+                                final cuisine = cuisines[index];
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 12.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container(width: 140, height: 140,
+                                      Container(
+                                        width: 60,
+                                        height: 60,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12),
-                                            image: DecorationImage(
-                                            image: AssetImage(resto.url_photo ?? 'assets/img/paella-orleans.png'),
+                                          border: Border.all(
+                                              color: Colors.grey, width: 1.0),
+                                          borderRadius: BorderRadius.circular(
+                                              12.0),
+                                          image: DecorationImage(
+                                            image: cuisine.img == 'None'
+                                                ? AssetImage(
+                                                'assets/img/typeCuisine/defaut.jpeg')
+                                                : AssetImage(cuisine.img),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                      child: Stack(
-                                      children: [
-                                        // Fond sombre dégradé
-                                        Positioned(bottom: 0, left: 0, right: 0,
-                                          child: Container(
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.only(
-                                                bottomLeft: Radius.circular(12),
-                                                bottomRight: Radius.circular(12),
-                                              ),
-                                              gradient: LinearGradient(
-                                                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
-                                                begin: Alignment.bottomCenter,
-                                                end: Alignment.topCenter,
-                                              ),
-                                            ),
-                                          ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        cuisine.cuisine,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        // Nom du restaurant
-                                        Positioned(bottom: 8, left: 8, right: 8,
-                                          child: Text(
-                                            resto.name ?? '',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                              shadows: [
-                                                Shadow(
-                                                  offset: Offset(0, 1),
-                                                  blurRadius: 2,
-                                                  color: Colors.black,
-                                                )
-                                              ],
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                                ),);
+                                );
                               },
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
 
-              const SizedBox(height: 20),
-             ],
+                      FutureBuilder<List<Restaurant>>(
+                        future: RestaurantsPreferees.getRestaurantsPreferees(
+                            user),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData && snapshot.connectionState !=
+                              ConnectionState.done) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (snapshot.hasError) {
+                            return Text('Erreur : ${snapshot.error}');
+                          }
+                          final restaurantPref = snapshot.data ?? [];
+                          if (restaurantPref.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Vos restaurants préférés",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                height: 160,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: restaurantPref.length,
+                                  itemBuilder: (context, index) {
+                                    final Restaurant resto = restaurantPref[index];
+                                    print(resto.url_photo);
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Container(width: 140, height: 140,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius
+                                                  .circular(12),
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    resto.url_photo ??
+                                                        'assets/img/paella-orleans.png'),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                // Fond sombre dégradé
+                                                Positioned(
+                                                  bottom: 0, left: 0, right: 0,
+                                                  child: Container(
+                                                    height: 40,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: const BorderRadius
+                                                          .only(
+                                                        bottomLeft: Radius
+                                                            .circular(12),
+                                                        bottomRight: Radius
+                                                            .circular(12),
+                                                      ),
+                                                      gradient: LinearGradient(
+                                                        colors: [
+                                                          Colors.black
+                                                              .withOpacity(0.7),
+                                                          Colors.transparent
+                                                        ],
+                                                        begin: Alignment
+                                                            .bottomCenter,
+                                                        end: Alignment
+                                                            .topCenter,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Nom du restaurant
+                                                Positioned(
+                                                  bottom: 8, left: 8, right: 8,
+                                                  child: Text(
+                                                    resto.name ?? '',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight
+                                                          .bold,
+                                                      fontSize: 14,
+                                                      shadows: [
+                                                        Shadow(
+                                                          offset: Offset(0, 1),
+                                                          blurRadius: 2,
+                                                          color: Colors.black,
+                                                        )
+                                                      ],
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow
+                                                        .ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
+                  )
               )
-          )
-        ),
+          ),
+        );
+      },
     );
   }
+
 }
-
-
