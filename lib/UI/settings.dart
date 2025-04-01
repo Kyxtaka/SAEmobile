@@ -30,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late UserViewModel userViewModel;
   var apiTypes = CaracteristiqueAndCuisineAPI();
   String selectedType = "non renseigné";
-  String localisation = "non renseignée";
+  LatLng localisation = LatLng(47.916672, 1.9);
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _loadUserTypePreference() async {
     var user = await UserViewModel.getCurrentUser();
     String? type = await CuisinesPrefereesTable.getCuisinesPreferees(user);
-    String pos = await userViewModel.getLocalisation();
+    LatLng pos = await userViewModel.getLocalisation();
     setState(() {
       selectedType = type ?? "non renseigné";
       localisation = pos;
@@ -57,12 +57,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
+      body: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "Votre type favori est : $selectedType",
@@ -101,22 +97,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               const SizedBox(height: 40),
               Text("Votre position actuelle est "),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.6, // 80% de la hauteur de l'écran
-                child:FlutterMap(
-                  options: const MapOptions(),
+              SingleChildScrollView(
+                child: Column(
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.app',
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: FlutterMap(
+                        options: MapOptions(
+                          initialCenter : localisation ?? LatLng(47.916672, 1.9),
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                )),
+                ),
+              ),
               ElevatedButton(
                   onPressed: () async {
                     var position = await _determinePosition();
-                    userViewModel.setLocalisation(position.toString());
+                    userViewModel.setLocalisation(position);
                   },
                   child: Text("Récupérer votre localisation")),
               const SizedBox(height: 40),
@@ -141,7 +145,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-      ),
+
     );
 
   }
