@@ -16,8 +16,7 @@ import 'global/footer.dart';
 
 class Accueil extends StatefulWidget{
   final SupabaseClient database;
-  final Database db; //bd sqlflite
-  const Accueil({super.key, required this.database, required this.db});
+  const Accueil({super.key, required this.database});
 
   @override
   State<Accueil> createState() => _AccueilState();
@@ -31,7 +30,7 @@ class _AccueilState extends State<Accueil> {
   late final RestaurantsPreferees restaurantPrefLocal;
   late final RestaurantsTable restaurants;
 
-  RestaurantAPI apiRestaurant = RestaurantAPI(database: Supabase.instance.client);
+  RestaurantAPI apiRestaurant = RestaurantAPI();
   TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(database: Supabase.instance.client);
 
   Future<void> _fetchAndInsertTypeCuisines() async {
@@ -45,10 +44,10 @@ class _AccueilState extends State<Accueil> {
   void initState() {
     super.initState();
 
-    typeCuisineLocal = TypeCuisineTable(db: widget.db);
-    typeCuisinePref = CuisinesPreferees(db: widget.db);
-    restaurantPrefLocal = RestaurantsPreferees(db: widget.db);
-    restaurants = RestaurantsTable(db: widget.db);
+    typeCuisineLocal = TypeCuisineTable();
+    typeCuisinePref = CuisinesPreferees();
+    restaurantPrefLocal = RestaurantsPreferees();
+    restaurants = RestaurantsTable();
 
     typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
       if (localCuisines.isEmpty) {
@@ -129,7 +128,7 @@ class _AccueilState extends State<Accueil> {
               ),
 
               FutureBuilder<List<Restaurant>>(
-                    future: restaurantPrefLocal.getRestaurantsPreferees('a@mail.com'),
+                    future: RestaurantsPreferees.getRestaurantsPreferees('a@mail.com'),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
                         return const Center(child: CircularProgressIndicator());

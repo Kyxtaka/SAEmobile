@@ -33,6 +33,21 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setTypePreferee(String type) async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    await prefs.setString('typePreferee', type);
+  }
+
+
+  Future<String> getTypePreferee() async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    var type = prefs.getString("typePreferee");
+    if (type != null){
+      return type;
+    }
+    return "";
+  }
+
   Future<void> autoLoginInit() async {
     debugPrint("autoLogin");
     isLoading = true;

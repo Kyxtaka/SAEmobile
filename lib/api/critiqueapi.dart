@@ -1,33 +1,48 @@
 
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/restaurant.dart';
 import 'package:saemobile/models/user.dart' as visiteur;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/critique.dart';
+import '../providers/imgsizeprovider.dart';
 
 class CritiqueAPI {
 
   /// recupere toutes les critiques d'un restaurant
   static Future<List<Critique>> getCritiquesForRestaurant(id) async {
+    List<Critique> critiques = [];
     try {
       final response = await Supabase.instance.client
           .from('Critique')
           .select('*, Visiteur(mail, prenom, nom_user)')
           .eq('id_resto', id);
-      List<Critique> critiques = [];
+
       debugPrint("Response contains ${response.length} rows.");
+
       if (response.isNotEmpty) {
+        final responResto = await Supabase.instance.client
+            .from("Restaurant")
+            .select()
+            .eq("id_resto", id)
+            .single();
+
         for (var row in response) {
+
           Critique critique = new Critique(
               row['id_critique'],
               row['message'] ?? "",
-              new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-              new visiteur.User(
-                  row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
+              RestaurantAPI().createRestant(responResto),
+              new visiteur.User(row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
               row['date_test'] ?? "No date",
-              row['etoiles'] ?? 3
-          );
+              int.parse(row['etoiles'].toString())
+            );
           //restaurant.debugPrint();
           critiques.add(critique);
         }
@@ -48,6 +63,7 @@ class CritiqueAPI {
       if (response is List) {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
+
           for (var row in response) {
             Critique critique = new Critique(
                 row['id_critique'],
@@ -55,7 +71,7 @@ class CritiqueAPI {
                 new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
                 new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['etoiles']??3
+                int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
             critiques.add(critique);
@@ -73,28 +89,40 @@ class CritiqueAPI {
     }
   }
 
-  static Future<Critique?> getCritique(id) async {
+  static Future<Critique?> getCritique(int id) async {
     try{
       final result = await Supabase.instance.client
           .from("Critique")
           .select('*')
           .eq('id_critique', id)
           .single();
+
       if (result.isNotEmpty){
-        return new Critique(
+        final responResto = await Supabase.instance.client
+            .from("Restaurant")
+            .select()
+            .eq("id_resto", result['id_resto'])
+            .single();
+
+        return Critique(
             result['id_critique'],
             result['message'],
-            new Restaurant(result['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-            new visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
+            RestaurantAPI().createRestant(responResto),
+            visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""),
+            result['date_test']??"No date",
+            int.parse(result['etoiles'].toString())
+        );
       }
     } catch (error){
-      debugPrint("Error while modify : $error ❌");
+      debugPrint("Error getting critic id ${id} : $error ❌");
       return null;
     }
+    return null;
   }
 
   /// get les critiques d'un utilisateur
   static Future<List<Critique>> getCritiqueForUser(mail) async{
+
     try {
       final response = await Supabase.instance.client
           .from('Critique')
@@ -105,14 +133,14 @@ class CritiqueAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            Critique critique = new Critique(
-
-                row['id_critique'],
+            print("runtype etoile ${row['etoiles'].runtimeType}");
+            Critique critique = Critique(
+                int.parse(row['id_critique'].toString()),
                 row['message']??"",
-                new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-                new visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
+                Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
+                visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
                 row['date_test']??"No date",
-                row['etoiles']??3
+                int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
             critiques.add(critique);
@@ -126,9 +154,9 @@ class CritiqueAPI {
       }
       return critiques;
     } catch (e) {
-      debugPrint("Error fetching data: $e ❌");
-      return [];
+      debugPrint("Error fetching data: ${e.toString()} ❌");
     }
+    return [];
   }
 
   /// suppression d'une critique
@@ -155,7 +183,7 @@ class CritiqueAPI {
     try{
       final result = await Supabase.instance.client
           .from('Critique')
-          .update({ "id_critique": id, "message": message, "etoiles": etoiles.round()})
+          .update({"message": message, "etoiles": etoiles.round()})
           .eq('id_critique', id)
           .select();
       if (result.isNotEmpty){
@@ -168,4 +196,177 @@ class CritiqueAPI {
         debugPrint("Error while modify : $error ❌");
         return false;
       }
-  }}
+  }
+
+  // Ajoute une image d'un commentaire à la BD
+  static Future<bool> ajoutePhotoCritique(int idCritique, String username, File photo) async {
+
+    final fileName = DateTime.now().microsecondsSinceEpoch.toString();
+    final path = "uploads/$fileName";
+    final supabase = Supabase.instance.client;
+
+    final response =
+    await supabase // Gère automatiquement l'id de la photo gràce à l'option is identity mise sur la colone dans supabase
+        .from('photo_critique')
+        .insert({
+      'user_identifier': username,
+      'review_id': idCritique,
+      'photoid': path
+    }).select();
+
+    await Supabase.instance.client.storage
+        .from("imgstorage")
+        .upload(path, photo!)
+        .then((value) {
+      print("Image bien uploadée : $value");
+    }).catchError((error) {
+      print("Erreur lors de l'upload : $error");
+      return false;
+    });
+    return response.isNotEmpty;
+
+  }
+
+  static Future<Critique?> insertCritique(String id_resto, String username, String commentaire, int note) async {
+    final supabase = Supabase.instance.client;
+
+    final response = await supabase
+        .from('Critique')
+        .insert({
+      'message': commentaire,
+      'mail_user': username,
+      'id_resto': id_resto,
+      'etoiles': note
+    }).select().single();
+
+    final responResto = await Supabase.instance.client
+      .from("Restaurant")
+      .select()
+      .eq("id_resto", response['id_resto'])
+      .single();
+
+    RestaurantAPI().createRestant(responResto);
+
+    return Critique(
+        response['id_critique'],
+        response['message'],
+        RestaurantAPI().createRestant(responResto),
+        visiteur.User(response['mail_user'],"","", "", "Visiteur", [], false, ""), 
+        response['date_test']??"No date",
+        int.parse(response['etoiles'].toString())
+    );
+  }
+
+
+  static Future<Critique?> insertCritiquePhoto(
+    String username, String idResto, String message, int note, File? image) async {
+    final critique = await CritiqueAPI.insertCritique(idResto, username, message, note);
+    try {
+      if (critique != null) {
+        debugPrint("================================================Crtitique Photo not null=================================================");
+        print("critique photo id critique ${critique.id}");
+        if(critique.id == -1) return null;
+        debugPrint("Critique ajouté, result critique ${critique.id}");
+        final result = await ajoutePhotoCritique(critique.id, username, image!);
+        print(result);
+        return critique;
+      }
+      debugPrint("========================================================================================================");
+    }catch (e) {
+      debugPrint("insert critique photo error: ${e.toString()}");
+    }
+    return null;
+  }
+
+  static Future<String?> getPhotoCritiqueIdentifier(int critiqueId, String identifier) async {
+    final SupabaseClient supabase = Supabase.instance.client;
+    final response = await supabase
+        .from('photo_critique')
+        .select('photoid')
+        .eq('review_id', critiqueId)
+        .eq('user_identifier', identifier)
+        .maybeSingle();
+
+    if (response != null) {
+      return response['photoid'];
+    }
+    return null;
+  }
+
+
+  static Future<Image?> getPhotoCritique(int critiqueId) async {
+
+      String? supa_base_url = await dotenv.env['SUPABASE_DB_API_URL'];
+      String bucketName = 'imgstorage';
+      String storageUrl = "${supa_base_url}/storage/v1/object/public/${bucketName}";
+      final username  = await UserViewModel.getCurrentUser();
+      if (critiqueId != -1) {
+        String? url = await CritiqueAPI.getPhotoCritiqueIdentifier(critiqueId, username);
+        if (url != null){
+          // ValueListenableBuilder<double>(
+          //   valueListenable: ImageSizeManager.imageSize,
+          //   builder: (context, size, child) {
+              return Image.network(
+                  storageUrl + "/" + url,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint("getPhotoCritique error : ${error.toString()}");
+                    debugPrint(
+                        "getPhotoCritique stackTrace : ${stackTrace.toString()}");
+
+                    return Image.asset(
+                      'assets/img/default-image.png',
+                      width: 100,
+                      height: 100,
+                    );
+                  }
+              );
+          //   }
+          // );
+        }
+      }
+      return null;
+    }
+
+    static Future<bool> deleteCritiquePhoto(Critique critique) async{
+      try {
+        final supabaseClient = Supabase.instance.client;
+        final supabaseStorage = Supabase.instance.client.storage;
+        final username = await UserViewModel.getCurrentUser();
+        // final Critique? critique = await getCritique(critique.id);
+        // if (critique == null) return false;
+        final photoId = await getPhotoCritiqueIdentifier(critique.id, username);
+        if (photoId == null) return false;
+        List<String> concernedSAOObjetId = [photoId];
+        final photoDeletion = await supabaseStorage
+            .from('imgstorage')
+            .remove(concernedSAOObjetId).catchError( (error) {
+              print("Erreur lors de la suppression de l'object image : $error");
+              return false;
+            }
+        );
+
+        final critPhotoLink = await supabaseClient
+          .from("photo_critique")
+          .delete()
+          .eq('photoid', photoId)
+          .eq('user_identifier', username)
+          .eq('review_id', critique.id)
+          .catchError( (error) {
+            print("Erreur lors de la suppression du lien Object / critique: $error");
+            return false;
+          }
+        );
+
+        await deleteCritique(critique);
+
+        return true;
+      } catch (e) {
+        debugPrint("critique with photo deletion on error: ${e.toString()}");
+        debugPrint("crit Pht del error stattrace: ${e.toString()}");
+      }
+      return false;
+    }
+}

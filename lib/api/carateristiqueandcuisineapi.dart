@@ -6,19 +6,21 @@ import 'package:saemobile/models/typeCuisine.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CaracteristiqueAndCuisineAPI {
-  final SupabaseClient database;
+  final SupabaseClient database = Supabase.instance.client;
 
-  const CaracteristiqueAndCuisineAPI({required this.database});
+  CaracteristiqueAndCuisineAPI();
 
   Future<List<Caracteristique>> getAllCaracterisque() async{
-    List<Caracteristique> result = [];
+    List<Caracteristique> result = [Caracteristique(-1, "Sélectionnez une caractéristique: Aucun choix")];
     try {
       final response = await database
-          .from('Caracteristique')
+          .from('Caractéristique')
           .select();
       if (response.isNotEmpty) {
+        // debugPrint("Raw response from Supabase: ${response.toString()}");
         for (var row in response) {
-          Caracteristique carac = Caracteristique(row['id_carac'], row['carac']);
+          int id = row['id_carac'] is int ? row['id_carac'] : int.parse(row['id_carac'].toString());
+          Caracteristique carac = Caracteristique(id, row['carac']);
           result.add(carac);
         }
         debugPrint('all caracteristique added to the List');
@@ -32,14 +34,16 @@ class CaracteristiqueAndCuisineAPI {
   }
 
   Future<List<TypeCuisine>> getAllTypeCuisine() async{
-    List<TypeCuisine> result = [];
+    List<TypeCuisine> result = [TypeCuisine(-1, "Sélectionnez un type de cuisine: Aucun choix",'')];
     try {
       final response = await database
           .from('TypeCuisine')
           .select();
       if (response.isNotEmpty) {
+
         for (var row in response) {
-          TypeCuisine typeCuisine = TypeCuisine(row['id'], row['cuisine'],row['imgCuisine']);
+          int id = row['id'] is int ? row['id'] : int.parse(row['id'].toString());
+          TypeCuisine typeCuisine = TypeCuisine(id, row['cuisine'],'');
           result.add(typeCuisine);
         }
         debugPrint('all type cuisine added to the List');
@@ -50,6 +54,48 @@ class CaracteristiqueAndCuisineAPI {
       debugPrint(e.toString());
     }
     return result;
+  }
+
+  static Future<TypeCuisine?> getType(id) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('TypeCuisine')
+          .select()
+          .eq('id', id)
+          .maybeSingle();
+      if (response!.isNotEmpty) {
+          TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine'],'');
+          return typeCuisine;
+
+      }else if (response!.isEmpty) {
+        debugPrint("Type cuisine result is empty");
+      }
+    }catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  static Future<String> getTypeString(id) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('TypeCuisine')
+          .select()
+          .eq('id', id)
+          .maybeSingle();
+      if (response!.isNotEmpty) {
+        TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine'],'');
+        return typeCuisine.cuisine;
+
+      }else if (response!.isEmpty) {
+        debugPrint("Type cuisine result is empty");
+        return "Non renseigné";
+      }
+    }catch (e) {
+      debugPrint(e.toString());
+      return "Non renseigné";
+    }
+    return "Non renseigné";
   }
 
 

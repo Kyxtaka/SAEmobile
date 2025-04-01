@@ -3,16 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:saemobile/UI/critiquesRestaurant.dart';
+import 'package:saemobile/UI/review/addCritique.dart';
+import 'package:saemobile/UI/review/critiquesRestaurant.dart';
+import 'package:saemobile/UI/favoris.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
+import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
+import 'package:saemobile/providers/imgsizeprovider.dart';
 import 'package:saemobile/services/local/insert.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'UI/avis.dart';
+import 'UI/review/avis.dart';
 import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
@@ -56,12 +61,12 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
-  await Insert.insertData(db);
-  print("données bien inserées");
+  //await Insert.insertData(db);
+  //print("données bien inserées");
   runApp(MyApp(database: db));
 }
 
-GoRouter _router(UserViewModel userViewModel, Database db) {
+GoRouter _router(UserViewModel userViewModel) {
   return GoRouter(
     initialLocation: '/',
 
@@ -110,10 +115,50 @@ GoRouter _router(UserViewModel userViewModel, Database db) {
             return null;
           }
         },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'decouverte',
+            name: 'decouverte',
+            builder: (context, state) => Decouverte(),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+          GoRoute(
+            path: 'result',
+            name: 'searchResult',
+            builder: (context, state) => SearchResult(
+                cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
+                carac:int.parse(state.uri.queryParameters['carac'].toString()),
+                search: state.uri.queryParameters['search'].toString()
+            ),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ]
       ),
       GoRoute(
+          path: '/favoris',
+        builder: (context, state) => Favoris(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },),
+      GoRoute(
         path: '/accueil',
-        builder: (context, state) => Accueil(database: Supabase.instance.client, db: db),
+        builder: (context, state) => Accueil(database: Supabase.instance.client),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
@@ -157,7 +202,16 @@ GoRouter _router(UserViewModel userViewModel, Database db) {
         builder: (BuildContext context, GoRouterState state){
           final id = state.pathParameters['id']!;
           return DetailsPage(restaurantId:id);
-        }
+        },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'addcritique',
+            name: 'addCritique',
+            builder: (BuildContext context, GoRouterState state) => AddCritiquePage(
+              restID:int.parse(state.pathParameters['id'].toString())
+            )
+          )
+        ]
       ),
       GoRoute(
           path: ('/details/:id/avis'),
@@ -199,48 +253,58 @@ class MyApp extends StatelessWidget {
 
           return MultiProvider(
               providers: [
-                Provider<SupabaseClient>(
-                    create: (_) => Supabase.instance.client),
-                Provider<int>(create: (_) => 42),
-                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
+                Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
                 FutureProvider<String>(
                   create: (context) => UserViewModel.getCurrentUser(),
                   initialData: "",
                 ),
-                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
-                  create: (context) => CritiqueViewModel(),
-                  update: (context, email, critiquesViewModel) {
-                    if (email.isNotEmpty) {
-                      critiquesViewModel?.generateCritiques(email);
-                    }
-                    return critiquesViewModel ?? CritiqueViewModel();
-                  },
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
                 ),
                 ChangeNotifierProvider<UserViewModel>(
                   create: (_) =>
                       UserViewModel(
                           database: Supabase.instance.client, context: context),
                 ),
+                ChangeNotifierProxyProvider<String, FavorisViewModel>(
+                  create: (context) => FavorisViewModel(),
+                  update: (context, email, favorisViewModel) {
+                    if (email.isNotEmpty) {
+                      favorisViewModel?.generateFavoris(email);
+                    }
+                    return favorisViewModel ?? FavorisViewModel();
+                  },
+                  child: Avis(),
+                ),
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                       critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
+                  },
+                ),
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-                  builder: (context, userViewModel, child) {
-                    if (userViewModel.isLoading) {
-                      return MaterialApp(
-                        home: Scaffold(
-                          body: Center(child: CircularProgressIndicator()),
-                        ),
-                      );
-                    }
-                        return MaterialApp.router(
-                          debugShowCheckedModeBanner: false,
-                          theme: theme,
-                          title: 'My App',
-                          routerConfig: _router(userViewModel, database),
-                        );
-                      })
-
+                builder: (context, userViewModel, child) {
+                  if (userViewModel.isLoading) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
+                      ),
+                    );
+                  }
+                  return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    theme: theme,
+                    title: 'My App',
+                    routerConfig: _router(userViewModel),
+                  );
+                }
+              )
           );
 
         });

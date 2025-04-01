@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/boutonDegrade.dart';
@@ -8,9 +9,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../models/restaurant.dart';
 
 class Decouverte extends StatefulWidget{
-  final SupabaseClient database;
+  final SupabaseClient database = Supabase.instance.client;
 
-  Decouverte({super.key, required this.database});
+  Decouverte({super.key});
 
   @override
   State<Decouverte> createState() => _DecouverteState();
@@ -24,7 +25,7 @@ class _DecouverteState extends State<Decouverte> {
   @override
   void initState() {
     super.initState();
-    restaurantAPI = RestaurantAPI(database: widget.database);
+    restaurantAPI = RestaurantAPI();
     futureRestaurants = restaurantAPI.getAllRestaurants();
   }
 
@@ -56,18 +57,7 @@ class _DecouverteState extends State<Decouverte> {
                       return ListView.builder(
                         itemCount: snapshot.data?.length,
                         itemBuilder: (context, index) {
-                          return Card(
-                              elevation: 6,
-                              margin: const EdgeInsets.all(10),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                    backgroundColor: Colors.amber,
-                                    child: Text(snapshot.data?[index].id.toString() ?? "")
-                                ),
-                                title: Text(snapshot.data?[index].name ?? ""),
-                                subtitle: Text(snapshot.data?[index].address ?? ""),
-                              )
-                          );
+                          return snapshot.data![index].renderCard(context);
                         },
                       );
                     }

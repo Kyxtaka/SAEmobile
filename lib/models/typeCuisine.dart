@@ -13,6 +13,9 @@ class TypeCuisine {
 
   String get cuisine => _cuisine;
 
+  String getGlobalLabet() => _cuisine;
+  int getGlobalId() => _idTypeCuisine;
+
   String get img => _img;
 
   void debugPrint() {

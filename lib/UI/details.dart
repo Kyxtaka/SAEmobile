@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-//import 'global/footer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
+import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
+import '../api/carateristiqueandcuisineapi.dart';
+import '../models/typeCuisine.dart';
 import 'global/footer.dart';
 import '../api/restaurantapi.dart';
 import '../models/restaurant.dart';
@@ -25,106 +29,159 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  RestaurantAPI api = RestaurantAPI(database: Supabase.instance.client);
+  RestaurantAPI api = RestaurantAPI();
+  late TypeCuisine type;
+  late final _future;
+  // Future<Map<String, dynamic>> getDetailsRestaurant() async {
+  //   var api = RestaurantAPI();
+  //   var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
+  //   var type;
+  //   try {
+  //     type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
+  //   } catch (e) {
+  //     type = "Non renseigné";
+  //   }
+  //   return {"restaurant": restaurant, "typecuisine": type};
+  // }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _future = _loadData;
+  }
+
+  Future<void> _loadData() async {
+    type = await RestaurantAPI().getRestaurantType(int.parse(widget.restaurantId.toString()));
+  }
 
   @override
   Widget build(BuildContext context) {
     Footer footer = Footer();
+    final favorisViewModel = context.watch<FavorisViewModel>();
     return Scaffold(
-        backgroundColor: Colors.white,
-        bottomNavigationBar: footer.create(context),
-        appBar: Header.create(),
-        body: FutureBuilder<Restaurant?>(
-          future: api.getRestaurantById(int.parse(widget.restaurantId??"-1")),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: footer.create(context),
+      appBar: Header.create(),
+      body: FutureBuilder<Restaurant?>(
+        future: RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1")),
           builder: (context, snapshot){
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
-            }
+          }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
-            } else if (snapshot.hasData) {
+          } else if (snapshot.hasData) {
+
+              String capacity = (snapshot.data!.capacity == -1)
+                  ? "Capacité inconnue"
+                  : "${snapshot.data!.capacity} personnes";
+
               return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 30.0),
-                      child: Text(
-                        snapshot.data!.name!,
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1),
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: Text(
+                      snapshot.data!.name,
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.orange,
+                    thickness: 2,
+                    indent: 250,
+                    endIndent: 250,
+                  ),
+                  SizedBox(height: 10),
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          snapshot.data!.url_photo,
+                          width: 300,
+                          height: 250,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                                'assets/img/default-image.png',
+                                width: 300,
+                                height: 250,
+                              ),
+                        ),
                       ),
-                    ),
-                    Divider(
-                      color: Colors.orange,
-                      thickness: 2,
-                      indent: 250,
-                      endIndent: 250,
-                    ),
-                    SizedBox(height: 10),
-                    Stack(
-                      alignment: Alignment.bottomCenter,
+                      Container(
+                        width: 120,
+                        padding: EdgeInsets.all(5),
+                        color: Colors.black54,
+                        child: Text(
+                          snapshot.data!.name,
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            snapshot.data!.url_photo!,
-                            width: 300,
-                            height: 250,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(
-                                  '../../assets/img/default-image.png',
-                                  width: 300,
-                                  height: 250,
-                                ),
-                          ),
-                        ),
-                        Container(
-                          width: 120,
-                          padding: EdgeInsets.all(5),
-                          color: Colors.black54,
-                          child: Text(
-                            snapshot.data!.name!,
-                            textAlign: TextAlign.center,
-                            style:
-                            TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ),
+                        infoSection("Adresse", snapshot.data!.address),
+                        infoSection("Origine", "Cuisine ID: ${snapshot.data!.id_cuisine}"),
+                        infoSection("Capacité", capacity),
+                        infoSection("Contact", snapshot.data!.tel),
                       ],
                     ),
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          infoSection("Adresse", snapshot.data!.address),
-                          infoSection("Origine", "Cuisine ID: ${snapshot.data!.id_cuisine}"),
-                          infoSection("Capacité", "${snapshot.data!.capacity} personnes"),
-                          infoSection("Contact", snapshot.data!.tel),
-                        ],
+                  ),
+                  SizedBox(height: 15),
+                  Text("Ajouter en favoris", style: TextStyle(fontSize:15)),
+                  IconButton(
+                    icon: Icon(Icons.favorite,),
+                    color: Colors.grey,
+                    onPressed:() async {
+                      var user = await  UserViewModel.getCurrentUser();
+                      favorisViewModel.addFavoris(user, snapshot.data?.id);
+                      context.go('/favoris');}
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
-                    SizedBox(height: 15),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    onPressed: () {
+                      context.go('/details/${snapshot.data!.id}/avis');
+                    },
+                    child: Text("Les Avis", style: TextStyle(color: Colors.white)),
+                  ),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {
-                        context.go('/details/'+snapshot.data!.id.toString()+'/avis');
-                      },
-                      child: Text("Les Avis", style: TextStyle(color: Colors.white)),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
-                  ],
-                ),
-              );}
+                    onPressed: () {
+                      context.go('/details/${widget.restaurantId}/addcritique');
+                    },
+                    child: Text("Donner un avis", style: TextStyle(color: Colors.white)),
+                  ),
+              ],
+            ),
+          );}
             return Text("Erreur lors de la récupération du restaurant");},
 
         ));

@@ -1,18 +1,20 @@
 
 
 import 'package:saemobile/models/restaurant.dart';
+import 'package:flutter/material.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsPreferees {
 
-  final Database db;
-  RestaurantsPreferees({required this.db});
-
-  Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.insert(
+    debugPrint("ajout local favoris pour ${email} avec ${restaurantId}");
+    var result = await db.insert(
       'restaurants_preferees',
       {
         'email': email,
@@ -22,40 +24,41 @@ class RestaurantsPreferees {
     );
   }
 
-  Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
+  static Future<void> deleteRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
+    var result = await db.delete(
       'restaurants_preferees',
       where: 'email = ? AND restaurant_id = ?',
       whereArgs: [email, restaurantId],
     );
   }
 
-  Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
+  static Future<List<Restaurant>> getRestaurantsPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    final maps = await db.rawQuery('''
-    SELECT r.*
-    FROM restaurants_preferees rp
-    INNER JOIN restaurants r ON rp.restaurant_id = r.id
-    WHERE rp.email = ?
-  ''', [email]);
-    return maps.map((map) {
-      return Restaurant(
-        map['id'] as int? ?? 0,
-        map['name'] as String? ?? '',
-        map['address'] as String? ?? '',
-        map['capacity'] as int? ?? 0,
-        map['tel'] as String? ?? '',
-        map['siret'] as String? ?? '',
-        map['website'] as String? ?? '',
-        map['url_photo'] as String? ?? '',
-        map['id_cuisine'] as int? ?? 0,
-        map['id_region'] as int? ?? 0,
-        map['nb_etoile'] as int? ?? 0,
-        map['horaires'] as String? ?? '',
-        map['gps_lat'] as double? ?? 0.0,
-        map['gps_long'] as double? ?? 0.0,
-      );
-    }).toList();
+    var result = await db.query(
+      'restaurants_preferees',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    List<Restaurant> restaurants = [];
+    for (var i =0;i<result.length;i++){
+      var restaurant = result[i];
+      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+         "",
+          "",
+          0,
+          "",
+          "",
+          "",
+          "",
+          0,
+          45,
+          0,
+          "",
+          0.0,
+          0.0));
+    }
+    return restaurants;
   }
+
 }

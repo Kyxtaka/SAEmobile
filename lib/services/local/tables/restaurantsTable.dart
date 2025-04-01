@@ -6,9 +6,6 @@ import '../sqlfliteDatabase.dart';
 
 class RestaurantsTable {
 
-  final Database db;
-  RestaurantsTable({required this.db});
-
   Future<void> insertRestaurant(Restaurant restaurant) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(

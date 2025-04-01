@@ -4,9 +4,6 @@ import '../sqlfliteDatabase.dart';
 
 class CuisinesPreferees {
 
-  final Database db;
-  CuisinesPreferees({required this.db});
-
   Future<void> insertCuisinePrefere(String email, int cuisineId) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(

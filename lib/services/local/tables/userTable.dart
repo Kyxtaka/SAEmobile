@@ -5,9 +5,6 @@ import '../sqlfliteDatabase.dart';
 
 class UserTable {
 
-  final Database db;
-  UserTable({required this.db});
-
   static Future<void> insertUser(User user) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
