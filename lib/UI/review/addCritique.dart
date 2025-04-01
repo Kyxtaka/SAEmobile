@@ -122,7 +122,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                         ),
                         const SizedBox(height: 20),
                         if (_selectedImage != null)
-                          Image.file(_selectedImage!, height: 500, width: double.infinity, fit: BoxFit.cover),
+                          Image.file(_selectedImage!, height: 75, width: double.infinity, fit: BoxFit.cover),
                         const SizedBox(height: 20),
 
 

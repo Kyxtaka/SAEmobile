@@ -11,6 +11,7 @@ import 'package:saemobile/models/user.dart' as visiteur;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/critique.dart';
+import '../providers/imgsizeprovider.dart';
 
 class CritiqueAPI {
 
@@ -294,6 +295,7 @@ class CritiqueAPI {
 
 
   static Future<Image?> getPhotoCritique(int critiqueId) async {
+
       String? supa_base_url = await dotenv.env['SUPABASE_DB_API_URL'];
       String bucketName = 'imgstorage';
       String storageUrl = "${supa_base_url}/storage/v1/object/public/${bucketName}";
@@ -301,23 +303,28 @@ class CritiqueAPI {
       if (critiqueId != -1) {
         String? url = await CritiqueAPI.getPhotoCritiqueIdentifier(critiqueId, username);
         if (url != null){
-          return Image.network(
-            storageUrl+"/"+url,
-            width: 300,
-            height: 250,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              debugPrint("getPhotoCritique error : ${error.toString()}");
-              debugPrint("getPhotoCritique stackTrace : ${stackTrace.toString()}");
+          // ValueListenableBuilder<double>(
+          //   valueListenable: ImageSizeManager.imageSize,
+          //   builder: (context, size, child) {
+              return Image.network(
+                  storageUrl + "/" + url,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint("getPhotoCritique error : ${error.toString()}");
+                    debugPrint(
+                        "getPhotoCritique stackTrace : ${stackTrace.toString()}");
 
-              return Image.asset(
-                'assets/img/default-image.png',
-                width: 150,
-                height: 350,
+                    return Image.asset(
+                      'assets/img/default-image.png',
+                      width: 100,
+                      height: 100,
+                    );
+                  }
               );
-            }
-
-          );
+          //   }
+          // );
         }
       }
       return null;

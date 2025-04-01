@@ -103,7 +103,7 @@ class Critique {
                     color: Colors.amber,
                   ),
               itemCount: 5,
-              itemSize: 24.0,
+              itemSize: 12.0,
               direction: Axis.horizontal,
             ),
             SizedBox(height: 8),
@@ -112,7 +112,7 @@ class Critique {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    iconSize: 20,
+                    iconSize: 15,
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
@@ -168,8 +168,13 @@ class Critique {
               itemSize: 24.0,
               direction: Axis.horizontal,
             ),
-            SizedBox(height: 8),
-            Text(message),
+            SizedBox(height: 5),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 5,
+              ),
+            ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

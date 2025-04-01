@@ -134,14 +134,14 @@ class Restaurant {
                 borderRadius: BorderRadius.circular(15),
                 child: Image.network(
                   url_photo,
-                  width: 300,
-                  height: 250,
+                  width: 100,
+                  height: 100,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
                     Image.asset(
                       'assets/img/default-image.png',
-                      width: 150,
-                      height: 350,
+                      width: 100,
+                      height: 100,
                     ),
                 ),
               ),
