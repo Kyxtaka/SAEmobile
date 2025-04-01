@@ -86,29 +86,19 @@ class Critique {
     _imagePath = value;
   }
 
-  Widget renderCard(BuildContext context) {
+  Widget renderCard(BuildContext context, bool? publicMode) {
+    if (publicMode != null) publicMode = publicMode;
+    else {
+      publicMode = true;
+    }
     if (imagePath != 'assets/img/default-image.png') {
-      return renderCardImage(context);
+      return renderCardImage(context, publicMode);
     }else {
-      return renderCardSimple(context);
+      return renderCardSimple(context, publicMode);
     }
   }
 
-  Widget renderCardImage(BuildContext context) {
-    // FutureBuilder<List<Image>>(
-    //   future: commentaire.getMesPhotos(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const CircularProgressIndicator();
-    //     } else if (snapshot.hasError ||
-    //         !snapshot.hasData ||
-    //         snapshot.data!.isEmpty) {
-    //       return const SizedBox();
-    //     }
-    //     return ImageCommentaireDetail(snapshot: snapshot);
-    //   },
-    // ),
-
+  Widget renderCardImage(BuildContext context, bool? publicMode) {
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(10),
@@ -141,6 +131,7 @@ class Critique {
                 fontSize: 12,
               ),
             ),
+            (publicMode!) ? Container() :
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -182,9 +173,7 @@ class Critique {
     );
   }
 
-  Widget renderCardSimple(BuildContext context) {
-
-
+  Widget renderCardSimple(BuildContext context,  bool? publicMode) {
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(10),
@@ -211,6 +200,7 @@ class Critique {
                 fontSize: 10,
               ),
             ),
+            (publicMode!) ? Container() :
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

@@ -57,7 +57,7 @@ class _AvisState extends State<Avis> {
             itemCount: critiquesViewModel.liste.length,
             itemBuilder: (BuildContext context, int index) {
               var critique = critiquesViewModel.liste[index];
-              return critique.renderCard(context);
+              return critique.renderCard(context, false);
             },
           ),
       );

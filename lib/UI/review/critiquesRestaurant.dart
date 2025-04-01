@@ -55,7 +55,7 @@ class CritiqueRestaurants extends StatelessWidget{
                           if (critique == null) {
                             return Text("Erreur dans la récupération d'une review");
                           }
-                          return critique.renderCard(context);
+                          return critique.renderCard(context, true);
                         }
                     );
                   }
