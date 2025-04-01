@@ -24,7 +24,15 @@ class CritiqueAPI {
               row['message'] ?? "",
               new Restaurant(row['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
               new visiteur.User(
-                  row['Visiteur']['mail'], "", row['Visiteur']['nom_user'], row['Visiteur']["prenom"], "Visiteur", [], false, ""),
+                  mail: row['Visiteur']['mail'],
+                  password: "",
+                  nom: row['Visiteur']['nom_user'],
+                  prenom: row['Visiteur']["prenom"],
+                  role: "Visiteur",
+                  tester: [],
+                  connected: false,
+                  localisation: ""
+              ),
               row['date_test'] ?? "No date",
               row['etoiles'] ?? 3
           );
@@ -53,7 +61,16 @@ class CritiqueAPI {
                 row['id_critique'],
                 row['message']??"",
                 new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-                new visiteur.User(row['mail'], "", row['nom_user'], row["prenom"],"Visiteur", [],false, ""),
+                new visiteur.User(
+                    mail: row['Visiteur']['mail'],
+                    password: "",
+                    nom: row['Visiteur']['nom_user'],
+                    prenom: row['Visiteur']["prenom"],
+                    role: "Visiteur",
+                    tester: [],
+                    connected: false,
+                    localisation: ""
+                ),
                 row['date_test']??"No date",
                 row['etoiles']??3
             );
@@ -80,12 +97,21 @@ class CritiqueAPI {
           .select('*')
           .eq('id_critique', id)
           .single();
-      if (result.isNotEmpty){
+      if (result != null) {
         return new Critique(
             result['id_critique'],
             result['message'],
             new Restaurant(result['id_resto'], "", "", 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-            new visiteur.User(result['mail_user'],"","", "", "Visiteur", [], false, ""), "", 3);
+            new visiteur.User(
+                mail: result['Visiteur']['mail'],
+                password: "",
+                nom: result['Visiteur']['nom_user'],
+                prenom: result['Visiteur']["prenom"],
+                role: "Visiteur",
+                tester: [],
+                connected: false,
+                localisation: ""
+            ), "", 3);
       }
     } catch (error){
       debugPrint("Error while modify : $error ❌");
@@ -110,7 +136,16 @@ class CritiqueAPI {
                 row['id_critique'],
                 row['message']??"",
                 new Restaurant(row['id_resto'], row['Restaurant']['nom'], row['Restaurant']['adresse'], 0, "", "", "", "", -1, 45, 0, "", 0.0, 0.0),
-                new visiteur.User(row['mail_user'], "", "", "","Visiteur", [],false, ""),
+                new visiteur.User(
+                    mail: row['Visiteur']['mail_user'],
+                    password: "",
+                    nom: row['Visiteur']['nom_user'],
+                    prenom: row['Visiteur']["prenom"],
+                    role: "Visiteur",
+                    tester: [],
+                    connected: false,
+                    localisation: ""
+                ),
                 row['date_test']??"No date",
                 row['etoiles']??3
             );
@@ -138,24 +173,24 @@ class CritiqueAPI {
           .from('Critique')
           .delete()
           .eq('id_critique', critique.id);
-      if (result != null){
-          debugPrint("Error while deleting critique");
-          return false;
-      }
-      else {
+
+      if (result.isEmpty) {
         return true;
+      } else {
+        debugPrint("Error while deleting critique ❌");
+        return false;
       }
-    } catch (error){
+    } catch (error) {
       debugPrint("Error with database: $error ❌");
       return false;
     }
   }
-  
+
   static Future<bool> modifyCritique(id, message, etoiles) async {
     try{
       final result = await Supabase.instance.client
           .from('Critique')
-          .update({ "id_critique": id, "message": message, "etoiles": etoiles.round()})
+          .update({ "message": message, "etoiles": etoiles.round() })
           .eq('id_critique', id)
           .select();
       if (result.isNotEmpty){
@@ -165,7 +200,7 @@ class CritiqueAPI {
 
       return false;
     } catch (error){
-        debugPrint("Error while modify : $error ❌");
-        return false;
-      }
+      debugPrint("Error while modify : $error ❌");
+      return false;
+    }
   }}

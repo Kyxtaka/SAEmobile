@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../api/viewsmodel/userviewmodel.dart';
 
 class Footer {
   BottomNavigationBar create(BuildContext context) {
@@ -21,15 +24,16 @@ class Footer {
         ),
         BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favoris"),
         BottomNavigationBarItem(icon: Icon(Icons.messenger_outline), label: "Avis"),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label : "Settings"),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Settings',
+          label: 'Profil',
         ),
       ],
     );
   }
 
-  /// determine l'onglet en focntion  url
+  /// determine l'onglet en fonction  url
   int _getSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/home')) return 0;
@@ -37,6 +41,7 @@ class Footer {
     if (location.startsWith('/favoris')) return 2;
     if (location.startsWith('/avis')) return 3;
     if (location.startsWith('/settings')) return 4;
+    if (location.startsWith('/profile')) return 5;
     return 0;
   }
 
@@ -57,6 +62,14 @@ class Footer {
         break;
       case 4:
         context.go('/settings');
+        break;
+      case 5:
+        final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+        if (userViewModel.isConnected()) {
+          context.go('/profile/${UserViewModel.getCurrentUser()}');
+        } else {
+          context.go('/login');
+        }
         break;
     }
   }

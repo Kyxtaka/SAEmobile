@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saemobile/services/local/tables/userTable.dart';
-import 'package:saemobile/models/user.dart';
-import '../utils/UserTools.dart';
+import 'package:saemobile/models/user.dart' as app_models;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Profile extends StatefulWidget {
@@ -23,6 +22,7 @@ class _ProfilePageState extends State<Profile> {
 
   TextEditingController _nomController = TextEditingController();
   TextEditingController _prenomController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
 
@@ -35,27 +35,29 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _loadUserData() async {
-    User? user = await _userTable.getUserByEmail(widget.userEmail);
+    app_models.User? user = await _userTable.getUserByEmail(widget.userEmail);
     if (user != null) {
       setState(() {
         _nomController.text = user.nom;
         _prenomController.text = user.prenom;
+        _emailController.text = user.mail;
         _isConnected = user.connected;
       });
     }
   }
+
   Future<void> _updateProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
-    User updatedUser = User(
-        widget.userEmail,
-        _passwordController.text.isNotEmpty ? _passwordController.text : "",
-        _nomController.text,
-        _prenomController.text,
-        "",
-        [],
-        _isConnected,
-        ""
+    app_models.User updatedUser = app_models.User(
+      mail: widget.userEmail,
+      password: _passwordController.text.isNotEmpty ? _passwordController.text : "",
+      nom: _nomController.text,
+      prenom: _prenomController.text,
+      role: "",
+      tester: [],
+      connected: _isConnected,
+      localisation: "",
     );
 
     await _userTable.updateUser(updatedUser);
@@ -63,6 +65,7 @@ class _ProfilePageState extends State<Profile> {
       SnackBar(content: Text("Profil mis à jour avec succès !")),
     );
   }
+
 
   Future<void> _logout() async {
     await supabase.auth.signOut();
@@ -133,3 +136,4 @@ class _ProfilePageState extends State<Profile> {
 
 
 }
+

@@ -6,7 +6,7 @@ import 'package:saemobile/models/user.dart';
 
 void main() {
   test("Test des getters sur l'objet User", (){
-    var user =  new User("mail@mail", "motdepasse", "Dupont", "Jean", "Visiteur", [], false, "");
+    var user =  new User(mail: "mail@mail", password: "motdepasse", nom: "Dupont", prenom: "Jean", role: "Visiteur", tester: [], connected: false, localisation: "");
     expect(user.connected, false);
     expect(user.mail, "mail@mail");
     expect(user.password, "motdepasse");
