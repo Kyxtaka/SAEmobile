@@ -15,13 +15,7 @@ class Avis extends StatefulWidget {
 
 class _AvisState extends State<Avis> {
   // final header = Header();
-  bool _loading = true;
   late List<Critique> critliste;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,27 +23,23 @@ class _AvisState extends State<Avis> {
     print("Avis widget reconstruit !");
     print("Avis page liste: ${critiquesViewModel.liste}");
 
-    if (critiquesViewModel.liste.isEmpty) {
-      if (_loading) {
-        return Scaffold(
-          appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
-          bottomNavigationBar: Footer().create(context),
-          body: Center(child: CircularProgressIndicator(),),
-        );
-      }
+    if (critiquesViewModel.onLoading) {
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: Footer().create(context),
-        body: Text("Pas d'avis"),
+        body: Center(child: CircularProgressIndicator(),),
+      );
+    }
+
+    if (critiquesViewModel.liste.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
+        bottomNavigationBar: Footer().create(context),
+        body: Center(child: Text("Pas d'avis")),
       );
     }
     else {
-      setState(() {
-        _loading = false;
-      });
       print(" avis page liste ${critiquesViewModel.liste}");
-
-
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: Footer().create(context),

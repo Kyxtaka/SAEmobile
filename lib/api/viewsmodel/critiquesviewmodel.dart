@@ -7,21 +7,26 @@ import 'package:saemobile/models/critique.dart';
 
 class CritiqueViewModel extends ChangeNotifier{
   late List<Critique> liste = [];
+  var _onLoading = true;
 
   CritiqueViewModel() {
     liste = [];
   }
 
 
+  get onLoading => _onLoading;
 
   Future<void> generateCritiques(user) async {
+    _onLoading = true;
     liste = await CritiqueAPI.getCritiqueForUser(user);
     for (var i = 0;i<liste.length; i++) {
       liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
       await liste[i].getCritiqueImageIfExist();
     }
+    _onLoading = false;
     notifyListeners();
   }
+
 
 
   Future<bool> deleteCritique(Critique critique, bool imagePresent) async {
