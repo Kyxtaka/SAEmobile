@@ -55,6 +55,22 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
   Widget build(BuildContext context) {
     final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
     // critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
+
+    void showLoading() {
+      showDialog(
+        barrierColor: Colors.black.withValues(alpha: 0.5),
+        context: context,
+        builder: (_) =>
+            Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+      );
+    }
+
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
@@ -62,7 +78,9 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
           future: _loadDataFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
-              return Center(child: CircularProgressIndicator(),);
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
 
             if (snapshot.hasError) {
@@ -134,6 +152,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
+                                  showLoading();
                                   print("Image sélectionnée : ${_selectedImage!.path}");
                                   await critiquesViewModel.insertCritiquePhoto(
                                     user_identifier,
@@ -145,7 +164,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
-
+                                  showLoading();
                                   await critiquesViewModel.insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
