@@ -70,11 +70,23 @@ class Critique {
 
   Future<void> getCritiqueImageIfExist() async {
     final result = await CritiqueAPI.getPhotoCritique(id);
-    if (result != null) image = result;
+    if (result != null)  {
+      image = result;
+      imagePath = "";
+    }
+
+  }
+
+  String? _imagePath;
+
+  String get imagePath => _imagePath ?? 'assets/img/default-image.png';
+
+  set imagePath(String value) {
+    _imagePath = value;
   }
 
   Widget renderCard(BuildContext context) {
-    if (image != null) {
+    if (imagePath != 'assets/img/default-image.png') {
       return renderCardImage(context);
     }else {
       return renderCardSimple(context);
@@ -107,7 +119,12 @@ class Critique {
               direction: Axis.horizontal,
             ),
             SizedBox(height: 8),
-            Text(message),
+            Text(
+              message,
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -116,6 +133,7 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
+                      print("image url : ${image}");
                       bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, true);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +190,7 @@ class Critique {
             Text(
               message,
               style: TextStyle(
-                fontSize: 5,
+                fontSize: 10,
               ),
             ),
             Row(
@@ -183,6 +201,7 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
+                      print("image url : ${image}");
                       bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, false);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
