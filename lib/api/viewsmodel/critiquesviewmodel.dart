@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/critiqueapi.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/critique.dart';
 
 
@@ -27,6 +28,17 @@ class CritiqueViewModel extends ChangeNotifier{
     }
     _onLoading = false;
     notifyListeners();
+  }
+
+  Future<void> refreshDataNoNotify() async {
+    String username = await UserViewModel.getCurrentUser();
+    _onLoading = true;
+    liste = await CritiqueAPI.getCritiqueForUser(username);
+    for (var i = 0;i<liste.length; i++) {
+      liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
+      await liste[i].getCritiqueImageIfExist();
+    }
+    _onLoading = false;
   }
 
 

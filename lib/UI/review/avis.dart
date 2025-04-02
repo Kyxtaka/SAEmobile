@@ -17,9 +17,19 @@ class Avis extends StatefulWidget {
 
 
 class _AvisState extends State<Avis> {
-  Key _key = UniqueKey();
   // final header = Header();
   late List<Critique> critliste;
+  late String memorizedUsername;
+
+  Future<void> getUser() async {
+    memorizedUsername = await UserViewModel.getCurrentUser();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
 
   void showLoading() {
     showDialog(
@@ -36,9 +46,39 @@ class _AvisState extends State<Avis> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final critiquesViewModel = context.watch<CritiqueViewModel>();
+    // final userViewModel = context.watch<UserViewModel>();
+
+    Future<void> refreshWidget() async {
+      showLoading();
+      await critiquesViewModel.refreshDataNoNotify();
+      context.pop();
+      context.go("/avis");
+    }
+
+    Future<void> initOnUserChange() async {
+      if (critiquesViewModel.liste.isNotEmpty) {
+        // final firstCritique = critiquesViewModel.liste.first;
+        final String currentUser = await UserViewModel.getCurrentUser();
+        if (memorizedUsername != currentUser) await refreshWidget();
+      }
+    }
+
+    //selector généré par chatGPT pour écouter la variable identifier du userViewModel
+    // ne fonctionne pas en dirait
+    Selector<UserViewModel, String>(
+      selector: (_, userViewModel) => UserViewModel.identifier,
+      builder: (_, currentUser, __) {
+        initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
+        return SizedBox.shrink(); // Widget invisible qui écoute les changements
+      },
+    );
+
+
     print("Avis widget reconstruit !");
     print("Avis page liste: ${critiquesViewModel.liste}");
 
@@ -60,8 +100,7 @@ class _AvisState extends State<Avis> {
                 Text("Aucun avis trouvé"),
                 ElevatedButton(
                     onPressed: () async {
-                      showLoading();
-                      await critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
+                      await refreshWidget();
                     },
                     child: Text("Un problème ? Réactualiser (Fonctionne pas)")
                 )
@@ -90,16 +129,12 @@ class _AvisState extends State<Avis> {
 
             ElevatedButton(
                 onPressed: () async {
-                  showLoading();
-                  await critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
-                  context.go('/accueil');
+                  await refreshWidget();
                 },
                 child: Text("Un problème ? Réactualiser")
             )
           ],
         )
-
-
       );
     }
   }
