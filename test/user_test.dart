@@ -20,5 +20,6 @@ void main() {
 
     expect(user.role, isNot("admin"));
     expect(user.prenom, isNot("Francis"));
+    user.debugPrint();
   });
 }

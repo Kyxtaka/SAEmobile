@@ -22,6 +22,7 @@ void main() {
     expect(restaurant.url_photo, "");
     expect(restaurant.toMapLocal(), {'id': 1,
       'name': "Au Bouillon",
-      'address': "3 rue perdu"});
+      'address': "3 rue perdu", 'url_photo':''});
+    restaurant.address;
   });
 }
