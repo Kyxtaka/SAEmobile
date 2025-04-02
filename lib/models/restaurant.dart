@@ -145,7 +145,7 @@ class Restaurant {
                     ),
                 ),
               ),
-              // hyperLink(context),
+
             ],
           ),
           title: Text(name ?? ""),
