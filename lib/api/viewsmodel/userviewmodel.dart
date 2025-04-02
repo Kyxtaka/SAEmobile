@@ -15,7 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class UserViewModel extends ChangeNotifier {
   late bool connectionStatus = false ;
   late SupabaseClient database;
-  static late String identifier;
+  late String identifier;
   final BuildContext context;
   bool isLoading = true;
 
@@ -35,7 +35,9 @@ class UserViewModel extends ChangeNotifier {
     await prefs.setString('identifier', identifier); debugPrint("identifier written in local storage");
     await prefs.setString('hashedPassword',hashedPassword); debugPrint("hash written in local storage");
     connectionStatus = true;
-    identifier = (await prefs.getString('identifier'))!; debugPrint("get identifier");
+    this.identifier = (await prefs.getString('identifier'))!;
+    debugPrint("objet identifier edited");
+    debugPrint("objet identifier is : ${this.identifier}");
     notifyListeners();
   }
 
@@ -77,7 +79,10 @@ class UserViewModel extends ChangeNotifier {
 
         if (result != null && result['mail']==identifier && result ['password']==hashedPassword) {
           connectionStatus = true;
-          debugPrint("connected from stored credential set connection status true");
+          this.identifier = (await prefs.getString('identifier'))!;
+          debugPrint("auto bjet identifier edited");
+          debugPrint("auto objet identifier is : ${this.identifier}");
+          debugPrint("auto connected from stored credential set connection status true");
           context.go('/accueil');
         }
         else {

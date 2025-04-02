@@ -48,7 +48,7 @@ class _AvisState extends State<Avis> {
   @override
   Widget build(BuildContext context) {
     final critiquesViewModel = context.watch<CritiqueViewModel>();
-    // final userViewModel = context.watch<UserViewModel>();
+    final userViewModel = context.watch<UserViewModel>();
 
     Future<void> refreshWidget() async {
       _showLoading(context);
@@ -69,22 +69,25 @@ class _AvisState extends State<Avis> {
     }
 
     Future<void> initOnUserChange() async {
+      debugPrint("initOnUserChanged called");
+      // if (critiquesViewModel.liste.isNotEmpty) {
+      //   debugPrint("list not empty");
+      final String currentUser = await UserViewModel.getCurrentUser();
+      // debugPrint("memorizeUsername ${memorizedUsername}");
+      // debugPrint("currentUser ${currentUser}");
+      // debugPrint("refreshing ...");
       if (critiquesViewModel.liste.isNotEmpty) {
-        final String currentUser = await UserViewModel.getCurrentUser();
-        if (memorizedUsername != currentUser) await refreshWidget();
+        if (currentUser != critiquesViewModel.liste.first.user?.mail) refreshWidget();
+      }else if (critiquesViewModel.liste.isEmpty) {
+        await critiquesViewModel.refreshDataNoNotify();
+        if (critiquesViewModel.liste.isNotEmpty) refreshWidget();
       }
+      debugPrint("refresh canceled");
+      // }
     }
 
-    //selector généré par chatGPT pour écouter la variable identifier du userViewModel
+    // selector généré par chatGPT pour écouter la variable identifier du userViewModel
     // ne fonctionne pas en dirait
-    // Selector<UserViewModel, String>(
-    //   selector: (_, userViewModel) => UserViewModel.identifier,
-    //   builder: (_, currentUser, __) {
-    //     initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
-    //     return SizedBox.shrink(); // Widget invisible qui écoute les changements
-    //   },
-    // );
-
 
     print("Avis widget reconstruit !");
     // print("Avis page liste: ${critiquesViewModel.liste}");
@@ -110,20 +113,26 @@ class _AvisState extends State<Avis> {
                       await refreshWidget();
                     },
                     child: Text("Un problème ? Réactualiser (Fonctionne pas)")
-                )
+                ),
+                Selector<UserViewModel, String>(
+                  selector: (_, userViewModel) => userViewModel.identifier,
+                  builder: (context, currentUser, __)  {
+                    debugPrint("====================== User identifier changed: cu ${currentUser} =======");
+                    initOnUserChange();
+                    return SizedBox.shrink(); // Widget invisible qui écoute les changements
+                  },
+                ),
               ],
             )
         ),
       );
     }
     else {
-      // print(" avis page liste ${critiquesViewModel.liste}");
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: Footer().create(context),
         body: Column(
           children: [
-
             Expanded(
                 child:  ListView.builder(
                   itemCount: critiquesViewModel.liste.length,
@@ -139,6 +148,14 @@ class _AvisState extends State<Avis> {
                   await refreshWidget();
                 },
                 child: Text("Un problème ? Réactualiser")
+            ),
+            Selector<UserViewModel, String>(
+              selector: (_, userViewModel) => userViewModel.identifier,
+              builder: (context, currentUser, __) {
+                debugPrint("====================== User identifier changed: cu ${currentUser} =======");
+                initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
+                return SizedBox.shrink(); // Widget invisible qui écoute les changements
+              },
             )
           ],
         )
