@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/carateristiqueandcuisineapi.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/caracteristique.dart';
 import 'package:saemobile/models/typeCuisine.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
@@ -22,6 +27,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   List<TypeCuisine> typeCuisines = [];
   List<Caracteristique> caracteristiques = [];
+  late var position;
+  late var restauranstByPosition;
 
   TypeCuisine? selectedType;
   Caracteristique? selectedCarac;
@@ -35,6 +42,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _loadData() async {
     final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
     final caracs = await caracAndCuisineAPI.getAllCaracterisque();
+    position = await UserViewModel.getLocalisation();
+    restauranstByPosition = await RestaurantAPI.getRestaurantsByLocation(position.latitude, position.longitude);
 
     setState(() {
       typeCuisines = cuisines;
@@ -142,11 +151,68 @@ class _SearchScreenState extends State<SearchScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: FlutterMap(
+                  options: MapOptions(
+                  initialCenter : position,
+                  initialZoom:13
+                ),
+                children: [
+                  TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
+                  ),
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: position, // center of 't Gooi
+                        radius: 150,
+                        useRadiusInMeter: true,
+                        color: Colors.red,
+                        borderColor: Colors.red,
+                        borderStrokeWidth: 2,
+                      )
+                    ],
+                  ),
+                  setRestaurantsByPosition(context)]),)
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+
+  Widget setRestaurantsByPosition(BuildContext context) {
+    List<Marker> markersRestaurants = [];
+
+    for (var i = 0; i < restauranstByPosition.length; i++) {
+      markersRestaurants.add(
+        Marker(
+          point: LatLng(
+              restauranstByPosition[i]['lat'],
+              restauranstByPosition[i]['long']
+          ),
+          width: 40,
+          height: 40,
+          child: GestureDetector(
+            onTap: () {
+              context.go('/details/${restauranstByPosition[i]['id']}');
+            },
+            child: Icon(
+              Icons.location_on,
+              color: Colors.orange,
+              size: 40,
+            ),
+          ),
+        ),
+      );
+    }
+    return MarkerLayer(
+      markers: markersRestaurants,
     );
   }
 }

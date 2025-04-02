@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:saemobile/UI/global/footer.dart';
@@ -43,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _loadUserTypePreference() async {
     var user = await UserViewModel.getCurrentUser();
     String? type = await CuisinesPrefereesTable.getCuisinesPreferees(user);
-    LatLng pos = await userViewModel.getLocalisation();
+    LatLng pos = await UserViewModel.getLocalisation();
     setState(() {
       selectedType = type ?? "non renseigné";
       localisation = pos;
@@ -115,8 +116,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           CircleLayer(
                             circles: [
                               CircleMarker(
-                                point: localisation,
-                                radius: 250,
+                                point: localisation, // center of 't Gooi
+                                radius: 200,
                                 useRadiusInMeter: true,
                                 color: Colors.red,
                                 borderColor: Colors.red,
