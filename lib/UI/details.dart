@@ -58,15 +58,15 @@ class _DetailsPageState extends State<DetailsPage> {
         future: getDetailsRestaurant(),
           builder: (context, snapshot){
           var typecuisine = "Non renseigné";
-          if (snapshot.data!['typecuisine'] is TypeCuisine?){
-            typecuisine = snapshot.data!['typecuisine'].cuisine;
-          }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
           }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
+            if (snapshot.data!['typecuisine'] is TypeCuisine?){
+              typecuisine = snapshot.data!['typecuisine'].cuisine;
+            }
               return SingleChildScrollView(
               child: Column(
                 children: [
