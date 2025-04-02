@@ -15,7 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class UserViewModel extends ChangeNotifier {
   late bool connectionStatus = false ;
   late SupabaseClient database;
-  late String identifier;
+  static late String identifier;
   final BuildContext context;
   bool isLoading = true;
 
@@ -35,6 +35,7 @@ class UserViewModel extends ChangeNotifier {
     await prefs.setString('identifier', identifier); debugPrint("identifier written in local storage");
     await prefs.setString('hashedPassword',hashedPassword); debugPrint("hash written in local storage");
     connectionStatus = true;
+    identifier = (await prefs.getString('identifier'))!; debugPrint("get identifier");
     notifyListeners();
   }
 

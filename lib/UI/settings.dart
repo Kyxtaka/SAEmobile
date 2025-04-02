@@ -153,8 +153,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  await critiquesViewModel.generateCritiques("");
-                  await favorisViewModel.generateFavoris("");
+                  // await critiquesViewModel.generateCritiques("");
+                  // await favorisViewModel.generateFavoris("");
                   await userViewModel.setDisconnection();
                 },
                 child: const Text(
