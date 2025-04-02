@@ -29,6 +29,9 @@ import 'UI/details.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
+import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
+
 
 import 'api/viewsmodel/critiquesviewmodel.dart';
 import 'api/viewsmodel/userviewmodel.dart'; // Detects if running on Web
@@ -48,6 +51,7 @@ Future<SupabaseClient> initSupabase() async{
   return Supabase.instance.client;
 
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -60,7 +64,46 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
-  runApp(MyApp(database: db));
+  runApp(
+    // reprise de l'exemple connection alert https://pub.dev/packages/internet_connection_control_alert
+      MaterialApp(
+        home: Builder(
+            builder: (context) {
+              Internet.delayStart(
+                context: context,
+                delay: 1500,
+                barrier: false,
+                alert: AlertDialog(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25)
+                  ),
+                  content: Container(
+                    height: 200,
+                    padding: const EdgeInsets.all(20),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      spacing: 20,
+                      children: [
+                        Icon(Icons.wifi_off_rounded, size: 50),
+                        Text(
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                          "Internet n'est pas disponible pour le moment. Verifier votre connection internet et réessayer.",
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              );
+              
+              return MyApp(database: db);
+            }
+        ),
+      )
+
+
+  );
 }
 
 GoRouter _router(UserViewModel userViewModel) {
@@ -223,6 +266,8 @@ GoRouter _router(UserViewModel userViewModel) {
 
 
 class MyApp extends StatelessWidget {
+
+
   final Database database;
   MyApp({required this.database});
 
@@ -287,6 +332,7 @@ class MyApp extends StatelessWidget {
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
                 builder: (context, userViewModel, child) {
+
                   if (userViewModel.isLoading) {
                     return MaterialApp(
                       home: Scaffold(

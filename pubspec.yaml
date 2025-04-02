@@ -60,6 +60,7 @@ dependencies:
   hyperlink: ^0.0.5
   url_launcher: ^6.3.1
   flutter_map_location_marker: ^10.0.0
+  internet_connection_control_alert: ^0.0.5
 
 dev_dependencies:
   flutter_test:
