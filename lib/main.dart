@@ -10,7 +10,7 @@ import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
-import 'package:saemobile/providers/imgsizeprovider.dart';
+import 'package:saemobile/providers/connectivyprovider.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
@@ -67,36 +67,10 @@ Future<void> main() async {
   runApp(
     // reprise de l'exemple connection alert https://pub.dev/packages/internet_connection_control_alert
       MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Builder(
             builder: (context) {
-              Internet.delayStart(
-                context: context,
-                delay: 1500,
-                barrier: false,
-                alert: AlertDialog(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)
-                  ),
-                  content: Container(
-                    height: 200,
-                    padding: const EdgeInsets.all(20),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      spacing: 20,
-                      children: [
-                        Icon(Icons.wifi_off_rounded, size: 50),
-                        Text(
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                          "Internet n'est pas disponible pour le moment. Verifier votre connection internet et réessayer.",
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              );
-              
+              ConnectivityProvider.checkConnectovity(context);
               return MyApp(database: db);
             }
         ),
@@ -274,8 +248,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
-
     final Widget loadingSceen = CircularProgressIndicator();
+
     return FutureBuilder(
         future: initSupabase(),
         builder: (context, snapshot) {
@@ -332,7 +306,7 @@ class MyApp extends StatelessWidget {
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
                 builder: (context, userViewModel, child) {
-
+                  ConnectivityProvider.checkAndHandleRequiredConnectivity(context, false);
                   if (userViewModel.isLoading) {
                     return MaterialApp(
                       home: Scaffold(
