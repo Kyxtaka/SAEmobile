@@ -83,9 +83,7 @@ class _AvisState extends State<Avis> {
         if (critiquesViewModel.liste.isNotEmpty) refreshWidget();
       }
       debugPrint("refresh canceled");
-      // }
     }
-
     // selector généré par chatGPT pour écouter la variable identifier du userViewModel
     // ne fonctionne pas en dirait
 
