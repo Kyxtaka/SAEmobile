@@ -30,7 +30,17 @@ class _AvisState extends State<Avis> {
   }
 
   void _showLoading(BuildContext context) {
-
+    showDialog(
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
   }
 
 
@@ -41,24 +51,12 @@ class _AvisState extends State<Avis> {
     // final userViewModel = context.watch<UserViewModel>();
 
     Future<void> refreshWidget() async {
-      showDialog(
-          barrierColor: Colors.black.withValues(alpha: 0.5),
-          context: context,
-          builder: (_) =>
-              Dialog(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-        );
-      debugPrint("before calling await refreshDataNoNotify");
+      _showLoading(context);
       await critiquesViewModel.refreshDataNoNotify();
-      debugPrint("refresh data finished ready to pop => Should be visible after await");
-      debugPrint("can pop status ${Navigator.of(context).canPop()}");
-      debugPrint("Pile actuelle: ${ModalRoute.of(context)?.settings.name}");
-      debugPrint("Routes empilées : ${Navigator.of(context).widget.toString()}");
+      // debugPrint("refresh data finished ready to pop => Should be visible after await");
+      // debugPrint("can pop status ${Navigator.of(context).canPop()}");
+      // debugPrint("Pile actuelle: ${ModalRoute.of(context)?.settings.name}");
+      // debugPrint("Routes empilées : ${Navigator.of(context).widget.toString()}");
 
       // context.pop();
       if (Navigator.of(context, rootNavigator: true).canPop()) {
@@ -67,7 +65,7 @@ class _AvisState extends State<Avis> {
       } else {
         debugPrint("Aucun dialog à pop !");
       }
-      // context.go("/avis");
+      GoRouter.of(context).refresh();
     }
 
     Future<void> initOnUserChange() async {
