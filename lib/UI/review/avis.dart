@@ -84,8 +84,6 @@ class _AvisState extends State<Avis> {
       }
       debugPrint("refresh canceled");
     }
-    // selector généré par chatGPT pour écouter la variable identifier du userViewModel
-    // ne fonctionne pas en dirait
 
     print("Avis widget reconstruit !");
     // print("Avis page liste: ${critiquesViewModel.liste}");
@@ -112,6 +110,8 @@ class _AvisState extends State<Avis> {
                     },
                     child: Text("Un problème ? Réactualiser (Fonctionne pas)")
                 ),
+                // selector généré par chatGPT pour écouter la variable identifier du userViewModel
+                // ne fonctionne pas en dirait
                 Selector<UserViewModel, String>(
                   selector: (_, userViewModel) => userViewModel.identifier,
                   builder: (context, currentUser, __)  {
@@ -147,6 +147,8 @@ class _AvisState extends State<Avis> {
                 },
                 child: Text("Un problème ? Réactualiser")
             ),
+            // selector généré par chatGPT pour écouter la variable identifier du userViewModel
+            // ne fonctionne pas en dirait
             Selector<UserViewModel, String>(
               selector: (_, userViewModel) => userViewModel.identifier,
               builder: (context, currentUser, __) {
