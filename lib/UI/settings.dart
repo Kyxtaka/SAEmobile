@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _loadUserTypePreference() async {
     var user = await UserViewModel.getCurrentUser();
     String? type = await CuisinesPrefereesTable.getCuisinesPreferees(user);
-    LatLng pos = await userViewModel.getLocalisation();
+    LatLng pos = await UserViewModel.getLocalisation();
     setState(() {
       selectedType = type ?? "non renseigné";
       localisation = pos;
@@ -108,13 +109,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: MediaQuery.of(context).size.height * 0.4,
                       child: FlutterMap(
                         options: MapOptions(
-                          initialCenter : localisation ?? LatLng(47.916672, 1.9),
+                          initialCenter : localisation,
+                          initialZoom:11
                         ),
                         children: [
                           TileLayer(
                             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             userAgentPackageName: 'com.example.app',
                           ),
+                          CircleLayer(
+                            circles: [
+                              CircleMarker(
+                                point: localisation, // center of 't Gooi
+                                radius: 200,
+                                useRadiusInMeter: true,
+                                color: Colors.red,
+                                borderColor: Colors.red,
+                                borderStrokeWidth: 2,
+                              )
+                            ],
+                          )
                         ],
                       ),
                     ),

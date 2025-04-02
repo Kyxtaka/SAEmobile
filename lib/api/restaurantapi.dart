@@ -179,4 +179,14 @@ class RestaurantAPI {
     TypeCuisine type = CaracteristiqueAndCuisineAPI.getType(rest.id_cuisine) as TypeCuisine;
     return type;
   }
+
+
+  /// récupéré de la flutter doc
+  static Future<dynamic> getRestaurantsByLocation(lat, long) async {
+    final data = await Supabase.instance.client.rpc('nearby_restaurants',params: {
+      'lat': lat,
+      'long': long,
+    });
+    return data.getRange(0,10).toList();
+  }
 }

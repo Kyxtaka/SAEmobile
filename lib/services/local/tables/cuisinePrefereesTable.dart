@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import '../sqlfliteDatabase.dart';
 
@@ -32,6 +33,9 @@ class CuisinesPrefereesTable {
       where: 'email = ?',
       whereArgs: [email],
     );
+    if (result.isEmpty){
+      return "non renseigné";
+    }
     return result[2].toString();
   }
 }

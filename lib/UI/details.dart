@@ -30,30 +30,19 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI();
-  late TypeCuisine type;
-  late final _future;
-  // Future<Map<String, dynamic>> getDetailsRestaurant() async {
-  //   var api = RestaurantAPI();
-  //   var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
-  //   var type;
-  //   try {
-  //     type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
-  //   } catch (e) {
-  //     type = "Non renseigné";
-  //   }
-  //   return {"restaurant": restaurant, "typecuisine": type};
-  // }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _future = _loadData;
+  Future<Map<String, dynamic>> getDetailsRestaurant() async {
+    var api = RestaurantAPI();
+    var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
+    var type;
+    try {
+      type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
+    } catch (e) {
+      type = "Non renseigné";
+    }
+    return {"restaurant": restaurant, "typecuisine": type};
   }
-  
-  Future<void> _loadData() async {
-    type = await RestaurantAPI().getRestaurantType(int.parse(widget.restaurantId.toString()));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +52,19 @@ class _DetailsPageState extends State<DetailsPage> {
       backgroundColor: Colors.white,
       bottomNavigationBar: footer.create(context),
       appBar: Header.create(),
-      body: FutureBuilder<Restaurant?>(
-        future: RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1")),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: getDetailsRestaurant(),
           builder: (context, snapshot){
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+          var typecuisine = "Non renseigné";
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
           }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
-
-              String capacity = (snapshot.data!.capacity == -1)
-                  ? "Capacité inconnue"
-                  : "${snapshot.data!.capacity} personnes";
-
+            if (snapshot.data!['typecuisine'] is TypeCuisine?){
+              typecuisine = snapshot.data!['typecuisine'].cuisine;
+            }
               return SingleChildScrollView(
               child: Column(
                 children: [
@@ -84,7 +72,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30.0),
                     child: Text(
-                      snapshot.data!.name,
+                      snapshot.data!['restaurant'].name,
                       style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -104,13 +92,13 @@ class _DetailsPageState extends State<DetailsPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: Image.network(
-                          snapshot.data!.url_photo,
+                          snapshot.data!['restaurant'].url_photo,
                           width: 300,
                           height: 250,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               Image.asset(
-                                'assets/img/default-image.png',
+                                '../../assets/img/default-image.png',
                                 width: 300,
                                 height: 250,
                               ),
@@ -121,7 +109,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         padding: EdgeInsets.all(5),
                         color: Colors.black54,
                         child: Text(
-                          snapshot.data!.name,
+                          snapshot.data!['restaurant'].name,
                           textAlign: TextAlign.center,
                           style:
                           TextStyle(color: Colors.white, fontSize: 12),
@@ -134,10 +122,10 @@ class _DetailsPageState extends State<DetailsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        infoSection("Adresse", snapshot.data!.address),
-                        infoSection("Origine", "Cuisine ID: ${snapshot.data!.id_cuisine}"),
-                        infoSection("Capacité", capacity),
-                        infoSection("Contact", snapshot.data!.tel),
+                        infoSection("Adresse", snapshot.data!['restaurant'].address),
+                        infoSection("Origine", "Type : ${typecuisine}"),
+                        infoSection("Capacité", (snapshot.data!['restaurant'].capacity == 0 || snapshot.data!['restaurant'].capacity == -1) ? "Non renseigné" : "${snapshot.data!['restaurant'].capacity} personnes"),
+                        infoSection("Contact", (snapshot.data!['restaurant'].tel == "None")?"Non renseigné": "${snapshot.data!['restaurant'].tel}"),
                       ],
                     ),
                   ),
@@ -148,7 +136,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     color: Colors.grey,
                     onPressed:() async {
                       var user = await  UserViewModel.getCurrentUser();
-                      favorisViewModel.addFavoris(user, snapshot.data?.id);
+                      favorisViewModel.addFavoris(user, snapshot.data?['restaurant'].id);
                       context.go('/favoris');}
                   ),
                   SizedBox(height: 15),
@@ -161,7 +149,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     onPressed: () {
-                      context.go('/details/${snapshot.data!.id}/avis');
+                      context.go('/details/'+snapshot.data!['restaurant'].id.toString()+'/avis');
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
                   ),
@@ -185,7 +173,7 @@ class _DetailsPageState extends State<DetailsPage> {
             return Text("Erreur lors de la récupération du restaurant");},
 
         ));
-  }
+      }
 
   Widget infoSection(String title, String value) {
     return Column(
@@ -207,3 +195,8 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 }
+
+
+
+
+

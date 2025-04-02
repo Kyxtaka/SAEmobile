@@ -96,10 +96,11 @@ class UserViewModel extends ChangeNotifier {
     pos += position.longitude.toString();
     await prefs.setString("position", pos);
   }
-  Future<LatLng> getLocalisation() async {
+  static Future<LatLng> getLocalisation() async {
     final SharedPreferences prefs =  await SharedPreferences.getInstance();
     var pos = await prefs.getString("position")??"47.916672 1.9";
     var localisation = pos.split(' ');
+    debugPrint(localisation[0]);
     return LatLng(double.parse(localisation[0]), double.parse(localisation[1]));
   }
 
