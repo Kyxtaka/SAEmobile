@@ -133,7 +133,7 @@ class CritiqueAPI {
         debugPrint("Response contains ${response.length} rows.");
         if (response.isNotEmpty) {
           for (var row in response) {
-            print("runtype etoile ${row['etoiles'].runtimeType}");
+            // print("runtype etoile ${row['etoiles'].runtimeType}");
             Critique critique = Critique(
                 int.parse(row['id_critique'].toString()),
                 row['message']??"",
