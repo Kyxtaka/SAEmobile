@@ -39,9 +39,8 @@ class CritiqueViewModel extends ChangeNotifier{
       await liste[i].getCritiqueImageIfExist();
     }
     _onLoading = false;
+    debugPrint("getting critique data again finished");
   }
-
-
 
   Future<bool> deleteCritique(Critique critique, bool imagePresent) async {
     bool isDeleted;

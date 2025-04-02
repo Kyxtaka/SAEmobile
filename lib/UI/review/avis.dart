@@ -14,8 +14,6 @@ class Avis extends StatefulWidget {
   _AvisState createState() => _AvisState();
 }
 
-
-
 class _AvisState extends State<Avis> {
   // final header = Header();
   late List<Critique> critliste;
@@ -31,19 +29,8 @@ class _AvisState extends State<Avis> {
     getUser();
   }
 
-  void showLoading() {
-    showDialog(
-      barrierColor: Colors.black.withValues(alpha: 0.5),
-      context: context,
-      builder: (_) =>
-          Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-    );
+  void _showLoading(BuildContext context) {
+
   }
 
 
@@ -54,15 +41,37 @@ class _AvisState extends State<Avis> {
     // final userViewModel = context.watch<UserViewModel>();
 
     Future<void> refreshWidget() async {
-      showLoading();
+      showDialog(
+          barrierColor: Colors.black.withValues(alpha: 0.5),
+          context: context,
+          builder: (_) =>
+              Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+        );
+      debugPrint("before calling await refreshDataNoNotify");
       await critiquesViewModel.refreshDataNoNotify();
-      context.pop();
-      context.go("/avis");
+      debugPrint("refresh data finished ready to pop => Should be visible after await");
+      debugPrint("can pop status ${Navigator.of(context).canPop()}");
+      debugPrint("Pile actuelle: ${ModalRoute.of(context)?.settings.name}");
+      debugPrint("Routes empilées : ${Navigator.of(context).widget.toString()}");
+
+      // context.pop();
+      if (Navigator.of(context, rootNavigator: true).canPop()) {
+        debugPrint("Pop du dialog...");
+        Navigator.of(context, rootNavigator: true).pop();
+      } else {
+        debugPrint("Aucun dialog à pop !");
+      }
+      // context.go("/avis");
     }
 
     Future<void> initOnUserChange() async {
       if (critiquesViewModel.liste.isNotEmpty) {
-        // final firstCritique = critiquesViewModel.liste.first;
         final String currentUser = await UserViewModel.getCurrentUser();
         if (memorizedUsername != currentUser) await refreshWidget();
       }
@@ -70,13 +79,13 @@ class _AvisState extends State<Avis> {
 
     //selector généré par chatGPT pour écouter la variable identifier du userViewModel
     // ne fonctionne pas en dirait
-    Selector<UserViewModel, String>(
-      selector: (_, userViewModel) => UserViewModel.identifier,
-      builder: (_, currentUser, __) {
-        initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
-        return SizedBox.shrink(); // Widget invisible qui écoute les changements
-      },
-    );
+    // Selector<UserViewModel, String>(
+    //   selector: (_, userViewModel) => UserViewModel.identifier,
+    //   builder: (_, currentUser, __) {
+    //     initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
+    //     return SizedBox.shrink(); // Widget invisible qui écoute les changements
+    //   },
+    // );
 
 
     print("Avis widget reconstruit !");
@@ -116,6 +125,7 @@ class _AvisState extends State<Avis> {
         bottomNavigationBar: Footer().create(context),
         body: Column(
           children: [
+
             Expanded(
                 child:  ListView.builder(
                   itemCount: critiquesViewModel.liste.length,
@@ -125,7 +135,6 @@ class _AvisState extends State<Avis> {
                   },
                 ),
             ),
-
 
             ElevatedButton(
                 onPressed: () async {
@@ -138,7 +147,5 @@ class _AvisState extends State<Avis> {
       );
     }
   }
-
-
 }
 
