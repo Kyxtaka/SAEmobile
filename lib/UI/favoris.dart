@@ -9,8 +9,6 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'global/footer.dart';
 
 class Favoris extends StatefulWidget {
-
-
   @override
   State<Favoris> createState() => _FavorisState();
 }
@@ -36,7 +34,6 @@ class _FavorisState extends State<Favoris> {
                   child: Text("Découvrir des restaurants")
               )
             ],
-
           ),
         ),
       );
