@@ -80,7 +80,7 @@ class _AvisState extends State<Avis> {
 
 
     print("Avis widget reconstruit !");
-    print("Avis page liste: ${critiquesViewModel.liste}");
+    // print("Avis page liste: ${critiquesViewModel.liste}");
 
     if (critiquesViewModel.onLoading) {
       return Scaffold(
@@ -110,7 +110,7 @@ class _AvisState extends State<Avis> {
       );
     }
     else {
-      print(" avis page liste ${critiquesViewModel.liste}");
+      // print(" avis page liste ${critiquesViewModel.liste}");
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
         bottomNavigationBar: Footer().create(context),
