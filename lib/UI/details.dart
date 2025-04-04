@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
-//import 'global/footer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../api/carateristiqueandcuisineapi.dart';
 import '../models/typeCuisine.dart';
 import 'global/footer.dart';
@@ -24,7 +22,7 @@ import 'global/header.dart';
 class DetailsPage extends StatefulWidget {
   final String? restaurantId;
 
-  const DetailsPage({required this.restaurantId});
+  const DetailsPage({super.key, required this.restaurantId});
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
@@ -36,7 +34,7 @@ class _DetailsPageState extends State<DetailsPage> {
   Future<Map<String, dynamic>> getDetailsRestaurant() async {
     var api = RestaurantAPI();
     var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
-    var type;
+    Object type;
     try {
       type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
     } catch (e) {
@@ -58,15 +56,15 @@ class _DetailsPageState extends State<DetailsPage> {
         future: getDetailsRestaurant(),
           builder: (context, snapshot){
           var typecuisine = "Non renseigné";
-          if (snapshot.data!['typecuisine'] is TypeCuisine?){
-            typecuisine = snapshot.data!['typecuisine'].cuisine;
-          }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
           }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
           } else if (snapshot.hasData) {
+            if (snapshot.data!['typecuisine'] is TypeCuisine?){
+              typecuisine = snapshot.data!['typecuisine'].cuisine;
+            }
               return SingleChildScrollView(
               child: Column(
                 children: [
@@ -125,7 +123,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     child: Column(
                       children: [
                         infoSection("Adresse", snapshot.data!['restaurant'].address),
-                        infoSection("Origine", "Type : ${typecuisine}"),
+                        infoSection("Origine", "Type : $typecuisine"),
                         infoSection("Capacité", (snapshot.data!['restaurant'].capacity == 0 || snapshot.data!['restaurant'].capacity == -1) ? "Non renseigné" : "${snapshot.data!['restaurant'].capacity} personnes"),
                         infoSection("Contact", (snapshot.data!['restaurant'].tel == "None")?"Non renseigné": "${snapshot.data!['restaurant'].tel}"),
                       ],
@@ -151,9 +149,23 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     onPressed: () {
-                      context.go('/details/'+snapshot.data!['restaurant'].id.toString()+'/avis');
+                      context.go('/details/${snapshot.data!['restaurant'].id}/avis');
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
+                  ),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    ),
+                    onPressed: () {
+                      context.go('/details/${widget.restaurantId}/addcritique');
+                    },
+                    child: Text("Donner un avis", style: TextStyle(color: Colors.white)),
                   ),
               ],
             ),

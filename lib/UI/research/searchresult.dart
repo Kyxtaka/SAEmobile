@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/restaurantapi.dart';
@@ -8,8 +7,9 @@ import 'package:saemobile/models/restaurant.dart';
 class SearchResult extends StatefulWidget {
   final int cuisine;
   final int carac;
+  final String search;
 
-  const SearchResult({required this.cuisine, required this.carac});
+  const SearchResult({super.key, required this.cuisine, required this.carac, required this.search});
 
   @override
   _SearchResultState createState() => _SearchResultState();
@@ -30,27 +30,31 @@ class _SearchResultState extends State<SearchResult> {
   }
 
   Future<void> _loadData() async {
+    List<Restaurant> restaurants;
     if (widget.carac != -1 && widget.cuisine != -1) {
-      final restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
+
     }else if (widget.carac != -1 && widget.cuisine == -1) {
-      final restaurants = await restAPI.getRestaurantByCarac(widget.carac);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCarac(widget.carac);
+
     }else if (widget.carac == -1 && widget.cuisine != -1) {
-      final restaurants = await restAPI.getRestaurantByCuisine(widget.cuisine);
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getRestaurantByCuisine(widget.cuisine);
+
     }else {
-      final restaurants = await restAPI.getAllRestaurants();
-      setState(() {
-        restaurantsList = restaurants;
-      });
+      restaurants = await restAPI.getAllRestaurants();
     }
+
+    print('=========================================> seach = ${widget.search}');
+    print(widget.search.runtimeType);
+
+    if (widget.search.toLowerCase() != "null") {
+      restaurants.removeWhere((rest) => !rest.name.toLowerCase().contains(widget.search.toLowerCase()));
+      // restaurants = restaurants.where((rest) => rest.name.contains(widget.search)).toList();
+    }
+
+    setState(() {
+      restaurantsList = restaurants;
+    });
   }
 
   @override
@@ -82,24 +86,7 @@ class _SearchResultState extends State<SearchResult> {
               child: ListView.builder(
                 itemCount: restaurantsList.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                        elevation: 6,
-                        margin: const EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                              backgroundColor: Colors.amber,
-                              child: Text(restaurantsList[index].id.toString() ?? "")
-                          ),
-                          title: Text(restaurantsList[index].name ?? ""),
-                          subtitle: Text(restaurantsList[index].address ?? ""),
-                          trailing: IconButton(
-                            icon: Icon(Icons.restaurant, color: Colors.grey), // Icône en forme de cœur rouge
-                            onPressed: () {
-                              context.go('/details/${restaurantsList[index].id}');
-                            },
-                          ),
-                        )
-                    );
+                    return restaurantsList[index].renderCard(context);
                   },
                 ),
             );

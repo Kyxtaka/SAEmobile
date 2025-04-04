@@ -9,7 +9,7 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'global/footer.dart';
 
 class Favoris extends StatefulWidget {
-
+  const Favoris({super.key});
 
   @override
   State<Favoris> createState() => _FavorisState();
@@ -17,20 +17,34 @@ class Favoris extends StatefulWidget {
 
 class _FavorisState extends State<Favoris> {
 
+  @override
   Widget build(BuildContext context) {
-    var footer = Footer();
     final favorisViewModel = context.watch<FavorisViewModel>();
     if (favorisViewModel.favoris.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text('Mes Favoris')),
-        bottomNavigationBar: footer.create(context),
-        body: Text("Pas de favoris"),
+        appBar: AppBar(title: Text('Mes Favoris sur mon appareil')),
+        bottomNavigationBar: Footer().create(context),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Pas de favoris actuellement"),
+              Text("Pourquoi pas en ajouter ?"),
+              ElevatedButton(
+                  onPressed: () {
+                    context.goNamed('decouverte');
+                  },
+                  child: Text("Découvrir des restaurants")
+              )
+            ],
+          ),
+        ),
       );
     }
     else {
     return Scaffold(
       appBar: AppBar(title: Text("Mes Favoris", style: TextStyle(color:Colors.black))),
-      bottomNavigationBar: footer.create(context),
+      bottomNavigationBar: Footer().create(context),
       body: ListView.builder(
             itemCount: favorisViewModel.favoris.length,
             itemBuilder: (context, index) {

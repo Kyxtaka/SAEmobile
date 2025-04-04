@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:saemobile/UI/critiquesRestaurant.dart';
+import 'package:saemobile/UI/review/addCritique.dart';
+import 'package:saemobile/UI/review/critiquesRestaurant.dart';
 import 'package:saemobile/UI/favoris.dart';
 import 'package:saemobile/UI/research/saerchpage.dart';
 import 'package:saemobile/UI/research/searchresult.dart';
@@ -14,11 +15,10 @@ import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
-import 'UI/avis.dart';
+import 'UI/review/avis.dart';
 import 'UI/research/decouverte.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart';
 import 'UI/forms/editForm.dart';
 import 'UI/home.dart';
 import 'UI/signIn.dart';
@@ -56,7 +56,7 @@ Future<void> main() async {
   } catch (e) {
     print(e);
   }
-  var database = new SqlfliteDatabase();
+  var database = SqlfliteDatabase();
   final db = await database.database;
   runApp(MyApp(database: db));
 }
@@ -128,7 +128,8 @@ GoRouter _router(UserViewModel userViewModel) {
             name: 'searchResult',
             builder: (context, state) => SearchResult(
                 cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
-                carac:int.parse(state.uri.queryParameters['carac'].toString())
+                carac:int.parse(state.uri.queryParameters['carac'].toString()),
+                search: state.uri.queryParameters['search'].toString()
             ),
             redirect: (BuildContext context, GoRouterState state) {
               if (!userViewModel.isConnected()) {
@@ -196,7 +197,16 @@ GoRouter _router(UserViewModel userViewModel) {
         builder: (BuildContext context, GoRouterState state){
           final id = state.pathParameters['id']!;
           return DetailsPage(restaurantId:id);
-        }
+        },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'addcritique',
+            name: 'addCritique',
+            builder: (BuildContext context, GoRouterState state) => AddCritiquePage(
+              restID:int.parse(state.pathParameters['id'].toString())
+            )
+          )
+        ]
       ),
       GoRoute(
           path: ('/details/:id/avis'),
@@ -212,7 +222,7 @@ GoRouter _router(UserViewModel userViewModel) {
 
 class MyApp extends StatelessWidget {
   final Database database;
-  MyApp({required this.database});
+  const MyApp({super.key, required this.database});
 
   @override
   Widget build(BuildContext context) {
@@ -238,33 +248,20 @@ class MyApp extends StatelessWidget {
 
           return MultiProvider(
               providers: [
-                Provider<SupabaseClient>(
-                    create: (_) => Supabase.instance.client),
-                Provider<int>(create: (_) => 42),
-                //ChangeNotifierProvider<AuthService>(create: (_) => AuthService()), // Exemple d'authentification
-                //ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()), // Exemple de thème
 
+                Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
                 FutureProvider<String>(
                   create: (context) => UserViewModel.getCurrentUser(),
                   initialData: "",
                 ),
-                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
-                  create: (context) => CritiqueViewModel(),
-                  update: (context, email, critiquesViewModel) {
-                    if (email.isNotEmpty) {
-                      critiquesViewModel?.generateCritiques(email);
-                    }
-                    return critiquesViewModel ?? CritiqueViewModel();
-                  },
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
                 ),
                 ChangeNotifierProvider<UserViewModel>(
                   create: (_) =>
                       UserViewModel(
                           database: Supabase.instance.client, context: context),
-                ),
-                FutureProvider<String>(
-                  create: (context) => UserViewModel.getCurrentUser(),
-                  initialData: "",
                 ),
                 ChangeNotifierProxyProvider<String, FavorisViewModel>(
                   create: (context) => FavorisViewModel(),
@@ -274,25 +271,35 @@ class MyApp extends StatelessWidget {
                     }
                     return favorisViewModel ?? FavorisViewModel();
                   },
+                  child: Avis(),
+                ),
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                       critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
+                  },
                 ),
               ],
               child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
-                  builder: (context, userViewModel, child) {
-                    if (userViewModel.isLoading) {
-                      return MaterialApp(
-                        home: Scaffold(
-                          body: Center(child: CircularProgressIndicator()),
-                        ),
-                      );
-                    }
-                        return MaterialApp.router(
-                          debugShowCheckedModeBanner: false,
-                          theme: theme,
-                          title: 'My App',
-                          routerConfig: _router(userViewModel),
-                        );
-                      })
-
+                builder: (context, userViewModel, child) {
+                  if (userViewModel.isLoading) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
+                      ),
+                    );
+                  }
+                  return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    theme: theme,
+                    title: 'My App',
+                    routerConfig: _router(userViewModel),
+                  );
+                }
+              )
           );
 
         });

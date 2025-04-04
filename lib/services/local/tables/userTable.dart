@@ -1,6 +1,3 @@
-import 'package:sqflite/sqflite.dart';
-import '../../../models/user.dart';
-import '../sqlfliteDatabase.dart';
 
 
 class UserTable {

@@ -14,6 +14,7 @@ class DropdownTypeCuisine extends StatelessWidget {
     this.selectedType,
   });
 
+  @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<TypeCuisine>(

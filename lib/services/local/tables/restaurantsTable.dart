@@ -1,8 +1,6 @@
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 import '../../../models/restaurant.dart';
-import '../sqlfliteDatabase.dart';
 
 class RestaurantsTable {
   final db;

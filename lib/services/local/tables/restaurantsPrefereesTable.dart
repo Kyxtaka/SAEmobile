@@ -10,7 +10,7 @@ class RestaurantsPrefereesDAO {
 
   static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
-    debugPrint("ajout local favoris pour ${email} avec ${restaurantId}");
+    debugPrint("ajout local favoris pour $email avec $restaurantId");
     var result = await db.insert(
       'restaurants_preferees',
       {
@@ -40,7 +40,7 @@ class RestaurantsPrefereesDAO {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+      restaurants.add(Restaurant(int.parse(restaurant['restaurant_id'].toString()),
          "",
           "",
           0,

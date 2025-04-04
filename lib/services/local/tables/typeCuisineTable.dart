@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../models/typeCuisine.dart';
-import '../sqlfliteDatabase.dart';
 
 class TypeCuisineTable {
   final db;

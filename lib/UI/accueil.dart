@@ -14,11 +14,11 @@ class Accueil extends StatefulWidget{
   State<Accueil> createState() => _AccueilState();
 }
 class _AccueilState extends State<Accueil> {
-  static SearchBar barreRecherche = new SearchBar();
+  static SearchBar barreRecherche = SearchBar();
 
   @override
   Widget build(BuildContext context) {
-    Footer footer = new Footer();
+    Footer footer = Footer();
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: Header.create(),

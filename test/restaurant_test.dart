@@ -5,7 +5,7 @@ import 'package:saemobile/models/restaurant.dart';
 
 void main() {
   test("Teste les getters de l'objet Critique", (){
-    var restaurant = new Restaurant(1, "Au Bouillon", "3 rue perdu", 100, "+33 2 34 45 56 67", "123456789", "aubouillon.com", "", 1, 45, 0, "12h-14h/18h-22h Lun à Sam", 0.0, 0.0);
+    var restaurant = Restaurant(1, "Au Bouillon", "3 rue perdu", 100, "+33 2 34 45 56 67", "123456789", "aubouillon.com", "", 1, 45, 0, "12h-14h/18h-22h Lun à Sam", 0.0, 0.0);
     expect(restaurant.id, 1);
     expect(restaurant.name, "Au Bouillon");
     expect(restaurant.address, "3 rue perdu");

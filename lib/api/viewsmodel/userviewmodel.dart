@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserViewModel extends ChangeNotifier {
   late bool connectionStatus = false ;
   late SupabaseClient database;
-  late String identifier;
+  static late String identifier;
   final BuildContext context;
   bool isLoading = true;
 
@@ -20,7 +25,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   bool isConnected() {
-    print("connection state : " + this.connectionStatus.toString());
+    print("connection state : ${this.connectionStatus}");
     return connectionStatus;
   }
 
@@ -30,6 +35,7 @@ class UserViewModel extends ChangeNotifier {
     await prefs.setString('identifier', identifier); debugPrint("identifier written in local storage");
     await prefs.setString('hashedPassword',hashedPassword); debugPrint("hash written in local storage");
     connectionStatus = true;
+    identifier = (prefs.getString('identifier'))!; debugPrint("get identifier");
     notifyListeners();
   }
 
@@ -63,7 +69,7 @@ class UserViewModel extends ChangeNotifier {
 
     if (identifier != null && hashedPassword != null) {
       try {
-        final result = await this.database
+        final result = await database
             .from("Visiteur")
             .select('mail, password')
             .eq('mail', identifier)
@@ -75,7 +81,7 @@ class UserViewModel extends ChangeNotifier {
           context.go('/accueil');
         }
         else {
-          throw new Exception("Email ou mot de passe incorrect");
+          throw Exception("Email ou mot de passe incorrect");
         }
       }catch (e) {
         debugPrint(e.toString());
@@ -83,6 +89,20 @@ class UserViewModel extends ChangeNotifier {
     }
     isLoading = false; //
     notifyListeners();
+  }
+
+  Future<void> setLocalisation(Position position) async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    var pos = "${position.latitude} ";
+    pos += position.longitude.toString();
+    await prefs.setString("position", pos);
+  }
+  static Future<LatLng> getLocalisation() async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    var pos = prefs.getString("position")??"47.916672 1.9";
+    var localisation = pos.split(' ');
+    debugPrint(localisation[0]);
+    return LatLng(double.parse(localisation[0]), double.parse(localisation[1]));
   }
 
   Future<void> setDisconnection() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/boutonDegrade.dart';
@@ -32,7 +33,7 @@ class _DecouverteState extends State<Decouverte> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header.create(),
-      bottomNavigationBar: new Footer().create(context),
+      bottomNavigationBar: Footer().create(context),
       body: Column(
         children: [
           Expanded(
@@ -56,18 +57,7 @@ class _DecouverteState extends State<Decouverte> {
                       return ListView.builder(
                         itemCount: snapshot.data?.length,
                         itemBuilder: (context, index) {
-                          return Card(
-                              elevation: 6,
-                              margin: const EdgeInsets.all(10),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                    backgroundColor: Colors.amber,
-                                    child: Text(snapshot.data?[index].id.toString() ?? "")
-                                ),
-                                title: Text(snapshot.data?[index].name ?? ""),
-                                subtitle: Text(snapshot.data?[index].address ?? ""),
-                              )
-                          );
+                          return snapshot.data![index].renderCard(context);
                         },
                       );
                     }

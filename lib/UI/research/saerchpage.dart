@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/api/carateristiqueandcuisineapi.dart';
+import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:saemobile/models/caracteristique.dart';
 import 'package:saemobile/models/typeCuisine.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
@@ -19,9 +24,12 @@ class _SearchScreenState extends State<SearchScreen> {
   final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
 
   late Future<void> _loadDataFuture;
+  final _formKey = GlobalKey<FormBuilderState>();
 
   List<TypeCuisine> typeCuisines = [];
   List<Caracteristique> caracteristiques = [];
+  late var position;
+  late var restauranstByPosition;
 
   TypeCuisine? selectedType;
   Caracteristique? selectedCarac;
@@ -35,6 +43,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _loadData() async {
     final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
     final caracs = await caracAndCuisineAPI.getAllCaracterisque();
+    position = await UserViewModel.getLocalisation();
+    restauranstByPosition = await RestaurantAPI.getRestaurantsByLocation(position.latitude, position.longitude);
 
     setState(() {
       typeCuisines = cuisines;
@@ -63,11 +73,6 @@ class _SearchScreenState extends State<SearchScreen> {
           return Center(
             child: Column(
               children: [
-                OutlinedButton(
-                  onPressed: () => {},
-                  child: const Text("En attente de la barre de recherche"),
-                ),
-
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -78,9 +83,27 @@ class _SearchScreenState extends State<SearchScreen> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Supprime le border radius
+                      ),
                     ),
                     child: const Text("Voir tous les restaurants"),
                   ),
+                ),
+
+                FormBuilder(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.all(15.5),
+                    child: Column(
+                      children: [
+                        FormBuilderTextField(
+                          name: 'search',
+                          decoration: const InputDecoration(labelText: 'Rechercher'),
+                        )
+                      ],
+                    ),
+                  )
                 ),
 
                 // TypeCuisine Dropdown
@@ -115,12 +138,15 @@ class _SearchScreenState extends State<SearchScreen> {
                     debugPrint("slected type id string ${selectedType?.id.toString()}");
                     debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
 
-                    print(selectedCarac);
+                    final searchValue = _formKey.currentState?.fields['search']?.value;
+
                     context.goNamed(
                       'searchResult',
                       queryParameters: {
                         if (selectedType != null) 'cuisine': selectedType?.id.toString(),
                         if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
+                        if (searchValue != null && searchValue.toString().trim().isNotEmpty)
+                          'search': searchValue.toString(),
                       },
                     );
                   },
@@ -142,11 +168,68 @@ class _SearchScreenState extends State<SearchScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: FlutterMap(
+                  options: MapOptions(
+                  initialCenter : position,
+                  initialZoom:13
+                ),
+                children: [
+                  TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
+                  ),
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: position, // center of 't Gooi
+                        radius: 150,
+                        useRadiusInMeter: true,
+                        color: Colors.red,
+                        borderColor: Colors.red,
+                        borderStrokeWidth: 2,
+                      )
+                    ],
+                  ),
+                  setRestaurantsByPosition(context)]),)
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+
+  Widget setRestaurantsByPosition(BuildContext context) {
+    List<Marker> markersRestaurants = [];
+
+    for (var i = 0; i < restauranstByPosition.length; i++) {
+      markersRestaurants.add(
+        Marker(
+          point: LatLng(
+              restauranstByPosition[i]['lat'],
+              restauranstByPosition[i]['long']
+          ),
+          width: 40,
+          height: 40,
+          child: GestureDetector(
+            onTap: () {
+              context.go('/details/${restauranstByPosition[i]['id']}');
+            },
+            child: Icon(
+              Icons.location_on,
+              color: Colors.orange,
+              size: 40,
+            ),
+          ),
+        ),
+      );
+    }
+    return MarkerLayer(
+      markers: markersRestaurants,
     );
   }
 }

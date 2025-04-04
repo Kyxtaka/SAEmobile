@@ -32,7 +32,7 @@ class _LoginPageState extends State<Login> {
 
   @override
   void initState() {
-    this.loginState  = UserTools(supabase: this.widget.database);
+    loginState  = UserTools(supabase: widget.database);
   }
 
   /// Connexion Supabse
@@ -46,7 +46,7 @@ class _LoginPageState extends State<Login> {
 
         final errorMessage = await loginState.login(email, digest);
         if (errorMessage == null) {
-          print("before call email is " + email + " and hash is " + digest);
+          print("${"before call email is " + email} and hash is $digest");
 
           await widget.userViewModel.setConnection(email, digest);
           print("error msg: $errorMessage");
@@ -65,7 +65,7 @@ class _LoginPageState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Connexion")),
+      appBar: AppBar(title: Text("Connexion au compte")),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -4,7 +4,7 @@ class BoutonDegrade extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const BoutonDegrade({required this.text, required this.onPressed, Key? key}) : super(key: key);
+  const BoutonDegrade({required this.text, required this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../models/critique.dart';
-import '../sqlfliteDatabase.dart';
 
 class CritiqueTable {
   final db;
