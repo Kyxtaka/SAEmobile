@@ -21,7 +21,7 @@ void main() {
     expect(find.text("Inscrivez-vous !"), findsOneWidget);
     await tester.tap(find.text("Se connecter"));
     await tester.pump();
-    await tester.tap(find.text("Inscrivez-vous !"));
+    await tester.tap(find.text("Inscrivez-vous !"), warnIfMissed: false);
     await tester.pump();
   });
 }

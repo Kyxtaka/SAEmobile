@@ -30,10 +30,10 @@ class UserViewModel extends ChangeNotifier {
   }
 
 
-  Future<void>  setConnection(String identifier, String hashedPassword) async {
+  Future<void>  setConnection(String? identifier, String? hashedPassword) async {
     final SharedPreferences prefs =  await SharedPreferences.getInstance();
-    await prefs.setString('identifier', identifier); debugPrint("identifier written in local storage");
-    await prefs.setString('hashedPassword',hashedPassword); debugPrint("hash written in local storage");
+    await prefs.setString('identifier', identifier!); debugPrint("identifier written in local storage");
+    await prefs.setString('hashedPassword',hashedPassword!); debugPrint("hash written in local storage");
     connectionStatus = true;
     identifier = (prefs.getString('identifier'))!; debugPrint("get identifier");
     notifyListeners();

@@ -12,12 +12,12 @@ class UserTools {
   }
 
   /// Connexion avec email et mot de passe
-  Future<String?> login(String email, String password) async {
+  Future<String?> login(String? email, String? password) async {
     try {
       final result = await supabase
           .from("Visiteur")
           .select('mail, password')
-          .eq('mail', email)
+          .eq('mail', email!)
           .maybeSingle();
 
       if (result != null && result['mail']==email && result['password']==password) {
