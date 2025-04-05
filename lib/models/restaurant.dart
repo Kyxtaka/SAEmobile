@@ -90,6 +90,25 @@ class Restaurant {
     };
   }
 
+  factory Restaurant.fromMap(Map<String, dynamic> map) {
+    return Restaurant(
+      map['id'] as int,
+      map['name'] as String,
+      map['address'] as String,
+      map['capacity'] = 0,
+      map['tel'] = '',
+      map['siret'] = '',
+      map['website'] = '',
+      map['url_photo'] as String,
+      map['id_cuisine'] = 0,
+      map['id_region'] = 0,
+      map['nb_etoile'] = 0,
+      map['horaires'] = '',
+      map['gps_lat'] = 0.0,
+      map['gps_long'] = 0.0,
+    );
+  }
+
   Widget renderCard(BuildContext context) {
 
     bool ableRedirecting = false;

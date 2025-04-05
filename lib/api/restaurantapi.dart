@@ -179,4 +179,21 @@ class RestaurantAPI {
     TypeCuisine type = CaracteristiqueAndCuisineAPI.getType(rest.id_cuisine) as TypeCuisine;
     return type;
   }
+
+  // renvoit deux restaurants pour les suggestions selon les types pref du user
+  Future<List<Restaurant>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
+    final supabase = Supabase.instance.client;
+    final typesString = '(${typesPref.join(',')})';
+    final restoString = '(${restaurantPref.join(',')})';
+    var resultat = await supabase
+        .from('restaurants')
+        .select('*')
+        .filter('_id_cuisine', 'in', typesString)
+        .not('id', 'in', restoString)
+        .limit(2);
+    return (resultat as List)
+        .map((rawResto) =>
+        Restaurant.fromMap(rawResto as Map<String, dynamic>))
+        .toList();
+  }
 }

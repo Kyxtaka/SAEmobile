@@ -35,6 +35,22 @@ class _AccueilState extends State<Accueil> {
   TypeCuisineAPI typeCuisineAPI = TypeCuisineAPI(
       database: Supabase.instance.client);
 
+  Future<List<Restaurant>> _getSuggestions(String user) async {
+    final favoriteCuisines = await typeCuisinePref.getCuisinesPreferees(user);
+    final favoriteCuisineIds = favoriteCuisines.map((cuisine) => cuisine.id).toList();
+
+    final favoriteRestaurants = await RestaurantsPreferees.getRestaurantsPreferees(user);
+    final favoriteRestaurantIds = favoriteRestaurants
+        .where((r) => r != null)
+        .map((r) => r!.id)
+        .toList();
+
+    return await apiRestaurant.getRestaurantSuggestions(
+      favoriteCuisineIds,
+      favoriteRestaurantIds,
+    );
+  }
+
   Future<void> _fetchAndInsertTypeCuisines() async {
     List<TypeCuisine> supaCuisines = await typeCuisineAPI.getAllTypeCuisines();
     for (var cuisine in supaCuisines.take(5)) {
@@ -273,7 +289,8 @@ class _AccueilState extends State<Accueil> {
           ),
         );
       },
-    );
+    ),
+
   }
 
 }
