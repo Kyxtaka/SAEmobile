@@ -18,7 +18,7 @@ class CuisinesPrefereesTable {
     );
   }
 
-  Future<int> deleteCuisinePrefere(String email, int cuisineId) async {
+  static Future<int> deleteCuisinePrefere(String email, int cuisineId) async {
     final db = await SqlfliteDatabase.instance.database;
     return await db.delete(
       'cuisines_preferees',
@@ -68,6 +68,20 @@ class CuisinesPrefereesTable {
       );
     }).toList();
   }
+
+  static getCuisinesPrefereesToString(String user) async {
+    final db = await SqlfliteDatabase.instance.database;
+    var result = await db.query(
+      'cuisines_preferees',
+      where: 'email = ?',
+      whereArgs: [user],
+    );
+    if (result.isEmpty){
+      return "non renseigné";
+    }
+    return result[2].toString();
+  }
+
 }
 
 

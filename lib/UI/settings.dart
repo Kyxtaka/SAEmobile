@@ -61,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// le setState ne doit pas etre en async
   Future<void> _removeCuisineFromFavorites(TypeCuisine value) async {
     var user = await UserViewModel.getCurrentUser();
-    await CuisinesPrefereesTable.deleteCuisinePrefere(user, value.cuisine);
+    await CuisinesPrefereesTable.deleteCuisinePrefere(user, int.parse(value.cuisine.toString()));
     setState(() {
         selectedType = selectedType.replaceAll(value.cuisine + ",", "");
         selectedType = selectedType.replaceAll(value.cuisine , "");
