@@ -99,10 +99,41 @@ class _AccueilState extends State<Accueil> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       InkWell(
-                      onTap: () {
-                        context.go('/SearchScreen');
-                      },
-                      child: barreRecherche,
+                        onTap: () {
+                          print("Barre de recherche cliquée");
+                          context.go('/search?focus=true');
+                        },
+                        child: Container(
+                          height: 50,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(color: Colors.grey.shade300),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search, color: Colors.grey.shade600),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Rechercher...",
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       FutureBuilder<List<TypeCuisine>>(
@@ -129,6 +160,10 @@ class _AccueilState extends State<Accueil> {
                                 final cuisine = cuisines[index];
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 12.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      context.go('/search?focus=true&cuisine=${cuisine.id.toString()}&autoSearch=true');
+                                    },
                                   child: Column(
                                     children: [
                                       Container(
@@ -158,6 +193,7 @@ class _AccueilState extends State<Accueil> {
                                       ),
                                     ],
                                   ),
+                                )
                                 );
                               },
                             ),

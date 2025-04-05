@@ -119,7 +119,11 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/search',
-        builder: (context, state) => SearchScreen(),
+        builder: (context, state) => SearchScreen(
+          shouldFocus: state.uri.queryParameters["focus"] == "true",
+          initialCuisineId: state.uri.queryParameters["cuisine"],
+          autoSearch: state.uri.queryParameters["autoSearch"] == "true",
+        ),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
@@ -143,11 +147,21 @@ GoRouter _router(UserViewModel userViewModel) {
           GoRoute(
             path: 'result',
             name: 'searchResult',
-            builder: (context, state) => SearchResult(
-                cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
-                carac:int.parse(state.uri.queryParameters['carac'].toString()),
-                search: state.uri.queryParameters['search'].toString()
-            ),
+            builder: (context, state) {
+              final cuisineParam = state.uri.queryParameters['cuisine'];
+              final caracParam = state.uri.queryParameters['carac'];
+              final searchParam = state.uri.queryParameters['search'];
+
+              final cuisine = cuisineParam != null ? int.tryParse(cuisineParam) ?? 0 : 0;
+              final carac   = caracParam != null ? int.tryParse(caracParam) ?? 0 : 0;
+              final search  = searchParam ?? "";
+
+              return SearchResult(
+                cuisine: cuisine,
+                carac: carac,
+                search: search,
+              );
+            },
             redirect: (BuildContext context, GoRouterState state) {
               if (!userViewModel.isConnected()) {
                 return '/login';
