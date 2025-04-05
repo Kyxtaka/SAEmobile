@@ -92,62 +92,114 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
             if (show) return Center(child: Text("data resstID: ${widget.restID} user_identifier: $user_identifier"),);
 
             return Center(
-              child: FormBuilder(
-                  key: _formKey,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.5),
-                    child: Column(
-                      children: [
-                        FormBuilderTextField(
-                          name: 'Message',
-                          decoration: const InputDecoration(labelText: 'Messsage'),
-                          validator:
-                          FormBuilderValidators.compose([
-                            FormBuilderValidators.required()
-                          ]),
-                        ),
-                        SizedBox(height: 20),
-                        Text("Votre note"),
-
-                        RatingBar.builder(
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
+              child: SingleChildScrollView(
+                child: FormBuilder(
+                    key: _formKey,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.5),
+                      child: Column(
+                        children: [
+                          FormBuilderTextField(
+                            name: 'Message',
+                            decoration: const InputDecoration(labelText: 'Messsage'),
+                            validator:
+                            FormBuilderValidators.compose([
+                              FormBuilderValidators.required()
+                            ]),
                           ),
-                          onRatingUpdate: (rating) {
-                            _noteController = rating;
-                          },
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton.icon(
-                              icon: Icon(Icons.image),
-                              label: Text("Depuis la galerie"),
-                              onPressed: () => _pickImage(ImageSource.gallery),
+                          SizedBox(height: 20),
+                          Text("Votre note"),
+
+                          RatingBar.builder(
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
                             ),
-                            ElevatedButton.icon(
-                              icon: Icon(Icons.camera),
-                              label: Text("Prendre une photo"),
-                              onPressed: () => _pickImage(ImageSource.camera),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        if (_selectedImage != null)
-                          Image.file(_selectedImage!, height: 75, width: double.infinity, fit: BoxFit.cover),
-                        const SizedBox(height: 20),
+                            onRatingUpdate: (rating) {
+                              _noteController = rating;
+                            },
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange
+                                  ),
+                                  icon: Icon(
+                                    Icons.image,
+
+                                  ),
+                                  label: Text(
+                                    "Depuis la galerie",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white
+                                    ),
+                                  ),
+                                  onPressed: () => _pickImage(ImageSource.gallery),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: ElevatedButton.icon(
+                                  icon: Icon(
+                                    Icons.camera,
+                                    color: Colors.white,
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange
+                                  ),
+                                  label: Text(
+                                    "Prendre une photo",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white
+                                    ),
+                                  ),
+                                  onPressed: () => _pickImage(ImageSource.camera),
+                                ),
+                              ),
+
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          if (_selectedImage != null)
+
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    Dialog(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(25.0),
+                                          child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                    ),
+                              );
+                            },
+                            child:  ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: Image.file(_selectedImage!,fit: BoxFit.cover),
+                                ),
+                          ),
+                          const SizedBox(height: 20),
 
 
-                        ElevatedButton(
+                          ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                textStyle: TextStyle(fontSize: 20),
-                                backgroundColor: Colors.purple
+                                backgroundColor: Colors.green
                             ),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()){
@@ -155,11 +207,11 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                   showLoading();
                                   print("Image sélectionnée : ${_selectedImage!.path}");
                                   await critiquesViewModel.insertCritiquePhoto(
-                                    user_identifier,
-                                    widget.restID.toString(),
-                                    _formKey.currentState?.fields['Message']?.value ?? "Pas de message",
-                                    (_noteController + 0.5).toInt() ?? 3,
-                                    _selectedImage
+                                      user_identifier,
+                                      widget.restID.toString(),
+                                      _formKey.currentState?.fields['Message']?.value ?? "Pas de message",
+                                      (_noteController + 0.5).toInt() ?? 3,
+                                      _selectedImage
                                   );
                                   context.go('/avis');
                                 }else {
@@ -175,12 +227,20 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                 }
                               }
                             },
-                            child: const Text('Ajouter')
-                        )
-                      ],
-                    ),
-                  )
-              ),
+                            child: const Text(
+                              'Ajouter',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white
+                              ),
+                            ),
+
+                          )
+                        ],
+                      ),
+                    )
+                ),
+              )
             );
           }
       ),

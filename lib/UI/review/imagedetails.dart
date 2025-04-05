@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-// la base de ce code m'a été fournis par on camarad: Julian marques
+// la base de ce code m'a été fournis par mon camarade: Julian marques
 // Il à été modifié pour qu'il fonctionne avec notre application
 class ImageDetail extends StatelessWidget {
   final Image image;

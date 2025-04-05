@@ -40,7 +40,7 @@ class _FavorisState extends State<Favoris> {
     }
     else {
     return Scaffold(
-      appBar: AppBar(title: Text("Mes Favoris", style: TextStyle(color:Colors.black))),
+      appBar: AppBar(title: Text("Mes Favoris sur l'appareil", style: TextStyle(color:Colors.black))),
       bottomNavigationBar: Footer().create(context),
       body: ListView.builder(
             itemCount: favorisViewModel.favoris.length,

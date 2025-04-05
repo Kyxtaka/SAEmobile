@@ -43,8 +43,6 @@ class _AvisState extends State<Avis> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final critiquesViewModel = context.watch<CritiqueViewModel>();
@@ -53,12 +51,7 @@ class _AvisState extends State<Avis> {
     Future<void> refreshWidget() async {
       _showLoading(context);
       await critiquesViewModel.refreshDataNoNotify();
-      // debugPrint("refresh data finished ready to pop => Should be visible after await");
-      // debugPrint("can pop status ${Navigator.of(context).canPop()}");
-      // debugPrint("Pile actuelle: ${ModalRoute.of(context)?.settings.name}");
-      // debugPrint("Routes empilées : ${Navigator.of(context).widget.toString()}");
 
-      // context.pop();
       if (Navigator.of(context, rootNavigator: true).canPop()) {
         debugPrint("Pop du dialog...");
         Navigator.of(context, rootNavigator: true).pop();
@@ -70,12 +63,7 @@ class _AvisState extends State<Avis> {
 
     Future<void> initOnUserChange() async {
       debugPrint("initOnUserChanged called");
-      // if (critiquesViewModel.liste.isNotEmpty) {
-      //   debugPrint("list not empty");
       final String currentUser = await UserViewModel.getCurrentUser();
-      // debugPrint("memorizeUsername ${memorizedUsername}");
-      // debugPrint("currentUser ${currentUser}");
-      // debugPrint("refreshing ...");
       if (critiquesViewModel.liste.isNotEmpty) {
         if (currentUser != critiquesViewModel.liste.first.user?.mail) refreshWidget();
       }else if (critiquesViewModel.liste.isEmpty) {
@@ -84,10 +72,7 @@ class _AvisState extends State<Avis> {
       }
       debugPrint("refresh canceled");
     }
-
     print("Avis widget reconstruit !");
-    // print("Avis page liste: ${critiquesViewModel.liste}");
-
     if (critiquesViewModel.onLoading) {
       return Scaffold(
         appBar: AppBar(title: Text('Mes Avis', style: TextStyle(color: Colors.black))),
@@ -110,6 +95,7 @@ class _AvisState extends State<Avis> {
                     },
                     child: Text("Un problème ? Réactualiser (Fonctionne pas)")
                 ),
+
                 // selector généré par chatGPT pour écouter la variable identifier du userViewModel
                 // ne fonctionne pas en dirait
                 Selector<UserViewModel, String>(
@@ -120,6 +106,7 @@ class _AvisState extends State<Avis> {
                     return SizedBox.shrink(); // Widget invisible qui écoute les changements
                   },
                 ),
+
               ],
             )
         ),
@@ -147,6 +134,7 @@ class _AvisState extends State<Avis> {
                 },
                 child: Text("Un problème ? Réactualiser")
             ),
+
             // selector généré par chatGPT pour écouter la variable identifier du userViewModel
             // ne fonctionne pas en dirait
             Selector<UserViewModel, String>(
@@ -156,7 +144,8 @@ class _AvisState extends State<Avis> {
                 initOnUserChange(); // Appelle la méthode lorsque l'utilisateur change
                 return SizedBox.shrink(); // Widget invisible qui écoute les changements
               },
-            )
+            ),
+
           ],
         )
       );

@@ -87,8 +87,9 @@ class Critique {
   }
 
   Widget renderCard(BuildContext context, bool? publicMode) {
-    if (publicMode != null) publicMode = publicMode;
-    else {
+    if (publicMode != null) {
+      publicMode = publicMode;
+    } else {
       publicMode = true;
     }
     if (imagePath != 'assets/img/default-image.png') {
@@ -126,7 +127,7 @@ class Critique {
                 fontSize: 12,
               ),
             ),
-            (publicMode!) ? Container() :
+            (publicMode) ? Container() :
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
