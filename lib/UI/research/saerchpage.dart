@@ -9,14 +9,17 @@ import 'package:saemobile/models/typeCuisine.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
-
-  const SearchScreen({super.key});
+  final bool shouldFocus;
+  const SearchScreen({super.key, this.shouldFocus = false});
 
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+
   final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
 
   late Future<void> _loadDataFuture;
@@ -32,8 +35,19 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _loadDataFuture = _loadData();
+    if (widget.shouldFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(_focusNode);
+      });
+    }
   }
 
+    @override
+    void dispose() {
+      _focusNode.dispose();
+      _controller.dispose();
+      super.dispose();
+    }
   Future<void> _loadData() async {
     final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
     final caracs = await caracAndCuisineAPI.getAllCaracterisque();
@@ -95,6 +109,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: Column(
                       children: [
                         FormBuilderTextField(
+                          focusNode: _focusNode,
+                          controller: _controller,
                           name: 'search',
                           decoration: const InputDecoration(labelText: 'Rechercher'),
                         )

@@ -107,7 +107,7 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/search',
-        builder: (context, state) => SearchScreen(),
+        builder: (context, state) => SearchScreen(shouldFocus: state.uri.queryParameters["focus"] == "true",),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
