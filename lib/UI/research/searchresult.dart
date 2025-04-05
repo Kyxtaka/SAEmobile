@@ -79,7 +79,12 @@ class _SearchResultState extends State<SearchResult> {
             
             if (restaurantsList.isEmpty) {
               return Center(
-                child: Text("Aucun restaurants ne correspond à votre recherche"),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Aucun restaurants ne correspond à votre recherche")
+                  ],
+                ),
               );
             }
 

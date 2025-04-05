@@ -102,7 +102,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
 
               const SizedBox(height: 40),
-              Text("Votre position actuelle est "),
+              Center(
+                child: Text("Votre position actuelle"),
+              ),
               SingleChildScrollView(
                 child: Column(
                   children: [
@@ -144,7 +146,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text("Autoriser la localisation")),
               const SizedBox(height: 40),
 
-              ElevatedButton(
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 20),
                   backgroundColor: Colors.red,
@@ -154,13 +158,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  // await critiquesViewModel.generateCritiques("");
-                  // await favorisViewModel.generateFavoris("");
                   await userViewModel.setDisconnection();
                 },
                 child: const Text(
-                  'Déconnexion',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                    'Déconnexion',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
                 ),
               ),
             ],

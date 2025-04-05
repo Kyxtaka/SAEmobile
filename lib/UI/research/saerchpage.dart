@@ -134,40 +134,43 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                   ),
 
-                  ElevatedButton(
-                    onPressed: () {
+                  Padding(
+                    padding: EdgeInsets.all(15),
+                    child: ElevatedButton(
+                      onPressed: () {
 
-                      debugPrint("slected type id string ${selectedType?.id.toString()}");
-                      debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
+                        debugPrint("slected type id string ${selectedType?.id.toString()}");
+                        debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
 
-                      final searchValue = _formKey.currentState?.fields['search']?.value;
+                        final searchValue = _formKey.currentState?.fields['search']?.value;
 
-                      context.goNamed(
-                        'searchResult',
-                        queryParameters: {
-                          if (selectedType != null) 'cuisine': selectedType?.id.toString(),
-                          if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
-                          if (searchValue != null && searchValue.toString().trim().isNotEmpty)
-                            'search': searchValue.toString(),
-                        },
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        context.goNamed(
+                          'searchResult',
+                          queryParameters: {
+                            if (selectedType != null) 'cuisine': selectedType?.id.toString(),
+                            if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
+                            if (searchValue != null && searchValue.toString().trim().isNotEmpty)
+                              'search': searchValue.toString(),
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    child: const Text(
-                      "Rechercher",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      child: const Text(
+                        "Rechercher",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
 
