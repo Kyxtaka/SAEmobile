@@ -18,6 +18,7 @@ import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'UI/profile.dart';
 import 'UI/review/avis.dart';
 import 'UI/research/decouverte.dart';
 import 'dart:async';
@@ -256,7 +257,15 @@ GoRouter _router(UserViewModel userViewModel) {
             final id = state.pathParameters['id']!;
             return CritiqueRestaurants(restaurantId: id);
           }
-      )
+      ),
+      // Code d'Ophelie
+      GoRoute(
+        path: '/profile/:email',
+        builder: (context, state) {
+          final String email = state.pathParameters['email'] ?? '';
+          return Profile(userEmail: email);
+        },
+      ),
     ],
   );
 }
