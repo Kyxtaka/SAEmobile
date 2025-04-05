@@ -30,7 +30,7 @@ class _SearchResultState extends State<SearchResult> {
   }
 
   Future<void> _loadData() async {
-    List<Restaurant> restaurants;
+    List<Restaurant>? restaurants;
     if (widget.carac != -1 && widget.cuisine != -1) {
       restaurants = await restAPI.getRestaurantByCaracAndCuisine(widget.carac, widget.cuisine);
 
@@ -48,12 +48,12 @@ class _SearchResultState extends State<SearchResult> {
     print(widget.search.runtimeType);
 
     if (widget.search.toLowerCase() != "null") {
-      restaurants.removeWhere((rest) => !rest.name.toLowerCase().contains(widget.search.toLowerCase()));
+      restaurants?.removeWhere((rest) => !rest.name.toLowerCase().contains(widget.search.toLowerCase()));
       // restaurants = restaurants.where((rest) => rest.name.contains(widget.search)).toList();
     }
 
     setState(() {
-      restaurantsList = restaurants;
+      restaurantsList = restaurants!;
     });
   }
 

@@ -19,7 +19,6 @@ void main() {
   late MockUserTools mockUserTools;
 
   setUp(() {
-
     mockDatabase = MockSupabaseClient();
     mockUserViewModel = MockUserViewModel();
     mockUserTools = MockUserTools();
