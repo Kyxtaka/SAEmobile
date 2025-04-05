@@ -1,16 +1,26 @@
-# saemobile
+# SAE Mobile - IUTables'O
 
-SAE Mobile
+## Introduction
+IUTables'O est une application mobile qui recense des restaurants d'Orléans et les différents avis de leurs clients.  
 
-## Getting Started
+## Pré-requis
+Pour ouvrir le projet, vous devez avoir préalablement les installations nécessaires :  
+- Android Studio et les packages Flutter [Installer Android Studio](https://www.google.com/search?client=safari&rls=en&q=android+studio+install&ie=UTF-8&oe=UTF-8)
+- Avoir les dépendances nécessaires avec ```pub get```
+- Google Chrome pour lancer en mode web
+- Un portable sous Android (Facultatif)
 
-This project is a starting point for a Flutter application.
+## Lancement du projet
+### support Web
+Pour lancer le projet depuis le web, vous devez : 
+- vous rendre à la racine du projet
+- lancer avec la commande ```flutter run```
 
-A few resources to get you started if this is your first Flutter project:
+## Fonctionnalités implémentées
+L'application mobile IUTables'O permet :
+- de se connecter, de s'inscrire et de vous garder connecté
+- de visualiser les détails d'un restaurant (avis, horaires..) par recommandation, recherche (nom, type de cuisine), par localisation (les plus proches)
+- de mettre en favoris des restaurants, de les supprimer
+- de donner des avis, de les supprimer ou modifier (avec photos)
+- de garder en mémoire votre localisation ou encore vos types de cuisine préféré
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
