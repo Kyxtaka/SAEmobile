@@ -44,10 +44,21 @@ class RestaurantsPrefereesDAO {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      Restaurant rest = await RestaurantsTable.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
-      restaurants.add(rest);
+      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
+          "",
+          "",
+          0,
+          "",
+          "",
+          "",
+          "",
+          0,
+          45,
+          0,
+          "",
+          0.0,
+          0.0));
     }
-    print("resturants preferees: ${restaurants}");
     return restaurants;
   }
 
