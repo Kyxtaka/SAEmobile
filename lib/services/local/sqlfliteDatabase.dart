@@ -38,7 +38,7 @@ class SqlfliteDatabase {
       id INTEGER PRIMARY KEY,
       name TEXT,
       address TEXT,
-      photo TEXT
+      url_photo TEXT
     )
     '''
     );

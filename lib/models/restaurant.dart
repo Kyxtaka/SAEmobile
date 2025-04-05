@@ -85,7 +85,8 @@ class Restaurant {
     return {
       'id': _id,
       'name': _name,
-      'address': _address
+      'address': _address,
+      'url_photo': _url_photo
     };
   }
 

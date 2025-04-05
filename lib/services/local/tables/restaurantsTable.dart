@@ -46,7 +46,7 @@ class RestaurantsTable {
         map['tel'] = '',
         map['siret'] = '',
         map['website'] = '',
-        map['url_photo'] = '',
+        map['url_photo'] as String,
         map['id_cuisine'] = 0,
         map['id_region'] = 0,
         map['nb_etoile'] = 0,
@@ -69,7 +69,6 @@ class RestaurantsTable {
     final tel = (map['tel'] as String?) ?? '';
     final siret = (map['siret'] as String?) ?? '';
     final website = (map['website'] as String?) ?? '';
-    final urlPhoto = (map['url_photo'] as String?) ?? '';
     final idCuisine = (map['id_cuisine'] as int?) ?? 0;
     final idRegion = (map['id_region'] as int?) ?? 0;
     final nbEtoile = (map['nb_etoile'] as int?) ?? 0;
@@ -85,7 +84,7 @@ class RestaurantsTable {
       tel,
       siret,
       website,
-      urlPhoto,
+      map['url_photo'] as String,
       idCuisine,
       idRegion,
       nbEtoile,
