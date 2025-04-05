@@ -135,7 +135,8 @@ class _DetailsPageState extends State<DetailsPage> {
                     ),
                   ),
                   SizedBox(height: 15),
-                  Text("Ajouter en favoris", style: TextStyle(fontSize:15)),
+
+                  Text((!snapshot.data!['isFav']) ? "Ajouter en favoris" : "Supprimer des favoris", style: TextStyle(fontSize:15)),
                   IconButton(
                     icon: Icon(Icons.favorite,),
                     color: (snapshot.data!['isFav']) ? Colors.red : Colors.grey,
