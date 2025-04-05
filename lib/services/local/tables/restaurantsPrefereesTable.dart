@@ -3,12 +3,8 @@
 import 'package:saemobile/models/restaurant.dart';
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/restaurantapi.dart';
-import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
-import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 
 class RestaurantsPrefereesDAO {
 
