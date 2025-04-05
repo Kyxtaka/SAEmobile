@@ -62,7 +62,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: Footer().create(context),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
             children: [
               Text(
@@ -109,8 +110,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       height: MediaQuery.of(context).size.height * 0.4,
                       child: FlutterMap(
                         options: MapOptions(
-                          initialCenter : localisation,
-                          initialZoom:11
+                            initialCenter : localisation,
+                            initialZoom:11
                         ),
                         children: [
                           TileLayer(
@@ -140,7 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     var position = await _determinePosition();
                     userViewModel.setLocalisation(position);
                   },
-                  child: Text("Récupérer votre localisation")),
+                  child: Text("Autoriser la localisation")),
               const SizedBox(height: 40),
 
               ElevatedButton(
@@ -165,6 +166,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
+      )
 
     );
 

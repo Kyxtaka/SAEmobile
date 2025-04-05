@@ -71,131 +71,133 @@ class _SearchScreenState extends State<SearchScreen> {
             return Center(child: Text(snapshot.error.toString()));
           }
 
-          return Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
+          return SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.goNamed('decouverte');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero, // Supprime le border radius
+                        ),
+                      ),
+                      child: const Text("Voir tous les restaurants"),
+                    ),
+                  ),
+
+                  FormBuilder(
+                      key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.all(15.5),
+                        child: Column(
+                          children: [
+                            FormBuilderTextField(
+                              name: 'search',
+                              decoration: const InputDecoration(labelText: 'Rechercher'),
+                            )
+                          ],
+                        ),
+                      )
+                  ),
+
+                  // TypeCuisine Dropdown
+                  DropdownTypeCuisine(
+                    typeCuisines: typeCuisines,
+                    selectedType: selectedType,
+                    onChanged: (TypeCuisine? value) {
+                      setState(() {
+                        print(value);
+                        selectedType = value;
+                        print(selectedType?.id);
+                      });
+                    },
+                  ),
+
+                  // Caracteristique Dropdown
+                  DropdownCaracteristique(
+                    caracteristiques: caracteristiques,
+                    selectedCarac: selectedCarac,
+                    onChanged: (Caracteristique? value) {
+                      setState(() {
+                        print(value);
+                        selectedCarac = value;
+                        print(selectedCarac?.id);
+                      });
+                    },
+                  ),
+
+                  ElevatedButton(
                     onPressed: () {
-                      context.goNamed('decouverte');
+
+                      debugPrint("slected type id string ${selectedType?.id.toString()}");
+                      debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
+
+                      final searchValue = _formKey.currentState?.fields['search']?.value;
+
+                      context.goNamed(
+                        'searchResult',
+                        queryParameters: {
+                          if (selectedType != null) 'cuisine': selectedType?.id.toString(),
+                          if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
+                          if (searchValue != null && searchValue.toString().trim().isNotEmpty)
+                            'search': searchValue.toString(),
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.orangeAccent,
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // Supprime le border radius
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                    child: const Text("Voir tous les restaurants"),
-                  ),
-                ),
-
-                FormBuilder(
-                  key: _formKey,
-                  child: Padding(
-                    padding: EdgeInsets.all(15.5),
-                    child: Column(
-                      children: [
-                        FormBuilderTextField(
-                          name: 'search',
-                          decoration: const InputDecoration(labelText: 'Rechercher'),
-                        )
-                      ],
+                    child: const Text(
+                      "Rechercher",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  )
-                ),
-
-                // TypeCuisine Dropdown
-                DropdownTypeCuisine(
-                  typeCuisines: typeCuisines,
-                  selectedType: selectedType,
-                  onChanged: (TypeCuisine? value) {
-                    setState(() {
-                      print(value);
-                      selectedType = value;
-                      print(selectedType?.id);
-                    });
-                  },
-                ),
-
-                // Caracteristique Dropdown
-                DropdownCaracteristique(
-                  caracteristiques: caracteristiques,
-                  selectedCarac: selectedCarac,
-                  onChanged: (Caracteristique? value) {
-                    setState(() {
-                      print(value);
-                      selectedCarac = value;
-                      print(selectedCarac?.id);
-                    });
-                  },
-                ),
-
-                ElevatedButton(
-                  onPressed: () {
-
-                    debugPrint("slected type id string ${selectedType?.id.toString()}");
-                    debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
-
-                    final searchValue = _formKey.currentState?.fields['search']?.value;
-
-                    context.goNamed(
-                      'searchResult',
-                      queryParameters: {
-                        if (selectedType != null) 'cuisine': selectedType?.id.toString(),
-                        if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
-                        if (searchValue != null && searchValue.toString().trim().isNotEmpty)
-                          'search': searchValue.toString(),
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orangeAccent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  child: const Text(
-                    "Rechercher",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
 
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: FlutterMap(
-                  options: MapOptions(
-                  initialCenter : position,
-                  initialZoom:13
-                ),
-                children: [
-                  TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
-                  ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: position, // center of 't Gooi
-                        radius: 150,
-                        useRadiusInMeter: true,
-                        color: Colors.red,
-                        borderColor: Colors.red,
-                        borderStrokeWidth: 2,
-                      )
-                    ],
-                  ),
-                  setRestaurantsByPosition(context)]),)
-              ],
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: FlutterMap(
+                        options: MapOptions(
+                            initialCenter : position,
+                            initialZoom:13
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          CircleLayer(
+                            circles: [
+                              CircleMarker(
+                                point: position, // center of 't Gooi
+                                radius: 150,
+                                useRadiusInMeter: true,
+                                color: Colors.red,
+                                borderColor: Colors.red,
+                                borderStrokeWidth: 2,
+                              )
+                            ],
+                          ),
+                          setRestaurantsByPosition(context)]),)
+                ],
+              ),
             ),
           );
         },
