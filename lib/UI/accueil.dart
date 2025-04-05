@@ -15,6 +15,7 @@ import '../services/local/tables/typeCuisineTable.dart';
 import '../models/typeCuisine.dart';
 import 'details.dart';
 import 'global/footer.dart';
+import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 
 
 class Accueil extends StatefulWidget{
@@ -30,7 +31,7 @@ class _AccueilState extends State<Accueil> {
 
   late final TypeCuisineTable typeCuisineLocal;
   late final CuisinesPrefereesTable typeCuisinePref;
-  late final RestaurantsPreferees restaurantPrefLocal;
+  late final RestaurantsPrefereesDAO restaurantPrefLocal;
   late final RestaurantsTable restaurants;
 
   RestaurantAPI apiRestaurant = RestaurantAPI();
@@ -38,10 +39,10 @@ class _AccueilState extends State<Accueil> {
       database: Supabase.instance.client);
 
   Future<List<Restaurant?>> _getSuggestions(String user) async {
-    final favoriteCuisines = await typeCuisinePref.getCuisinesPreferees(user);
+    final favoriteCuisines = await CuisinesPrefereesTable.getCuisinesPrefereesInType(user);
     final favoriteCuisineIds = favoriteCuisines.map((cuisine) => cuisine.id).toList();
 
-    final favoriteRestaurants = await RestaurantsPreferees.getRestaurantsPreferees(user);
+    final favoriteRestaurants = await RestaurantsPrefereesDAO.getRestaurantsPreferees(user);
     final favoriteRestaurantIds = favoriteRestaurants.map((resto) => resto.id).toList();
 
     return await apiRestaurant.getRestaurantSuggestions(
@@ -63,7 +64,7 @@ class _AccueilState extends State<Accueil> {
 
     typeCuisineLocal = TypeCuisineTable();
     typeCuisinePref = CuisinesPrefereesTable();
-    restaurantPrefLocal = RestaurantsPreferees();
+    restaurantPrefLocal = RestaurantsPrefereesDAO();
     restaurants = RestaurantsTable();
 
     typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
@@ -137,7 +138,7 @@ class _AccueilState extends State<Accueil> {
                       ),
                       const SizedBox(height: 16),
                       FutureBuilder<List<TypeCuisine>>(
-                        future: typeCuisinePref.getCuisinesPreferees(user),
+                        future: CuisinesPrefereesTable.getCuisinesPrefereesInType(user),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData && snapshot.connectionState !=
                               ConnectionState.done) {
@@ -162,7 +163,7 @@ class _AccueilState extends State<Accueil> {
                                   padding: const EdgeInsets.only(right: 12.0),
                                   child: InkWell(
                                     onTap: () {
-                                      context.go('/search?focus=true&cuisine=${cuisine.id.toString()}&autoSearch=true');
+                                      context.go('/search?focus=true&cuisine=${cuisine.id}&autoSearch=true');
                                     },
                                   child: Column(
                                     children: [
@@ -201,7 +202,7 @@ class _AccueilState extends State<Accueil> {
                         },
                       ),
                       FutureBuilder<List<Restaurant?>>(
-                        future: RestaurantsPreferees.getRestaurantsPreferees(
+                        future: RestaurantsPrefereesDAO.getRestaurantsPreferees(
                             user),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData && snapshot.connectionState !=

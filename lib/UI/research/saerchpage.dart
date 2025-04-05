@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:saemobile/UI/global/footer.dart';
@@ -13,16 +14,17 @@ import 'package:saemobile/models/typeCuisine.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
+
   final bool shouldFocus;
   final String? initialCuisineId;
   final bool autoSearch;
+
   const SearchScreen({
     super.key,
     this.shouldFocus = false,
     this.initialCuisineId,
     this.autoSearch = false,
   });
-
 
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
@@ -36,14 +38,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
   late Future<void> _loadDataFuture;
   final _formKey = GlobalKey<FormBuilderState>();
-  late var position;
-  late var restauranstByPosition;
 
   List<TypeCuisine> typeCuisines = [];
   List<Caracteristique> caracteristiques = [];
+  late var position;
+  late var restauranstByPosition;
 
   TypeCuisine? selectedType;
   Caracteristique? selectedCarac;
+
   @override
   void initState() {
     super.initState();
@@ -61,12 +64,12 @@ class _SearchScreenState extends State<SearchScreen> {
     _controller.dispose();
     super.dispose();
   }
+
   Future<void> _loadData() async {
     final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
     final caracs = await caracAndCuisineAPI.getAllCaracterisque();
     position = await UserViewModel.getLocalisation();
     restauranstByPosition = await RestaurantAPI.getRestaurantsByLocation(position.latitude, position.longitude);
-
 
     setState(() {
       typeCuisines = cuisines;
@@ -76,24 +79,23 @@ class _SearchScreenState extends State<SearchScreen> {
       if (widget.initialCuisineId != null) {
         final matchedType = cuisines.firstWhere(
               (c) => c.id.toString() == widget.initialCuisineId,
-          orElse: () => cuisines.first,
         );
         selectedType = matchedType;
       }
     });
 
-    if (widget.autoSearch && widget.initialCuisineId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.goNamed(
-          'searchResult',
-          queryParameters: {
-            'cuisine': widget.initialCuisineId!,
-          },
-        );
-      });
+  if (widget.autoSearch && widget.initialCuisineId != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.goNamed(
+        'searchResult',
+        queryParameters: {
+          'cuisine': widget.initialCuisineId!,
+          'carac': '-1',
+        },
+      );
+    });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -133,20 +135,22 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
 
-                  FormBuilder(
-                      key: _formKey,
-                      child: Padding(
-                        padding: EdgeInsets.all(15.5),
-                        child: Column(
-                          children: [
-                            FormBuilderTextField(
-                              name: 'search',
-                              decoration: const InputDecoration(labelText: 'Rechercher'),
-                            )
-                          ],
-                        ),
-                      )
-                  ),
+                FormBuilder(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.all(15.5),
+                    child: Column(
+                      children: [
+                        FormBuilderTextField(
+                          focusNode: _focusNode,
+                          controller: _controller,
+                          name: 'search',
+                          decoration: const InputDecoration(labelText: 'Rechercher'),
+                        )
+                      ],
+                    ),
+                  )
+                ),
 
                   // TypeCuisine Dropdown
                   DropdownTypeCuisine(
@@ -154,9 +158,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     selectedType: selectedType,
                     onChanged: (TypeCuisine? value) {
                       setState(() {
-                        print(value);
+                        // print(value);
                         selectedType = value;
-                        print(selectedType?.id);
+                        // print(selectedType?.id);
                       });
                     },
                   ),

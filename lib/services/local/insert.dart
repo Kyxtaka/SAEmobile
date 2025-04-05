@@ -1,4 +1,3 @@
-import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 import 'package:saemobile/services/local/tables/typeCuisineTable.dart';
@@ -15,7 +14,7 @@ class Insert {
 
     final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
     final CuisinesPrefereesTable typeCuisinePref = CuisinesPrefereesTable();
-    final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
+    final RestaurantsPrefereesDAO restaurantPrefLocal = RestaurantsPrefereesDAO();
     final RestaurantsTable restaurants = RestaurantsTable();
     final UserTable user = UserTable();
 
@@ -77,37 +76,37 @@ class Insert {
     );
 
     // Insertion de restaurants préférés
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5139);
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5140);
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5142);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5139);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5140);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5142);
 
     // Insertion de types de cuisine
     await typeCuisineLocal.insertTypeCuisine(
       1,
-      TypeCuisine(1, 'japonais', 'assets/img/typeCuisine/japonais.jpg'),
+      TypeCuisine(76, 'tacos', 'assets/img/typeCuisine/japonais.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       2,
-      TypeCuisine(2, 'italien', 'assets/img/typeCuisine/italien.jpg'),
+      TypeCuisine(78, 'italian', 'assets/img/typeCuisine/italien.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       3,
-      TypeCuisine(3, 'coréen', 'assets/img/typeCuisine/coreen.jpg'),
+      TypeCuisine(83, 'mexican', 'assets/img/typeCuisine/coreen.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       4,
-      TypeCuisine(4, 'français', 'assets/img/typeCuisine/francais.png'),
+      TypeCuisine(91, 'vietnamese', 'assets/img/typeCuisine/francais.png'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       5,
-      TypeCuisine(5, 'indien', 'assets/img/typeCuisine/indien.png'),
+      TypeCuisine(102, 'turkish', 'assets/img/typeCuisine/indien.png'),
     );
 
-    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 1, 'simple');
-    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 2, 'italian');
-    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 3, 'chinese');
-    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 4, 'kebab');
-    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 5, 'salad');
+    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 76, "");
+    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 78, "");
+    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 83, "");
+    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 91, "");
+    await CuisinesPrefereesTable.insertCuisinePrefere('a@mail.com', 102, "");
 
   }
 }

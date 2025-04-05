@@ -11,6 +11,13 @@ import '../api/restaurantapi.dart';
 import '../models/restaurant.dart';
 import 'global/header.dart';
 
+// Ajouter ce script à l'accueil pour envoyer l'id du restaurant cliqué à DetailsPage
+//Navigator.push(
+//   context,
+//   MaterialPageRoute(
+//     builder: (context) => DetailsPage(restaurantId: restaurant.id_resto),
+//   ),
+// );
 
 class DetailsPage extends StatefulWidget {
   final String? restaurantId;
@@ -41,141 +48,142 @@ class _DetailsPageState extends State<DetailsPage> {
     return {"restaurant": restaurant, "typecuisine": type, "isFav": isFav};
   }
 
+
   @override
   Widget build(BuildContext context) {
     Footer footer = Footer();
     final favorisViewModel = context.watch<FavorisViewModel>();
     return Scaffold(
-        backgroundColor: Colors.white,
-        bottomNavigationBar: footer.create(context),
-        appBar: Header.create(),
-        body: FutureBuilder<Map<String, dynamic>>(
-          future: getDetailsRestaurant(),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: footer.create(context),
+      appBar: Header.create(),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: getDetailsRestaurant(),
           builder: (context, snapshot){
-            var typecuisine = "Non renseigné";
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
+          var typecuisine = "Non renseigné";
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
-            } else if (snapshot.hasData) {
-              if (snapshot.data!['typecuisine'] is TypeCuisine?){
-                typecuisine = snapshot.data!['typecuisine'].cuisine;
-              }
+          } else if (snapshot.hasData) {
+            if (snapshot.data!['typecuisine'] is TypeCuisine?){
+              typecuisine = snapshot.data!['typecuisine'].cuisine;
+            }
               return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 30.0),
-                      child: Text(
-                        snapshot.data!['restaurant'].name,
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1),
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: Text(
+                      snapshot.data!['restaurant'].name,
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1),
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.orange,
+                    thickness: 2,
+                    indent: 250,
+                    endIndent: 250,
+                  ),
+                  SizedBox(height: 10),
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          snapshot.data!['restaurant'].url_photo,
+                          width: 300,
+                          height: 250,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                                'assets/img/default-image.png',
+                                width: 300,
+                                height: 250,
+                              ),
+                        ),
                       ),
-                    ),
-                    Divider(
-                      color: Colors.orange,
-                      thickness: 2,
-                      indent: 250,
-                      endIndent: 250,
-                    ),
-                    SizedBox(height: 10),
-                    Stack(
-                      alignment: Alignment.bottomCenter,
+                      Container(
+                        width: 120,
+                        padding: EdgeInsets.all(5),
+                        color: Colors.black54,
+                        child: Text(
+                          snapshot.data!['restaurant'].name,
+                          textAlign: TextAlign.center,
+                          style:
+                          TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                            snapshot.data!['restaurant'].url_photo,
-                            width: 300,
-                            height: 250,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(
-                                  'assets/img/default-image.png',
-                                  width: 300,
-                                  height: 250,
-                                ),
-                          ),
-                        ),
-                        Container(
-                          width: 120,
-                          padding: EdgeInsets.all(5),
-                          color: Colors.black54,
-                          child: Text(
-                            snapshot.data!['restaurant'].name,
-                            textAlign: TextAlign.center,
-                            style:
-                            TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ),
+                        infoSection("Adresse", snapshot.data!['restaurant'].address),
+                        infoSection("Origine", "Type : ${typecuisine}"),
+                        infoSection("Capacité", (snapshot.data!['restaurant'].capacity == 0 || snapshot.data!['restaurant'].capacity == -1) ? "Non renseigné" : "${snapshot.data!['restaurant'].capacity} personnes"),
+                        infoSection("Contact", (snapshot.data!['restaurant'].tel == "None")?"Non renseigné": "${snapshot.data!['restaurant'].tel}"),
                       ],
                     ),
-                    SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          infoSection("Adresse", snapshot.data!['restaurant'].address),
-                          infoSection("Origine", "Type : ${typecuisine}"),
-                          infoSection("Capacité", (snapshot.data!['restaurant'].capacity == 0 || snapshot.data!['restaurant'].capacity == -1) ? "Non renseigné" : "${snapshot.data!['restaurant'].capacity} personnes"),
-                          infoSection("Contact", (snapshot.data!['restaurant'].tel == "None")?"Non renseigné": "${snapshot.data!['restaurant'].tel}"),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 15),
+                  ),
+                  SizedBox(height: 15),
 
-                    Text((!snapshot.data!['isFav']) ? "Ajouter en favoris" : "Supprimer des favoris", style: TextStyle(fontSize:15)),
-                    IconButton(
-                        icon: Icon(Icons.favorite,),
-                        color: (snapshot.data!['isFav']) ? Colors.red : Colors.grey,
-                        onPressed:() async {
-                          var user = await  UserViewModel.getCurrentUser();
-                          if (snapshot.data!['isFav']) {
-                            await favorisViewModel.removeFavoris(user, snapshot.data?['restaurant'].id);
-                          }else {
-                            await favorisViewModel.addFavoris(user, snapshot.data?['restaurant'].id);
-                          }
-                          context.go('/favoris');}
-                    ),
-                    SizedBox(height: 15),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  Text((!snapshot.data!['isFav']) ? "Ajouter en favoris" : "Supprimer des favoris", style: TextStyle(fontSize:15)),
+                  IconButton(
+                    icon: Icon(Icons.favorite,),
+                    color: (snapshot.data!['isFav']) ? Colors.red : Colors.grey,
+                    onPressed:() async {
+                      var user = await  UserViewModel.getCurrentUser();
+                      if (snapshot.data!['isFav']) {
+                        favorisViewModel.removeFavoris(user, snapshot.data?['restaurant'].id);
+                      }else {
+                        favorisViewModel.addFavoris(user, snapshot.data?['restaurant'].id);
+                      }
+                      context.go('/favoris');}
+                  ),
+                  SizedBox(height: 15),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {
-                        context.go('/details/'+snapshot.data!['restaurant'].id.toString()+'/avis');
-                      },
-                      child: Text("Les Avis", style: TextStyle(color: Colors.white)),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
+                    onPressed: () {
+                      context.go('/details/'+snapshot.data!['restaurant'].id.toString()+'/avis');
+                    },
+                    child: Text("Les Avis", style: TextStyle(color: Colors.white)),
+                  ),
 
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onPressed: () {
-                        context.go('/details/${widget.restaurantId}/addcritique');
-                      },
-                      child: Text("Donner un avis", style: TextStyle(color: Colors.white)),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
-                  ],
-                ),
-              );}
+                    onPressed: () {
+                      context.go('/details/${widget.restaurantId}/addcritique');
+                    },
+                    child: Text("Donner un avis", style: TextStyle(color: Colors.white)),
+                  ),
+              ],
+            ),
+          );}
             return Text("Erreur lors de la récupération du restaurant");},
 
         ));
-  }
+      }
 
   Widget infoSection(String title, String value) {
     return Column(
@@ -197,3 +205,8 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 }
+
+
+
+
+

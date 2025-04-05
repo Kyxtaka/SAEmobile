@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../../models/typeCuisine.dart';
 import '../sqlfliteDatabase.dart';
@@ -18,37 +18,29 @@ class CuisinesPrefereesTable {
     );
   }
 
-  /// get les cuisines favorites pour un utilisateur
-  static Future<String> getCuisinesPrefereesToString(String email) async {
+  Future<int> deleteCuisinePrefere(String email, int cuisineId) async {
+    final db = await SqlfliteDatabase.instance.database;
+    return await db.delete(
+      'cuisines_preferees',
+      where: 'email = ? AND cuisine_id = ?',
+      whereArgs: [email, cuisineId],
+    );
+  }
+
+  static Future<String> getCuisinesPreferees(String email) async {
     final db = await SqlfliteDatabase.instance.database;
     var result = await db.query(
       'cuisines_preferees',
       where: 'email = ?',
       whereArgs: [email],
     );
-
     if (result.isEmpty){
       return "non renseigné";
     }
-    var favoris = "";
-    for (var i = 0;i<result.length;i++){
-      favoris += result[i]['cuisine'].toString() + ", ";
-    }
-    return favoris;
+    return result[2].toString();
   }
 
-
-
-  /// suppression cuisine favorite
-  static Future<void> deleteCuisinePrefere(String email, String cuisine) async {
-    final db = await SqlfliteDatabase.instance.database;
-    await db.delete(
-      'cuisines_preferees',
-      where: 'email = ? AND cuisine = ?',
-      whereArgs: [email, cuisine],
-    );
-  }
-  Future<List<TypeCuisine>> getCuisinesPreferees(String email) async {
+  static Future<List<TypeCuisine>> getCuisinesPrefereesInType(String email) async {
     final db = await SqlfliteDatabase.instance.database;
     final cuisineMaps = await db.rawQuery('''
     SELECT c.*
@@ -64,11 +56,10 @@ class CuisinesPrefereesTable {
       );
     }).toList();
   }
-
-  Future<List<TypeCuisine>> getAllTypeCuisines() async {
+  //
+  static Future<List<TypeCuisine>> getAllTypeCuisines() async {
     final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, Object?>> typeCuisineMaps = await db.query(
-        'cuisines_preferees');
+    final List<Map<String, Object?>> typeCuisineMaps = await db.query('cuisines_preferees');
     return typeCuisineMaps.map((map) {
       return TypeCuisine(
           map['idCuisine'] as int,
@@ -77,5 +68,6 @@ class CuisinesPrefereesTable {
       );
     }).toList();
   }
-
 }
+
+

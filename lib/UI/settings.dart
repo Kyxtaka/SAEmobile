@@ -191,6 +191,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 onPressed: () async {
+                  await favorisViewModel.removeAll();
                   await userViewModel.setDisconnection();
                 },
                 child: const Text(

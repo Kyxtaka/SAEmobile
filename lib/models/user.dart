@@ -47,4 +47,20 @@ class User {
       'localisation': _localisation
     };
   }
+
+  //Code d'Ophelie
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      map['mail'] as String,
+      map['password'] as String,
+      map['nom'] as String,
+      map['prenom'] as String,
+      map['role'] as String,
+      (map['tester'] as String).split(','),
+      (map['connected'] as int) == 1,
+      map['localisation'] as String,
+    );
+  }
+
+
 }

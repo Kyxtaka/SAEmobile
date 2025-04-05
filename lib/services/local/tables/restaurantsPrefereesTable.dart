@@ -3,14 +3,10 @@
 import 'package:saemobile/models/restaurant.dart';
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/restaurantapi.dart';
-import 'package:saemobile/models/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
-import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 
-class RestaurantsPreferees {
+class RestaurantsPrefereesDAO {
 
   static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;
@@ -44,10 +40,9 @@ class RestaurantsPreferees {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      Restaurant rest = await RestaurantsTable.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
-      restaurants.add(rest);
+      Restaurant? rest = await RestaurantAPI.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
+      restaurants.add(rest!);
     }
-    print("resturants preferees: ${restaurants}");
     return restaurants;
   }
 

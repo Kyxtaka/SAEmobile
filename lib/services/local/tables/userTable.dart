@@ -1,13 +1,10 @@
-
-
 import 'package:sqflite/sqflite.dart';
-
-import '../../../models/user.dart';
+import 'package:saemobile/models/user.dart' as app_models;
 import '../sqlfliteDatabase.dart';
 
 class UserTable {
 
-  static Future<void> insertUser(User user) async {
+  Future<void> insertUser(app_models.User user) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.insert(
       'User',
@@ -15,9 +12,8 @@ class UserTable {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-/*
 
-  Future<void> updateUser(User user) async {
+  Future<void> updateUser(app_models.User user) async {
     final db = await SqlfliteDatabase.instance.database;
     await db.update(
       'User',
@@ -27,28 +23,44 @@ class UserTable {
     );
   }
 
-
-
-  static Future<void> deleteUserCredentials() async {
+  Future<void> deleteUser(String email) async {
     final db = await SqlfliteDatabase.instance.database;
-    final UserCredentials user  = await getUserCredentials() ;
     await db.delete(
       'User',
       where: 'email = ?',
-      whereArgs: [user.email],
+      whereArgs: [email],
     );
   }
 
-  static Future<UserCredentials> getUserCredentials() async {
+  Future<app_models.User?> getUserByEmail(String email) async {
+    final db = await SqlfliteDatabase.instance.database;
+    final List<Map<String, Object?>> result = await db.query(
+      'User',
+      where: 'mail = ?',
+      whereArgs: [email],
+    );
+
+    if (result.isNotEmpty) {
+      return app_models.User.fromMap(result.first);
+    }
+    return null;
+  }
+
+  Future<List<app_models.User>> getAllUsers() async {
     final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> usersMaps = await db.query('User');
-    UserCredentials credentials = UserCredentials("","","");
-    try {
-      credentials.email = usersMaps.first['email'].toString();
-      credentials.password = usersMaps.first['password'].toString();
-    }catch (e) {
-      print(e);
-    }
-    return credentials;
-  */
+
+    return usersMaps.map((map) {
+      return app_models.User(
+        map['mail'] as String,
+        map['password'] as String? ?? '',
+        map['nom'] as String? ?? '',
+        map['prenom'] as String? ?? '',
+        map['role'] as String? ?? '',
+        (map['tester'] as List<String>?) ?? [],
+        (map['connected'] as int) == 1,
+        map['localisation'] as String? ?? '',
+      );
+    }).toList();
+  }
 }

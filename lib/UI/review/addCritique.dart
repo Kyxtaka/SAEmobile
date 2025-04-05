@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
+import 'package:saemobile/api/critiqueapi.dart';
 import 'package:saemobile/api/viewsmodel/critiquesviewmodel.dart';
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -68,6 +69,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
         ),
       );
     }
+
 
     return Scaffold(
       appBar: Header.create(),
@@ -211,7 +213,6 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                       (_noteController + 0.5).toInt() ?? 3,
                                       _selectedImage
                                   );
-                                  // context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
                                   _showLoading(context);
@@ -221,7 +222,6 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
                                     (_noteController + 0.5).toInt() ?? 3,
                                   );
-                                  // context.go('/avis');
                                 }
                                 if (Navigator.of(context, rootNavigator: true).canPop()) {
                                   debugPrint("Pop du dialog...");

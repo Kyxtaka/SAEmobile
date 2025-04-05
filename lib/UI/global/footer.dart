@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../api/viewsmodel/userviewmodel.dart';
 
 class Footer {
   BottomNavigationBar create(BuildContext context) {
@@ -25,6 +28,11 @@ class Footer {
           icon: Icon(Icons.settings),
           label: 'Settings',
         ),
+        //code d'Ophelie
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profil',
+        ),
       ],
     );
   }
@@ -37,6 +45,7 @@ class Footer {
     if (location.startsWith('/favoris')) return 2;
     if (location.startsWith('/avis')) return 3;
     if (location.startsWith('/settings')) return 4;
+    if (location.startsWith('/profile')) return 5;
     return 0;
   }
 
@@ -57,6 +66,15 @@ class Footer {
         break;
       case 4:
         context.go('/settings');
+        break;
+      //code d'ophelie
+      case 5:
+        final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+        if (userViewModel.isConnected()) {
+          context.go('/profile/${UserViewModel.getCurrentUser()}');
+        } else {
+          context.go('/login');
+        }
         break;
     }
   }

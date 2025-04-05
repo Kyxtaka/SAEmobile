@@ -1,22 +1,23 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
 
 class RestaurantsTable {
 
-  Future<int> insertRestaurant(Restaurant restaurant) async {
+  Future<void> insertRestaurant(Restaurant restaurant) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.insert(
+    await db.insert(
       'restaurants',
       restaurant.toMapLocal(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<int> updateRestaurant(Restaurant restaurant) async {
+  Future<void> updateRestaurant(Restaurant restaurant) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.update(
+    await db.update(
       'restaurants',
       restaurant.toMapLocal(),
       where: 'id = ?',
@@ -24,9 +25,9 @@ class RestaurantsTable {
     );
   }
 
-  Future<int> deleteRestaurant(int id) async {
+  Future<void> deleteRestaurant(int id) async {
     final db = await SqlfliteDatabase.instance.database;
-    return await db.delete(
+    await db.delete(
       'restaurants',
       where: 'id = ?',
       whereArgs: [id],
@@ -45,7 +46,7 @@ class RestaurantsTable {
         map['tel'] = '',
         map['siret'] = '',
         map['website'] = '',
-        map['url_photo'] as String,
+        map['url_photo'] = '',
         map['id_cuisine'] = 0,
         map['id_region'] = 0,
         map['nb_etoile'] = 0,
@@ -55,47 +56,4 @@ class RestaurantsTable {
       );
     }).toList();
   }
-
-  static Future<Restaurant> getRestaurantById(int id) async {
-    final db = await SqlfliteDatabase.instance.database;
-    final List<Map<String, Object?>> Restmaps = await db.query(
-      'restaurants_preferees',
-      where: 'restaurant_id = ?',
-      whereArgs: [id],
-    );
-    if (Restmaps.isEmpty) {
-      throw Exception('Restaurant with id $id not found');
-    }
-    final map = Restmaps.first;
-    final capacity = (map['capacity'] as int?) ?? 0;
-    final tel = (map['tel'] as String?) ?? '';
-    final siret = (map['siret'] as String?) ?? '';
-    final website = (map['website'] as String?) ?? '';
-    final idCuisine = (map['id_cuisine'] as int?) ?? 0;
-    final idRegion = (map['id_region'] as int?) ?? 0;
-    final nbEtoile = (map['nb_etoile'] as int?) ?? 0;
-    final horaires = (map['horaires'] as String?) ?? '';
-    final gpsLat = (map['gps_lat'] as double?) ?? 0.0;
-    final gpsLong = (map['gps_long'] as double?) ?? 0.0;
-
-    Restaurant resto = Restaurant(
-      (map['id'] as int?) ?? 0,
-      (map['name'] as String?) ?? "",
-      (map['address'] as String?) ?? "",
-      capacity,
-      tel,
-      siret,
-      website,
-      (map['url_photo'] as String?) ?? "assets/img/default-image.png",
-      idCuisine,
-      idRegion,
-      nbEtoile,
-      horaires,
-      gpsLat,
-      gpsLong,
-    );
-
-    return resto;
-  }
-
 }
