@@ -9,15 +9,12 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'global/footer.dart';
 
 class Favoris extends StatefulWidget {
-  const Favoris({super.key});
-
   @override
   State<Favoris> createState() => _FavorisState();
 }
 
 class _FavorisState extends State<Favoris> {
 
-  @override
   Widget build(BuildContext context) {
     final favorisViewModel = context.watch<FavorisViewModel>();
     if (favorisViewModel.favoris.isEmpty) {
@@ -42,10 +39,10 @@ class _FavorisState extends State<Favoris> {
       );
     }
     else {
-    return Scaffold(
-      appBar: AppBar(title: Text("Mes Favoris sur l'appareil", style: TextStyle(color:Colors.black))),
-      bottomNavigationBar: Footer().create(context),
-      body: ListView.builder(
+      return Scaffold(
+          appBar: AppBar(title: Text("Mes Favoris sur l'appareil", style: TextStyle(color:Colors.black))),
+          bottomNavigationBar: Footer().create(context),
+          body: ListView.builder(
             itemCount: favorisViewModel.favoris.length,
             itemBuilder: (context, index) {
               var fav = favorisViewModel.favoris[index];
@@ -60,7 +57,7 @@ class _FavorisState extends State<Favoris> {
                     fav!.address,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text(fav.name ?? "Restaurant"),
+                  subtitle: Text(fav?.name ?? "Restaurant"),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -75,7 +72,7 @@ class _FavorisState extends State<Favoris> {
                         icon: Icon(Icons.favorite, color: Colors.red),
                         onPressed: () async {
                           var user = await UserViewModel.getCurrentUser();
-                          favorisViewModel.removeFavoris(user, fav.id);
+                          favorisViewModel.removeFavoris(user, fav?.id);
                           if (context.mounted) {
                             context.go('/favoris');
                           }
@@ -87,6 +84,6 @@ class _FavorisState extends State<Favoris> {
               );
             },
           ));
-        }
+    }
   }
 }

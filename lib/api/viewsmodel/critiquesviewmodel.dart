@@ -14,13 +14,11 @@ class CritiqueViewModel extends ChangeNotifier{
     liste = [];
   }
 
-
   get onLoading => _onLoading;
 
   Future<void> generateCritiques(user) async {
     _onLoading = true;
     notifyListeners();
-    print("============================critique get user : $user ============================critique get user : ");
     liste = await CritiqueAPI.getCritiqueForUser(user);
     for (var i = 0;i<liste.length; i++) {
       liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
@@ -98,7 +96,6 @@ class CritiqueViewModel extends ChangeNotifier{
     }catch (e) {
       debugPrint('message erreur ${e.toString()}');
     }
-    print('====================================================notyfyListeners==================================');
     return null;
   }
 }

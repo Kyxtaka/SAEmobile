@@ -40,59 +40,59 @@ class _EditFormState extends State<EditForm> {
           return Text("${snapshot.error}");
         } else if (snapshot.hasData) {
             _noteController = snapshot.data?.note.toDouble();
-    return FormBuilder(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Modifier votre critique", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30), ),
-            SizedBox(height: 20),
-            FormBuilderTextField(
-                name: 'Avis',
-                initialValue: snapshot.data?.message,
-                decoration: InputDecoration(
-                  labelText: 'Avis',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
-                  ),
-                validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
-              ),
-            SizedBox(height: 20),
-                Text("Votre note"),
+              return FormBuilder(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Modifier votre critique", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30), ),
+                    SizedBox(height: 20),
+                    FormBuilderTextField(
+                        name: 'Avis',
+                        initialValue: snapshot.data?.message,
+                        decoration: InputDecoration(
+                          labelText: 'Avis',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(25.7)),
+                          ),
+                        validator: (value) => value!.isEmpty ? 'Veuillez donner un avis' : null,
+                      ),
+                    SizedBox(height: 20),
+                        Text("Votre note"),
 
-                RatingBar.builder(
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    _noteController = rating;
-                  },
-                ),
-            SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState?.save(),
-                  context.read<CritiqueViewModel>().editCritique(
-                      snapshot.data?.id ?? 3,
-                      _formKey.currentState?.fields['Avis']?.value,
-                      _noteController)
-                  },
-                  context.go('/avis')
-                  },
-                child: Text("Sauvegarder"))
-              ],
+                        RatingBar.builder(
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            _noteController = rating;
+                          },
+                        ),
+                    SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState?.save(),
+                          context.read<CritiqueViewModel>().editCritique(
+                              snapshot.data?.id ?? 3,
+                              _formKey.currentState?.fields['Avis']?.value,
+                              _noteController)
+                          },
+                          context.go('/avis')
+                          },
+                        child: Text("Sauvegarder"))
+                      ],
 
-              ));
-          }
-          return Text("Error");})
+                      ));
+                  }
+                  return Text("Erreur lors de la récupération des données");})
 
-    );
-    }
+            );
+            }
   }
 
