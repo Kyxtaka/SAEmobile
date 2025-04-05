@@ -6,12 +6,14 @@ class DropdownTypeCuisine extends StatelessWidget {
   final List<TypeCuisine> typeCuisines;
   final ValueChanged<TypeCuisine?> onChanged;
   final TypeCuisine? selectedType;
+  final ValueChanged<TypeCuisine>? onRemove;
 
   const DropdownTypeCuisine({
     super.key,
     required this.typeCuisines,
     required this.onChanged,
     this.selectedType,
+    this.onRemove
   });
 
   @override
@@ -42,18 +44,30 @@ class DropdownTypeCuisine extends StatelessWidget {
         ),
         items: typeCuisines.map<DropdownMenuItem<TypeCuisine>>(
               (TypeCuisine item) {
-            return DropdownMenuItem<TypeCuisine>(
-              value: item,
-              child: Text(
-                item.cuisine,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
+                return DropdownMenuItem<TypeCuisine>(
+                    value: item,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                              item.cuisine,
+                              style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                      ),
+                          overflow: TextOverflow.ellipsis,
+                          ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            onRemove!(item);
+                            },
+                          ),
+                      ],
+                  ),
+                );
           },
         ).toList(),
         value: selectedType,

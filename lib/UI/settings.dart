@@ -41,6 +41,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadUserTypePreference();
   }
 
+  Future<void> _addCuisineToFavorites(TypeCuisine value) async {
+    var user = await UserViewModel.getCurrentUser();
+    await CuisinesPrefereesTable.insertCuisinePrefere(user, value.id, value.cuisine);
+    setState(() {
+        selectedType += value.cuisine + ",";
+      });
+    context.go("/settings");
+  }
+
+  /// lorsqu'on retire un type de cuisine favorite on le supprime de la BD et du type actuel
+  /// le setState ne doit pas etre en async
+  Future<void> _removeCuisineFromFavorites(TypeCuisine value) async {
+    var user = await UserViewModel.getCurrentUser();
+    await CuisinesPrefereesTable.deleteCuisinePrefere(user, value.cuisine);
+    setState(() {
+        selectedType = selectedType.replaceAll(value.cuisine + ",", "");
+      });
+    context.go("/settings");
+  }
+
   /// recupere le type preferee dans les shared preferences
   void _loadUserTypePreference() async {
     var user = await UserViewModel.getCurrentUser();
@@ -66,7 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             children: [
               Text(
-                "Votre type favori est : $selectedType",
+                "Vos types favoris sont : $selectedType",
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
@@ -87,14 +107,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       typeCuisines: snapshot.data!,
                       onChanged: (TypeCuisine? value) {
                         if (value != null) {
-                          setState(() async {
-                            selectedType = value.cuisine;
-                            var user = await UserViewModel.getCurrentUser();
-                            CuisinesPrefereesTable.insertCuisinePrefere(user, value.id, value.cuisine);
-                          });
+                          _addCuisineToFavorites(value);
+                          context.go('/settings');
+                        }
+                      },
+                      onRemove: (TypeCuisine? value) {
+                        if (value != null) {
+                          _removeCuisineFromFavorites(value);
+                          context.go("/settings");
                         }
                       },
                     );
+
                   }
                   return const Text("Aucune cuisine disponible.");
                 },
