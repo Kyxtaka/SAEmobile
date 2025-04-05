@@ -81,7 +81,6 @@ class RestaurantAPI {
           .select()
           .eq('id_resto', id)
           .maybeSingle(); // Permet de récupérer un seul élément
-
       if (response != null) {
         return Restaurant(
           response['id_resto'],
@@ -198,7 +197,9 @@ class RestaurantAPI {
     for (var item in (resultat as List)) {
       final id = (item as Map<String, dynamic>)['id_resto'];
       final restaurant = await getRestaurantById(id);
-      restaurantList.add(restaurant);
+      if (restaurant != null) {
+        restaurantList.add(restaurant);
+      }
     }
     return restaurantList;
   }

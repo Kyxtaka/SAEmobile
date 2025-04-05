@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/header.dart';
 import 'package:saemobile/UI/themes/SearchBar.dart' hide SearchBar;
 import 'package:saemobile/services/local/tables/restaurantsTable.dart';
@@ -12,6 +13,7 @@ import '../services/local/tables/cuisinePrefereesTable.dart';
 import '../services/local/tables/restaurantsPrefereesTable.dart';
 import '../services/local/tables/typeCuisineTable.dart';
 import '../models/typeCuisine.dart';
+import 'details.dart';
 import 'global/footer.dart';
 
 
@@ -50,7 +52,7 @@ class _AccueilState extends State<Accueil> {
 
   Future<void> _fetchAndInsertTypeCuisines() async {
     List<TypeCuisine> supaCuisines = await typeCuisineAPI.getAllTypeCuisines();
-    for (var cuisine in supaCuisines.take(5)) {
+    for (var cuisine in supaCuisines.take(6)) {
       await typeCuisineLocal.insertTypeCuisine(1, cuisine);
     }
   }
@@ -96,7 +98,12 @@ class _AccueilState extends State<Accueil> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      barreRecherche,
+                      InkWell(
+                      onTap: () {
+                        context.go('/SearchScreen');
+                      },
+                      child: barreRecherche,
+                      ),
                       const SizedBox(height: 16),
                       FutureBuilder<List<TypeCuisine>>(
                         future: typeCuisinePref.getCuisinesPreferees(user),
@@ -197,6 +204,10 @@ class _AccueilState extends State<Accueil> {
                                     return Padding(
                                       padding: const EdgeInsets.only(
                                           right: 12.0),
+                                      child: InkWell(
+                                          onTap: () {
+                                            context.go('/details/${resto?.id.toString()}');
+                                          },
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment
                                             .start,
@@ -269,7 +280,8 @@ class _AccueilState extends State<Accueil> {
                                             ),
                                           ),
                                         ],
-                                      ),);
+                                      ),)
+                                    );
                                   },
                                 ),
                               ),
@@ -313,6 +325,10 @@ class _AccueilState extends State<Accueil> {
                                     print(resto);
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 12.0),
+                                      child: InkWell(
+                                          onTap: () {
+                                            context.go('/details/${resto.id.toString()}');
+                                          },
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -380,6 +396,7 @@ class _AccueilState extends State<Accueil> {
                                           ),
                                         ],
                                       ),
+                                    )
                                     );
                                   },
                                 ),

@@ -27,7 +27,7 @@ class Insert {
         '',
         '',
         '',
-        'assets/img/bouillon.jpeg',
+        'assets/img/cha.png',
         0,
         0,
         0,
@@ -46,7 +46,7 @@ class Insert {
         '',
         '',
         '',
-        'assets/img/paella-orleans.png',
+        'assets/img/freshkin.png',
         0,
         0,
         0,
@@ -65,7 +65,7 @@ class Insert {
         '',
         '',
         '',
-        'assets/img/paella-orleans.png',
+        'assets/img/kfc.png',
         0,
         0,
         0,
@@ -95,16 +95,18 @@ class Insert {
     );
     await typeCuisineLocal.insertTypeCuisine(
       4,
-      TypeCuisine(4, 'français', 'assets/img/typeCuisine/japonais.jpg'),
+      TypeCuisine(4, 'français', 'assets/img/typeCuisine/francais.png'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       5,
-      TypeCuisine(5, 'indien', 'assets/img/typeCuisine/japonais.jpg'),
+      TypeCuisine(5, 'indien', 'assets/img/typeCuisine/indien.png'),
     );
 
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 1);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 2);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 3);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 4);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 5);
+
   }
 }
