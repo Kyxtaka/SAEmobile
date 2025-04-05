@@ -14,7 +14,7 @@ class Insert {
 
     final TypeCuisineTable typeCuisineLocal = TypeCuisineTable();
     final CuisinesPrefereesTable typeCuisinePref = CuisinesPrefereesTable();
-    final RestaurantsPreferees restaurantPrefLocal = RestaurantsPreferees();
+    final RestaurantsPrefereesDAO restaurantPrefLocal = RestaurantsPrefereesDAO();
     final RestaurantsTable restaurants = RestaurantsTable();
     final UserTable user = UserTable();
 
@@ -76,9 +76,9 @@ class Insert {
     );
 
     // Insertion de restaurants préférés
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5139);
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5140);
-    await RestaurantsPreferees.insertRestaurantPrefere('a@mail.com', 5142);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5139);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5140);
+    await RestaurantsPrefereesDAO.insertRestaurantPrefere('a@mail.com', 5142);
 
     // Insertion de types de cuisine
     await typeCuisineLocal.insertTypeCuisine(

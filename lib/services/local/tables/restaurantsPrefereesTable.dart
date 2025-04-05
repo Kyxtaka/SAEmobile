@@ -10,7 +10,7 @@ import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
 import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 
-class RestaurantsPreferees {
+class RestaurantsPrefereesDAO {
 
   static Future<void> insertRestaurantPrefere(String email, int restaurantId) async {
     final db = await SqlfliteDatabase.instance.database;

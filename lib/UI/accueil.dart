@@ -31,7 +31,7 @@ class _AccueilState extends State<Accueil> {
 
   late final TypeCuisineTable typeCuisineLocal;
   late final CuisinesPrefereesTable typeCuisinePref;
-  late final RestaurantsPreferees restaurantPrefLocal;
+  late final RestaurantsPrefereesDAO restaurantPrefLocal;
   late final RestaurantsTable restaurants;
 
   RestaurantAPI apiRestaurant = RestaurantAPI();
@@ -42,7 +42,7 @@ class _AccueilState extends State<Accueil> {
     final favoriteCuisines = await CuisinesPrefereesTable.getCuisinesPrefereesInType(user);
     final favoriteCuisineIds = favoriteCuisines.map((cuisine) => cuisine.id).toList();
 
-    final favoriteRestaurants = await RestaurantsPreferees.getRestaurantsPreferees(user);
+    final favoriteRestaurants = await RestaurantsPrefereesDAO.getRestaurantsPreferees(user);
     final favoriteRestaurantIds = favoriteRestaurants.map((resto) => resto.id).toList();
 
     return await apiRestaurant.getRestaurantSuggestions(
@@ -64,7 +64,7 @@ class _AccueilState extends State<Accueil> {
 
     typeCuisineLocal = TypeCuisineTable();
     typeCuisinePref = CuisinesPrefereesTable();
-    restaurantPrefLocal = RestaurantsPreferees();
+    restaurantPrefLocal = RestaurantsPrefereesDAO();
     restaurants = RestaurantsTable();
 
     typeCuisineLocal.getAllTypeCuisines().then((localCuisines) {
@@ -202,7 +202,7 @@ class _AccueilState extends State<Accueil> {
                         },
                       ),
                       FutureBuilder<List<Restaurant?>>(
-                        future: RestaurantsPreferees.getRestaurantsPreferees(
+                        future: RestaurantsPrefereesDAO.getRestaurantsPreferees(
                             user),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData && snapshot.connectionState !=
