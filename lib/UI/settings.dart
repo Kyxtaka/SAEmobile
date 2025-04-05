@@ -50,6 +50,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     context.go("/settings");
   }
 
+  /// lorsqu'on retire un type de cuisine favorite on le supprime de la BD et du type actuel
+  /// le setState ne doit pas etre en async
   Future<void> _removeCuisineFromFavorites(TypeCuisine value) async {
     var user = await UserViewModel.getCurrentUser();
     await CuisinesPrefereesTable.deleteCuisinePrefere(user, value.cuisine);
