@@ -1,47 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/UI/global/header.dart';
-import 'package:saemobile/UI/themes/boutonDegrade.dart';
-import 'package:saemobile/api/restaurantapi.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:saemobile/UI/research/decouverte.dart';
+import 'package:saemobile/api/restaurantAPI.dart';
+import 'package:saemobile/models/restaurant.dart';
 
-import '../../models/restaurant.dart';
+class InjectedDecouverte extends Decouverte {
+  final RestaurantAPI api;
 
-class Decouverte extends StatefulWidget{
-  final SupabaseClient database = Supabase.instance.client;
-
-  Decouverte({super.key});
+  InjectedDecouverte({required this.api});
 
   @override
-  State<Decouverte> createState() => DecouverteState();
+  State<Decouverte> createState() => _TestableDecouverteState();
 }
 
-class DecouverteState extends State<Decouverte> {
-
-  late RestaurantAPI restaurantAPI;
-  late Future<List<Restaurant>>?  futureRestaurants;
+class _TestableDecouverteState extends State<Decouverte> {
+  late Future<List<Restaurant>> futureRestaurants;
 
   @override
   void initState() {
     super.initState();
-    restaurantAPI = RestaurantAPI();
-    futureRestaurants = restaurantAPI.getAllRestaurants();
-  }
-
-  /// pour les tests
-  void setAPI(RestaurantAPI api) {
-   restaurantAPI = api;
+    final widgetWithApi = widget as InjectedDecouverte;
+    futureRestaurants = widgetWithApi.api.getAllRestaurants();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header.create(),
-      bottomNavigationBar: Footer().create(context),
-      body: Column(
-        children: [
-          Expanded(
+        appBar: Header.create(),
+        bottomNavigationBar: Footer().create(context),
+        body: Column(
+          children: [
+            Expanded(
               child: FutureBuilder(
                   future: futureRestaurants,
                   builder: (context, snapshot) {
@@ -69,9 +59,9 @@ class DecouverteState extends State<Decouverte> {
                     return Container();
                   }
               ),
-          ),
-        ],
-      )
+            ),
+          ],
+        )
     );
   }
 }

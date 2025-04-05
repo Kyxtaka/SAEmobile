@@ -67,7 +67,7 @@ class CaracteristiqueAndCuisineAPI {
           TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine']);
           return typeCuisine;
 
-      }else if (response!.isEmpty) {
+      }else if (response.isEmpty) {
         debugPrint("Type cuisine result is empty");
       }
     }catch (e) {
@@ -87,7 +87,7 @@ class CaracteristiqueAndCuisineAPI {
         TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine']);
         return typeCuisine.cuisine;
 
-      }else if (response!.isEmpty) {
+      }else if (response.isEmpty) {
         debugPrint("Type cuisine result is empty");
         return "Non renseigné";
       }

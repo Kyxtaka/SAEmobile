@@ -11,7 +11,7 @@ import 'global/header.dart';
 
 class SignIn extends StatefulWidget {
     final SupabaseClient database;
-   SignIn({super.key, required this.database});
+   const SignIn({super.key, required this.database});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -24,7 +24,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   void initState() {
-    this.loginState = UserTools(supabase: this.widget.database);
+    loginState = UserTools(supabase: widget.database);
   }
 
   Future<void> _signin() async {

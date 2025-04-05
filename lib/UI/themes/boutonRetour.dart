@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class RetourButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const RetourButton({Key? key, required this.onPressed}) : super(key: key);
+  const RetourButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -20,7 +20,7 @@ class CritiqueViewModel extends ChangeNotifier{
   Future<void> generateCritiques(user) async {
     _onLoading = true;
     notifyListeners();
-    print("============================critique get user : ${user} ============================critique get user : ");
+    print("============================critique get user : $user ============================critique get user : ");
     liste = await CritiqueAPI.getCritiqueForUser(user);
     for (var i = 0;i<liste.length; i++) {
       liste[i] = (await CritiqueAPI.getCritique(liste[i].id))!;
@@ -74,9 +74,9 @@ class CritiqueViewModel extends ChangeNotifier{
     }
   }
 
-  Future<bool> insertCritique(String id_resto, String username, String commentaire, int note) async {
+  Future<bool> insertCritique(String idResto, String username, String commentaire, int note) async {
     try {
-      Critique? critique = await CritiqueAPI.insertCritique(id_resto, username, commentaire, note);
+      Critique? critique = await CritiqueAPI.insertCritique(idResto, username, commentaire, note);
       if (critique != null) {
         await generateCritiques(username);
         return true;

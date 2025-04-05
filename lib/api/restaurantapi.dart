@@ -35,7 +35,7 @@ class RestaurantAPI {
   Future<List<Restaurant>> getAllRestaurants() async {
     //final supabase = await _initDb();
     try {
-      final response = await this.database
+      final response = await database
           .from('Restaurant')
           .select();
 
@@ -125,7 +125,7 @@ class RestaurantAPI {
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
+    debugPrint("Pas de restaurant trouvé avec l id carac $caracId");
     return result;
   }
 
@@ -139,15 +139,13 @@ class RestaurantAPI {
       if (responseCuisine.isNotEmpty) {
         for (var resto in responseCuisine) {
           Restaurant rest = createRestant(resto);
-          if (rest != null) {
-            result.add(rest);
-          }
-        }
+          result.add(rest);
+                }
       }
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac ${cuisineId}");
+    debugPrint("Pas de restaurant trouvé avec l id carac $cuisineId");
     return result;
   }
 
@@ -169,7 +167,7 @@ class RestaurantAPI {
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
+    debugPrint("Pas de restaurant trouvé avec l id carac $caracId");
     return result;
   }
 

@@ -6,6 +6,8 @@ import 'package:saemobile/UI/themes/boutonDegrade.dart';
 import 'themes/theme.dart';
 
 class Home extends StatelessWidget{
+  const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +31,11 @@ class Home extends StatelessWidget{
               padding: EdgeInsets.only(top:5.0),
               child: Text("Pas de compte ?", style: MyTheme.loginStyle() ),
             ),
-            TextButton(child: Text("Inscrivez-vous !", style: TextStyle(color: Colors.deepOrange,decoration: TextDecoration.underline,)), onPressed: ()=>context.go('/signIn'),
+            TextButton(onPressed: ()=>context.go('/signIn'),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero, // Enlève le padding par défaut
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Réduit la taille du bouton au texte
-                    ),)
+                    ),child: Text("Inscrivez-vous !", style: TextStyle(color: Colors.deepOrange,decoration: TextDecoration.underline,)),)
 
     ],
       ),

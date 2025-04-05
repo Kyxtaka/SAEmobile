@@ -26,7 +26,7 @@ class _EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
-    Footer footer = new Footer();
+    Footer footer = Footer();
     return Scaffold(
       appBar: Header.create(),
       bottomNavigationBar: footer.create(context),

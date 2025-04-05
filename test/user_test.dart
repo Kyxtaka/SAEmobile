@@ -1,12 +1,11 @@
 
-import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saemobile/models/user.dart';
 
 void main() {
   test("Test des getters sur l'objet User", (){
-    var user =  new User("mail@mail", "motdepasse", "Dupont", "Jean", "Visiteur", [], false, "");
+    var user =  User("mail@mail", "motdepasse", "Dupont", "Jean", "Visiteur", [], false, "");
     expect(user.connected, false);
     expect(user.mail, "mail@mail");
     expect(user.password, "motdepasse");

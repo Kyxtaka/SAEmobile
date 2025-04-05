@@ -11,18 +11,10 @@ import '../api/restaurantapi.dart';
 import '../models/restaurant.dart';
 import 'global/header.dart';
 
-// Ajouter ce script à l'accueil pour envoyer l'id du restaurant cliqué à DetailsPage
-//Navigator.push(
-//   context,
-//   MaterialPageRoute(
-//     builder: (context) => DetailsPage(restaurantId: restaurant.id_resto),
-//   ),
-// );
-
 class DetailsPage extends StatefulWidget {
   final String? restaurantId;
 
-  const DetailsPage({required this.restaurantId});
+  const DetailsPage({super.key, required this.restaurantId});
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
@@ -39,7 +31,7 @@ class _DetailsPageState extends State<DetailsPage> {
     debugPrint("favoris status ${isFav.toString()}");
 
     var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
-    var type;
+    Object type;
     try {
       type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
     } catch (e) {
@@ -128,7 +120,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     child: Column(
                       children: [
                         infoSection("Adresse", snapshot.data!['restaurant'].address),
-                        infoSection("Origine", "Type : ${typecuisine}"),
+                        infoSection("Origine", "Type : $typecuisine"),
                         infoSection("Capacité", (snapshot.data!['restaurant'].capacity == 0 || snapshot.data!['restaurant'].capacity == -1) ? "Non renseigné" : "${snapshot.data!['restaurant'].capacity} personnes"),
                         infoSection("Contact", (snapshot.data!['restaurant'].tel == "None")?"Non renseigné": "${snapshot.data!['restaurant'].tel}"),
                       ],
@@ -159,7 +151,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     onPressed: () {
-                      context.go('/details/'+snapshot.data!['restaurant'].id.toString()+'/avis');
+                      context.go('/details/${snapshot.data!['restaurant'].id}/avis');
                     },
                     child: Text("Les Avis", style: TextStyle(color: Colors.white)),
                   ),

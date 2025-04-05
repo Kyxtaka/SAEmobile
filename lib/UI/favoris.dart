@@ -9,12 +9,15 @@ import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
 import 'global/footer.dart';
 
 class Favoris extends StatefulWidget {
+  const Favoris({super.key});
+
   @override
   State<Favoris> createState() => _FavorisState();
 }
 
 class _FavorisState extends State<Favoris> {
 
+  @override
   Widget build(BuildContext context) {
     final favorisViewModel = context.watch<FavorisViewModel>();
     if (favorisViewModel.favoris.isEmpty) {

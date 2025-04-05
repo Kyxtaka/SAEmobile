@@ -11,6 +11,7 @@ import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/providers/connectivyprovider.dart';
+import 'package:saemobile/providers/imgsizeprovider.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';

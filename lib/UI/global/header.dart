@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 
 class Header extends AppBar{
+  Header({super.key});
+
   static AppBar create() {
     return AppBar(
         title: Text("IUTables'O", style: TextStyle( color: Colors.black)),

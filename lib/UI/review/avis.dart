@@ -10,6 +10,8 @@ import '../global/footer.dart';
 import '../global/header.dart';
 
 class Avis extends StatefulWidget {
+  const Avis({super.key});
+
   @override
   _AvisState createState() => _AvisState();
 }

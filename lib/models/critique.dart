@@ -16,7 +16,7 @@ class Critique {
   final User? _user;
   final String _date_test;
   int _note;
-  Image? _image = null;
+  Image? _image;
 
   Critique(
       this._id,
@@ -51,8 +51,9 @@ class Critique {
     };
   }
 
+  @override
   String toString(){
-    return "review ${id}, message ${message}, ${date_test}, ${note}";
+    return "review $id, message $message, $date_test, $note";
   }
 
   set message(String value) {
@@ -104,7 +105,7 @@ class Critique {
       elevation: 6,
       margin: const EdgeInsets.all(10),
       child: ListTile(
-        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le ${date_test}") : Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
+        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le $date_test") : Text('Vous avez critiqué ${restaurant!.name} le $date_test',),
         leading: ImageDetail(image: image,),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +137,7 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
-                      print("image url : ${image}");
+                      print("image url : $image");
                       bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, true);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +153,7 @@ class Critique {
                     iconSize: 20,
                     color: Colors.grey,
                     icon: const Icon(Icons.edit),
-                    onPressed: () => context.go('/avis/${id}'),
+                    onPressed: () => context.go('/avis/$id'),
                   ),
                   IconButton(
                       iconSize: 20,
@@ -174,7 +175,7 @@ class Critique {
       elevation: 6,
       margin: const EdgeInsets.all(10),
       child: ListTile(
-        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le ${date_test}") : Text('Vous avez critiqué ${restaurant!.name} le ${date_test}',),
+        title: (publicMode!) ? Text("${user!.prenom} ${user!.nom} à critiqué ${restaurant!.name} le $date_test") : Text('Vous avez critiqué ${restaurant!.name} le $date_test',),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -196,7 +197,7 @@ class Critique {
                 fontSize: 10,
               ),
             ),
-            (publicMode!) ? Container() :
+            (publicMode) ? Container() :
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -205,7 +206,7 @@ class Critique {
                     color: Colors.red,
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
-                      print("image url : ${image}");
+                      print("image url : $image");
                       bool isDeleted = await Provider.of<CritiqueViewModel>(context, listen: false).deleteCritique(this, false);
                       if (!isDeleted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -221,7 +222,7 @@ class Critique {
                     iconSize: 20,
                     color: Colors.grey,
                     icon: const Icon(Icons.edit),
-                    onPressed: () => context.go('/avis/${id}'),
+                    onPressed: () => context.go('/avis/$id'),
                   ),
                   IconButton(
                       iconSize: 20,

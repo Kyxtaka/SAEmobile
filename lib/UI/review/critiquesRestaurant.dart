@@ -9,7 +9,7 @@ import '../global/header.dart';
 
 class CritiqueRestaurants extends StatelessWidget{
   final String restaurantId;
-  CritiqueRestaurants({required this.restaurantId});
+  const CritiqueRestaurants({super.key, required this.restaurantId});
 
   Future<void> _initWidgetImg(List<Critique> critiques) async{
     for(Critique crit in critiques) {
