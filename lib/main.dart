@@ -61,8 +61,8 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
-  //await Insert.insertData(db);
-  //print("données bien inserées");
+  await  Insert.insertData(db);
+  print("données bien inserées");
   runApp(MyApp(database: db));
 }
 

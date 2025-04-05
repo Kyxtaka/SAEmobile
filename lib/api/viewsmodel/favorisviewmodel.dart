@@ -6,7 +6,7 @@ import 'package:saemobile/services/local/tables/restaurantsPrefereesTable.dart';
 import '../../models/restaurant.dart';
 
 class FavorisViewModel extends ChangeNotifier {
-  late List<Restaurant> favoris = [];
+  late List<Restaurant?> favoris = [];
 
   FavorisViewModel() {
     favoris = [];
@@ -14,7 +14,7 @@ class FavorisViewModel extends ChangeNotifier {
   Future<void> generateFavoris(user) async {
     favoris = await RestaurantsPreferees.getRestaurantsPreferees(user);
     for (var i = 0;i<favoris.length; i++) {
-      favoris[i] = (await RestaurantAPI.getRestaurantById(favoris[i].id))!;
+      favoris[i] = (await RestaurantAPI.getRestaurantById(favoris[i]!.id))!;
     }
     notifyListeners();
   }
@@ -32,7 +32,7 @@ class FavorisViewModel extends ChangeNotifier {
 
   Future<bool> isFavoris(fav) async {
     for (var i = 0;i<favoris.length;i++){
-      if (favoris[i].id==fav){
+      if (favoris[i]?.id==fav){
         return true;
       }
     }

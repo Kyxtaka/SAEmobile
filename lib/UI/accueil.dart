@@ -61,7 +61,6 @@ class _AccueilState extends State<Accueil> {
   @override
   Widget build(BuildContext context) {
     Footer footer = Footer();
-
     return FutureBuilder<String>(
       future: UserViewModel.getCurrentUser(),
       builder: (context, userSnapshot) {
@@ -145,8 +144,7 @@ class _AccueilState extends State<Accueil> {
                           );
                         },
                       ),
-
-                      FutureBuilder<List<Restaurant>>(
+                      FutureBuilder<List<Restaurant?>>(
                         future: RestaurantsPreferees.getRestaurantsPreferees(
                             user),
                         builder: (context, snapshot) {
@@ -159,6 +157,7 @@ class _AccueilState extends State<Accueil> {
                             return Text('Erreur : ${snapshot.error}');
                           }
                           final restaurantPref = snapshot.data ?? [];
+                          print(restaurantPref);
                           if (restaurantPref.isEmpty) {
                             return const SizedBox.shrink();
                           }
@@ -179,8 +178,9 @@ class _AccueilState extends State<Accueil> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: restaurantPref.length,
                                   itemBuilder: (context, index) {
-                                    final Restaurant resto = restaurantPref[index];
-                                    print(resto.url_photo);
+                                    final Restaurant? resto = restaurantPref[index];
+                                    print(resto?.debugPrint());
+                                    print(resto?.url_photo);
                                     return Padding(
                                       padding: const EdgeInsets.only(
                                           right: 12.0),
@@ -193,9 +193,10 @@ class _AccueilState extends State<Accueil> {
                                               borderRadius: BorderRadius
                                                   .circular(12),
                                               image: DecorationImage(
-                                                image: AssetImage(
-                                                    resto.url_photo ??
-                                                        'assets/img/paella-orleans.png'),
+                                                image: resto?.url_photo == 'None'
+                                                    ? AssetImage(
+                                                    'assets/img/default-image.png')
+                                                    : AssetImage(resto!.url_photo),
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -232,7 +233,7 @@ class _AccueilState extends State<Accueil> {
                                                 Positioned(
                                                   bottom: 8, left: 8, right: 8,
                                                   child: Text(
-                                                    resto.name ?? '',
+                                                    resto?.name ?? '',
                                                     style: const TextStyle(
                                                       color: Colors.white,
                                                       fontWeight: FontWeight

@@ -75,9 +75,10 @@ class Restaurant {
     _url_photo = value;
   }
 
-  void debugPrint() {
+  String debugPrint() {
     String restaurant = "id: $_id, name: $_name, address: $_address, capacity: $_capacity, tel: $_tel, siret: $_siret, website: $_website, url_photo: $_url_photo, id_cuisine: $_id_cuisine, id_region: $_id_region, horraire: $_horaires, gps_lat: $_gps_lat, gps_long: $gps_long";
     print(restaurant);
+    return restaurant;
   }
 
   Map<String, Object?> toMapLocal() {

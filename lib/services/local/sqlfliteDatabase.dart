@@ -14,6 +14,8 @@ class SqlfliteDatabase {
   }
 
   Future<Database> _initDB() async {
+
+
     return await openDatabase(
       join(await getDatabasesPath(), 'iutableso.db'),
       onCreate: (db, version) {
