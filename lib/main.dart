@@ -11,6 +11,8 @@ import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/providers/connectivyprovider.dart';
+import 'package:saemobile/providers/imgsizeprovider.dart';
+import 'package:saemobile/services/local/insert.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
@@ -64,6 +66,8 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
+  await  Insert.insertData(db);
+  print("données bien inserées");
   runApp(
     // reprise de l'exemple connection alert https://pub.dev/packages/internet_connection_control_alert
       MaterialApp(
@@ -75,8 +79,6 @@ Future<void> main() async {
             }
         ),
       )
-
-
   );
 }
 
@@ -121,7 +123,12 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/search',
-        builder: (context, state) => SearchScreen(),
+        //builder: (context, state) => SearchScreen(),
+          builder: (context, state) => SearchScreen(
+            shouldFocus: state.uri.queryParameters["focus"] == "true",
+            initialCuisineId: state.uri.queryParameters["cuisine"],
+            autoSearch: state.uri.queryParameters["autoSearch"] == "true",
+          ),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
             return '/login';
@@ -145,11 +152,26 @@ GoRouter _router(UserViewModel userViewModel) {
           GoRoute(
             path: 'result',
             name: 'searchResult',
-            builder: (context, state) => SearchResult(
-                cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
-                carac:int.parse(state.uri.queryParameters['carac'].toString()),
-                search: state.uri.queryParameters['search'].toString()
-            ),
+            // builder: (context, state) => SearchResult(
+            //     cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
+            //     carac:int.parse(state.uri.queryParameters['carac'].toString()),
+            //     search: state.uri.queryParameters['search'].toString()
+            // ),
+            builder: (context, state) {
+              final cuisineParam = state.uri.queryParameters['cuisine'];
+              final caracParam = state.uri.queryParameters['carac'];
+              final searchParam = state.uri.queryParameters['search'];
+
+              final cuisine = cuisineParam != null ? int.tryParse(cuisineParam) ?? 0 : 0;
+              final carac   = caracParam != null ? int.tryParse(caracParam) ?? 0 : 0;
+              final search  = searchParam ?? "";
+
+              return SearchResult(
+                cuisine: cuisine,
+                carac: carac,
+                search: search,
+              );
+            },
             redirect: (BuildContext context, GoRouterState state) {
               if (!userViewModel.isConnected()) {
                 return '/login';
@@ -240,8 +262,6 @@ GoRouter _router(UserViewModel userViewModel) {
 
 
 class MyApp extends StatelessWidget {
-
-
   final Database database;
   MyApp({required this.database});
 
@@ -249,7 +269,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
     final Widget loadingSceen = CircularProgressIndicator();
-
     return FutureBuilder(
         future: initSupabase(),
         builder: (context, snapshot) {

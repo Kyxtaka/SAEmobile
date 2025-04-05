@@ -54,7 +54,7 @@ class _FavorisState extends State<Favoris> {
                 child: ListTile(
                   contentPadding: EdgeInsets.all(8),
                   title: Text(
-                    fav.address,
+                    fav!.address,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(fav.name ?? "Restaurant"),

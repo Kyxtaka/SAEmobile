@@ -13,6 +13,7 @@ import 'package:saemobile/models/user.dart';
 import 'package:saemobile/utils/UserTools.dart';
 
 import 'package:saemobile/api/viewsmodel/userviewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -50,6 +51,8 @@ class _LoginPageState extends State<Login> {
 
           await widget.userViewModel.setConnection(email, digest);
           print("error msg: $errorMessage");
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_email', email);
           context.go("/accueil");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

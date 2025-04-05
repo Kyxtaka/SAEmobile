@@ -1,10 +1,13 @@
 class TypeCuisine {
   final int _idTypeCuisine;
   final String _cuisine;
+  final String _img;
 
   const TypeCuisine(
       this._idTypeCuisine,
-      this._cuisine);
+      this._cuisine,
+      this._img
+  );
 
   int get id => _idTypeCuisine;
 
@@ -13,6 +16,8 @@ class TypeCuisine {
   String getGlobalLabet() => _cuisine;
   int getGlobalId() => _idTypeCuisine;
 
+  String get img => _img;
+
   void debugPrint() {
     String typeCuisine = "idTypeCuisine: $_idTypeCuisine, cuisine: $_cuisine";
     print(typeCuisine);
@@ -20,8 +25,9 @@ class TypeCuisine {
 
   Map<String, Object?> toMapLocal() {
     return {
-      'idTypeCuisine': _idTypeCuisine,
-      'cuisine': _cuisine
+      'idCuisine': _idTypeCuisine,
+      'nomCuisine': _cuisine,
+      'imgCuisine': _img
     };
   }
 }

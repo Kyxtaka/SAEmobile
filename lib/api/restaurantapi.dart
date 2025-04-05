@@ -81,7 +81,6 @@ class RestaurantAPI {
           .select()
           .eq('id_resto', id)
           .maybeSingle(); // Permet de récupérer un seul élément
-
       if (response != null) {
         return Restaurant(
           response['id_resto'],
@@ -188,5 +187,30 @@ class RestaurantAPI {
       'long': long,
     });
     return data.getRange(0,10).toList();
+  }
+
+  // renvoit deux restaurants pour les suggestions selon les types pref du user
+  Future<List<Restaurant?>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
+    final supabase = Supabase.instance.client;
+    final typesString = '(${typesPref.join(',')})';
+    print("types : $typesString");
+    final restoString = '(${restaurantPref.join(',')})';
+    print("restos : $restoString");
+    var resultat = await supabase
+        .from('Restaurant')
+        .select('*')
+        .filter('id_cuisine', 'in', typesString)
+        .not('id_resto', 'in', restoString)
+        .limit(2);
+    print("resultat : $resultat");
+    List<Restaurant?> restaurantList = [];
+    for (var item in (resultat as List)) {
+      final id = (item as Map<String, dynamic>)['id_resto'];
+      final restaurant = await getRestaurantById(id);
+      if (restaurant != null) {
+        restaurantList.add(restaurant);
+      }
+    }
+    return restaurantList;
   }
 }
