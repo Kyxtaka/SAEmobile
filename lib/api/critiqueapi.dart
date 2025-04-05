@@ -44,6 +44,7 @@ class CritiqueAPI {
               int.parse(row['etoiles'].toString())
             );
           //restaurant.debugPrint();
+          await critique.getCritiqueImageIfExist();
           critiques.add(critique);
         }
       }
@@ -74,6 +75,7 @@ class CritiqueAPI {
                 int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
+            await critique.getCritiqueImageIfExist();
             critiques.add(critique);
           }
         } else {
@@ -104,7 +106,7 @@ class CritiqueAPI {
             .eq("id_resto", result['id_resto'])
             .single();
 
-        return Critique(
+        Critique crit = Critique(
             result['id_critique'],
             result['message'],
             RestaurantAPI().createRestant(responResto),
@@ -112,6 +114,11 @@ class CritiqueAPI {
             result['date_test']??"No date",
             int.parse(result['etoiles'].toString())
         );
+
+        await crit.getCritiqueImageIfExist();
+
+        return crit;
+
       }
     } catch (error){
       debugPrint("Error getting critic id ${id} : $error ❌");
@@ -143,6 +150,7 @@ class CritiqueAPI {
                 int.parse(row['etoiles'].toString())
             );
             //restaurant.debugPrint();
+            await critique.getCritiqueImageIfExist();
             critiques.add(critique);
           }
           debugPrint("Critiques count: ${critiques.length}");
@@ -295,40 +303,38 @@ class CritiqueAPI {
   }
 
 
-  static Future<Image?> getPhotoCritique(int critiqueId) async {
+  static Future<Image?> getPhotoCritique(Critique crit) async {
 
       String? supa_base_url = await dotenv.env['SUPABASE_DB_API_URL'];
       String bucketName = 'imgstorage';
       String storageUrl = "${supa_base_url}/storage/v1/object/public/${bucketName}";
       final username  = await UserViewModel.getCurrentUser();
-      if (critiqueId != -1) {
-        String? url = await CritiqueAPI.getPhotoCritiqueIdentifier(critiqueId, username);
-        if (url != null){
-          // ValueListenableBuilder<double>(
-          //   valueListenable: ImageSizeManager.imageSize,
-          //   builder: (context, size, child) {
-              return Image.network(
-                  storageUrl + "/" + url,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    debugPrint("getPhotoCritique error : ${error.toString()}");
-                    debugPrint(
-                        "getPhotoCritique stackTrace : ${stackTrace.toString()}");
+      String? url = await CritiqueAPI.getPhotoCritiqueIdentifier(crit.id, crit.user!.mail);
+      if (url != null){
+        // ValueListenableBuilder<double>(
+        //   valueListenable: ImageSizeManager.imageSize,
+        //   builder: (context, size, child) {
+            return Image.network(
+                storageUrl + "/" + url,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint("getPhotoCritique error : ${error.toString()}");
+                  debugPrint(
+                      "getPhotoCritique stackTrace : ${stackTrace.toString()}");
 
-                    return Image.asset(
-                      'assets/img/default-image.png',
-                      width: 100,
-                      height: 100,
-                    );
-                  }
-              );
-          //   }
-          // );
-        }
+                  return Image.asset(
+                    'assets/img/default-image.png',
+                    width: 100,
+                    height: 100,
+                  );
+                }
+            );
+        //   }
+        // );
       }
-      return null;
+          return null;
     }
 
     static Future<bool> deleteCritiquePhoto(Critique critique) async{

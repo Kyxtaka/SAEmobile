@@ -70,7 +70,7 @@ class Critique {
   }
 
   Future<void> getCritiqueImageIfExist() async {
-    final result = await CritiqueAPI.getPhotoCritique(id);
+    final result = await CritiqueAPI.getPhotoCritique(this);
     if (result != null)  {
       image = result;
       imagePath = "";
