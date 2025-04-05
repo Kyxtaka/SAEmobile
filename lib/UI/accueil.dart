@@ -160,6 +160,10 @@ class _AccueilState extends State<Accueil> {
                                 final cuisine = cuisines[index];
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 12.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      context.go('/search?focus=true&cuisine=${cuisine.id.toString()}&autoSearch=true');
+                                    },
                                   child: Column(
                                     children: [
                                       Container(
@@ -189,6 +193,7 @@ class _AccueilState extends State<Accueil> {
                                       ),
                                     ],
                                   ),
+                                )
                                 );
                               },
                             ),

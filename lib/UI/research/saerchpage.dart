@@ -10,7 +10,14 @@ import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
   final bool shouldFocus;
-  const SearchScreen({super.key, this.shouldFocus = false});
+  final String? initialCuisineId;
+  final bool autoSearch;
+  const SearchScreen({
+    super.key,
+    this.shouldFocus = false,
+    this.initialCuisineId,
+    this.autoSearch = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
@@ -57,7 +64,25 @@ class _SearchScreenState extends State<SearchScreen> {
       caracteristiques = caracs;
       selectedType = cuisines.first;
       selectedCarac = caracs.first;
+      if (widget.initialCuisineId != null) {
+        final matchedType = cuisines.firstWhere(
+              (c) => c.id.toString() == widget.initialCuisineId,
+          orElse: () => cuisines.first,
+        );
+        selectedType = matchedType;
+      }
     });
+
+  if (widget.autoSearch && widget.initialCuisineId != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.goNamed(
+        'searchResult',
+        queryParameters: {
+          'cuisine': widget.initialCuisineId!,
+        },
+      );
+    });
+    }
   }
 
   @override
