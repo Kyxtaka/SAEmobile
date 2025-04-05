@@ -7,7 +7,7 @@ import 'package:saemobile/models/typeCuisine.dart';
 
 void main(){
   test("test des getters sur l'objet typeCuisine", (){
-      var typecuisine = TypeCuisine(1, "du monde");
+      var typecuisine = TypeCuisine(1, "du monde", "");
       expect(typecuisine.id, 1);
       expect(typecuisine.cuisine, "du monde");
       expect(typecuisine.toMapLocal(), {'idTypeCuisine': 1,

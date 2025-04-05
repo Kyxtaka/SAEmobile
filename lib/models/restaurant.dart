@@ -75,21 +75,42 @@ class Restaurant {
     _url_photo = value;
   }
 
-  void debugPrint() {
+  String debugPrint() {
     String restaurant = "id: $_id, name: $_name, address: $_address, capacity: $_capacity, tel: $_tel, siret: $_siret, website: $_website, url_photo: $_url_photo, id_cuisine: $_id_cuisine, id_region: $_id_region, horraire: $_horaires, gps_lat: $_gps_lat, gps_long: $gps_long";
     print(restaurant);
+    return restaurant;
   }
 
   Map<String, Object?> toMapLocal() {
     return {
       'id': _id,
       'name': _name,
-      'address': _address
+      'address': _address,
+      'url_photo': _url_photo
     };
   }
 
+  factory Restaurant.fromMap(Map<String, dynamic> map) {
+    return Restaurant(
+      map['id'] as int,
+      map['name'] as String,
+      map['address'] as String,
+      map['capacity'] = 0,
+      map['tel'] = '',
+      map['siret'] = '',
+      map['website'] = '',
+      map['url_photo'] as String,
+      map['id_cuisine'] = 0,
+      map['id_region'] = 0,
+      map['nb_etoile'] = 0,
+      map['horaires'] = '',
+      map['gps_lat'] = 0.0,
+      map['gps_long'] = 0.0,
+    );
+  }
+
   Widget renderCard(BuildContext context) {
-    
+
     bool ableRedirecting = false;
     if (website != "None") {
       ableRedirecting = true;

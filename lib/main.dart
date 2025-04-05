@@ -11,7 +11,7 @@ import 'package:saemobile/UI/research/searchresult.dart';
 import 'package:saemobile/UI/settings.dart';
 import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
 import 'package:saemobile/providers/connectivyprovider.dart';
-import 'package:saemobile/providers/imgsizeprovider.dart';
+import 'package:saemobile/services/local/insert.dart';
 import 'package:saemobile/services/local/sqlfliteDatabase.dart';
 import 'package:sqflite/sqflite.dart';
 import 'UI/accueil.dart';
@@ -30,9 +30,6 @@ import 'UI/details.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
-import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
-
 
 import 'api/viewsmodel/critiquesviewmodel.dart';
 import 'api/viewsmodel/userviewmodel.dart'; // Detects if running on Web
@@ -52,7 +49,6 @@ Future<SupabaseClient> initSupabase() async{
   return Supabase.instance.client;
 
 }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -65,6 +61,9 @@ Future<void> main() async {
   }
   var database = new SqlfliteDatabase();
   final db = await database.database;
+  await  Insert.insertData(db);
+  print("données bien inserées");
+  runApp(MyApp(database: db));
   runApp(
     // reprise de l'exemple connection alert https://pub.dev/packages/internet_connection_control_alert
       MaterialApp(
@@ -76,8 +75,6 @@ Future<void> main() async {
             }
         ),
       )
-
-
   );
 }
 
@@ -184,7 +181,6 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/avis',
-        name: 'avis',
         builder: (context, state) => Avis(),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {
@@ -242,8 +238,6 @@ GoRouter _router(UserViewModel userViewModel) {
 
 
 class MyApp extends StatelessWidget {
-
-
   final Database database;
   MyApp({required this.database});
 
@@ -251,7 +245,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = MyTheme.defaultTheme();
     final Widget loadingSceen = CircularProgressIndicator();
-
     return FutureBuilder(
         future: initSupabase(),
         builder: (context, snapshot) {

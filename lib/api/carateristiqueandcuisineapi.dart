@@ -34,7 +34,7 @@ class CaracteristiqueAndCuisineAPI {
   }
 
   Future<List<TypeCuisine>> getAllTypeCuisine() async{
-    List<TypeCuisine> result = [TypeCuisine(-1, "Sélectionnez un type de cuisine: Aucun choix")];
+    List<TypeCuisine> result = [TypeCuisine(-1, "Sélectionnez un type de cuisine: Aucun choix",'')];
     try {
       final response = await database
           .from('TypeCuisine')
@@ -43,7 +43,7 @@ class CaracteristiqueAndCuisineAPI {
 
         for (var row in response) {
           int id = row['id'] is int ? row['id'] : int.parse(row['id'].toString());
-          TypeCuisine typeCuisine = TypeCuisine(id, row['cuisine']);
+          TypeCuisine typeCuisine = TypeCuisine(id, row['cuisine'],'');
           result.add(typeCuisine);
         }
         debugPrint('all type cuisine added to the List');
@@ -64,7 +64,7 @@ class CaracteristiqueAndCuisineAPI {
           .eq('id', id)
           .maybeSingle();
       if (response!.isNotEmpty) {
-          TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine']);
+          TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine'],'');
           return typeCuisine;
 
       }else if (response.isEmpty) {
@@ -84,7 +84,7 @@ class CaracteristiqueAndCuisineAPI {
           .eq('id', id)
           .maybeSingle();
       if (response!.isNotEmpty) {
-        TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine']);
+        TypeCuisine typeCuisine = TypeCuisine(id, response['cuisine'],'');
         return typeCuisine.cuisine;
 
       }else if (response.isEmpty) {

@@ -14,6 +14,8 @@ class SqlfliteDatabase {
   }
 
   Future<Database> _initDB() async {
+
+
     return await openDatabase(
       join(await getDatabasesPath(), 'iutableso.db'),
       onCreate: (db, version) {
@@ -25,6 +27,7 @@ class SqlfliteDatabase {
         _createCuisinePreferees(db);
       },
       version: 1,
+      readOnly: false,
     );
   }
 
@@ -35,7 +38,7 @@ class SqlfliteDatabase {
       id INTEGER PRIMARY KEY,
       name TEXT,
       address TEXT,
-      photo TEXT
+      url_photo TEXT
     )
     '''
     );
@@ -45,8 +48,9 @@ class SqlfliteDatabase {
     return db.execute(
         '''
     CREATE TABLE TypeCuisine(
-      id INTEGER PRIMARY KEY,
-      nom_cuisine TEXT
+      idCuisine INTEGER PRIMARY KEY,
+      nomCuisine TEXT, 
+      imgCuisine TEXT
     )
     '''
     );

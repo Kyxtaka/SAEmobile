@@ -22,24 +22,30 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI();
-
-  Future<Map<String, dynamic>> getDetailsRestaurant() async {
-    final favViewModel = Provider.of<FavorisViewModel>(context, listen: false);
-
-    var api = RestaurantAPI();
-    bool isFav = await favViewModel.isFavoris(int.parse(widget.restaurantId.toString()));
-    debugPrint("favoris status ${isFav.toString()}");
-
-    var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
-    Object type;
-    try {
-      type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
-    } catch (e) {
-      type = "Non renseigné";
-    }
-    return {"restaurant": restaurant, "typecuisine": type, "isFav": isFav};
+  late TypeCuisine type;
+  late final _future;
+   Future<Map<String, dynamic>> getDetailsRestaurant() async {
+     var api = RestaurantAPI();
+     var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
+     var type;
+     try {
+       type = await CaracteristiqueAndCuisineAPI.getType(restaurant?.id_cuisine ?? 0) ?? "Non renseigné";
+     } catch (e) {
+       type = "Non renseigné";
+     }
+     return {"restaurant": restaurant, "typecuisine": type};
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _future = _loadData;
+  }
+
+  Future<void> _loadData() async {
+    type = await RestaurantAPI().getRestaurantType(int.parse(widget.restaurantId.toString()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +203,3 @@ class _DetailsPageState extends State<DetailsPage> {
     );
   }
 }
-
-
-
-
-

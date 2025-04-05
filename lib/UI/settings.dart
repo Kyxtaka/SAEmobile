@@ -45,7 +45,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     var user = await UserViewModel.getCurrentUser();
     await CuisinesPrefereesTable.insertCuisinePrefere(user, value.id, value.cuisine);
     setState(() {
+      if (selectedType == "non renseigné"){
+        selectedType = value.cuisine;
+      }
+      else {
         selectedType += value.cuisine + ",";
+      }
       });
     context.go("/settings");
   }
@@ -64,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// recupere le type preferee dans les shared preferences
   void _loadUserTypePreference() async {
     var user = await UserViewModel.getCurrentUser();
-    String? type = await CuisinesPrefereesTable.getCuisinesPreferees(user);
+    String? type = await CuisinesPrefereesTable.getCuisinesPrefereesToString(user);
     LatLng pos = await UserViewModel.getLocalisation();
     setState(() {
       selectedType = type ?? "non renseigné";
@@ -103,7 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       style: const TextStyle(color: Colors.red),
                     );
                   } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    return DropdownTypeCuisine(
+                    return DropdownTypeCuisineFavoris(
                       typeCuisines: snapshot.data!,
                       onChanged: (TypeCuisine? value) {
                         if (value != null) {

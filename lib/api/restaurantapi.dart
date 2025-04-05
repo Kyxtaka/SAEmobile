@@ -81,7 +81,6 @@ class RestaurantAPI {
           .select()
           .eq('id_resto', id)
           .maybeSingle(); // Permet de récupérer un seul élément
-
       if (response != null) {
         return Restaurant(
           response['id_resto'],
@@ -125,7 +124,7 @@ class RestaurantAPI {
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac $caracId");
+    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
     return result;
   }
 
@@ -139,13 +138,15 @@ class RestaurantAPI {
       if (responseCuisine.isNotEmpty) {
         for (var resto in responseCuisine) {
           Restaurant rest = createRestant(resto);
-          result.add(rest);
-                }
+          if (rest != null) {
+            result.add(rest);
+          }
+        }
       }
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac $cuisineId");
+    debugPrint("Pas de restaurant trouvé avec l id carac ${cuisineId}");
     return result;
   }
 
@@ -167,7 +168,7 @@ class RestaurantAPI {
     } catch (e) {
       debugPrint("Error fetching restaurant by ID: $e ❌");
     }
-    debugPrint("Pas de restaurant trouvé avec l id carac $caracId");
+    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
     return result;
   }
 
@@ -186,5 +187,30 @@ class RestaurantAPI {
       'long': long,
     });
     return data.getRange(0,10).toList();
+  }
+
+  // renvoit deux restaurants pour les suggestions selon les types pref du user
+  Future<List<Restaurant?>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
+    final supabase = Supabase.instance.client;
+    final typesString = '(${typesPref.join(',')})';
+    print("types : $typesString");
+    final restoString = '(${restaurantPref.join(',')})';
+    print("restos : $restoString");
+    var resultat = await supabase
+        .from('Restaurant')
+        .select('*')
+        .filter('id_cuisine', 'in', typesString)
+        .not('id_resto', 'in', restoString)
+        .limit(2);
+    print("resultat : $resultat");
+    List<Restaurant?> restaurantList = [];
+    for (var item in (resultat as List)) {
+      final id = (item as Map<String, dynamic>)['id_resto'];
+      final restaurant = await getRestaurantById(id);
+      if (restaurant != null) {
+        restaurantList.add(restaurant);
+      }
+    }
+    return restaurantList;
   }
 }

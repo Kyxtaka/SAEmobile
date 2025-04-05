@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SearchBar extends StatefulWidget {
-  const SearchBar({super.key, required SearchController controller, required WidgetStatePropertyAll<EdgeInsets> padding, required Null Function() onTap, required Null Function(dynamic _) onChanged, required Icon leading, required List<Widget> trailing});
+  const SearchBar({super.key, required SearchController controller, required WidgetStatePropertyAll<EdgeInsets> padding, required Null Function() onTap, required Null Function(dynamic _) onChanged, required Icon leading, required List<Widget> trailing, required String hintText});
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -29,6 +29,7 @@ class _SearchBarState extends State<SearchBar> {
                 padding: const WidgetStatePropertyAll<EdgeInsets>(
                   EdgeInsets.symmetric(horizontal: 16.0),
                 ),
+                hintText: 'Rechercher...',
                 onTap: () {
                   controller.openView();
                 },

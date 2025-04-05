@@ -1,20 +1,21 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../models/typeCuisine.dart';
+import '../sqlfliteDatabase.dart';
 
 class TypeCuisineTable {
-  final db;
-  TypeCuisineTable({required this.db});
 
-  Future<int> insertTypeCuisine(TypeCuisine typeCuisine) async {
-    return await db.insert(
+  Future<void> insertTypeCuisine(id,TypeCuisine typeCuisine) async {
+    final db = await SqlfliteDatabase.instance.database;
+     await db.insert(
       'TypeCuisine',
       typeCuisine.toMapLocal(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<int> updateTypeCuisine(TypeCuisine typeCuisine) async {
-    return await db.update(
+  Future<void> updateTypeCuisine(TypeCuisine typeCuisine) async {
+    final db = await SqlfliteDatabase.instance.database;
+    await db.update(
       'TypeCuisine',
       typeCuisine.toMapLocal(),
       where: 'id = ?',
@@ -22,8 +23,9 @@ class TypeCuisineTable {
     );
   }
 
-  Future<int> deleteTypeCuisine(int id) async {
-    return await db.delete(
+  Future<void> deleteTypeCuisine(int id) async {
+    final db = await SqlfliteDatabase.instance.database;
+    await db.delete(
       'TypeCuisine',
       where: 'id = ?',
       whereArgs: [id],
@@ -31,11 +33,13 @@ class TypeCuisineTable {
   }
 
   Future<List<TypeCuisine>> getAllTypeCuisines() async {
+    final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> typeCuisineMaps = await db.query('TypeCuisine');
     return typeCuisineMaps.map((map) {
       return TypeCuisine(
-        map['idTypeCuisine'] as int,
-        map['cuisine'] as String
+        map['idCuisine'] as int,
+        map['nomCuisine'] as String,
+        map['imgCuisine'] as String
       );
     }).toList();
   }
