@@ -151,29 +151,26 @@ class DropdownTypeCuisineFavoris extends StatelessWidget {
   final ValueChanged<TypeCuisine?> onChanged;
   final TypeCuisine? selectedType;
   final ValueChanged<TypeCuisine>? onRemove;
+  final String favoris;
 
   const DropdownTypeCuisineFavoris({
     super.key,
     required this.typeCuisines,
     required this.onChanged,
+    required this.favoris,
     this.selectedType,
     this.onRemove,
+
   });
 
-  Widget addBoutonDelete(item){
-    var button = null;
-    if (typeCuisines.contains(item)){
-      var button =IconButton(
+  Row addBoutonDelete(item){
+    var button = IconButton(onPressed: (){}, icon: Icon(Icons.add), color: Colors.green,);
+    var listFav = favoris.split(",");
+    if (listFav.contains(item.cuisine)){
+      button =IconButton(
         icon: Icon(Icons.delete, color: Colors.red),
         onPressed: () {
           onRemove!(item);
-        },
-      );
-    }
-    else {
-      var button = IconButton(
-        icon: Icon(Icons.add, color: Colors.green),
-        onPressed: () {
         },
       );
     }
@@ -224,7 +221,7 @@ class DropdownTypeCuisineFavoris extends StatelessWidget {
               (TypeCuisine item) {
             return DropdownMenuItem<TypeCuisine>(
               value: item,
-              child: addBoutonDelete(item)
+              child: this.addBoutonDelete(item)
             );
           },
         ).toList(),

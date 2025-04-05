@@ -49,7 +49,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         selectedType = value.cuisine;
       }
       else {
-        selectedType += value.cuisine + ",";
+        if (!selectedType.contains(value.cuisine)){
+          selectedType += value.cuisine + ",";
+        }
       }
       });
     context.go("/settings");
@@ -62,6 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await CuisinesPrefereesTable.deleteCuisinePrefere(user, value.cuisine);
     setState(() {
         selectedType = selectedType.replaceAll(value.cuisine + ",", "");
+        selectedType = selectedType.replaceAll(value.cuisine , "");
       });
     context.go("/settings");
   }
@@ -116,6 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           context.go('/settings');
                         }
                       },
+                      favoris: this.selectedType,
                       onRemove: (TypeCuisine? value) {
                         if (value != null) {
                           _removeCuisineFromFavorites(value);
