@@ -183,6 +183,7 @@ GoRouter _router(UserViewModel userViewModel) {
       ),
       GoRoute(
         path: '/avis',
+        name: 'avis',
         builder: (context, state) => Avis(),
         redirect: (BuildContext context, GoRouterState state) {
           if (!userViewModel.isConnected()) {

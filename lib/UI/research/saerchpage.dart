@@ -150,7 +150,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             if (selectedType != null) 'cuisine': selectedType?.id.toString(),
                             if (selectedCarac != null) 'carac': selectedCarac?.id.toString(),
                             if (searchValue != null && searchValue.toString().trim().isNotEmpty)
-                              'search': searchValue.toString(),
+                              'search': searchValue.toString().trim(),
                           },
                         );
                       },
