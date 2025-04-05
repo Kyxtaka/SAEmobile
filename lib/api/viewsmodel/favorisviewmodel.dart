@@ -42,6 +42,9 @@ class FavorisViewModel extends ChangeNotifier {
     }
     return false;
   }
+  Future<void> removeAll() async {
+    favoris = [];
+  }
 
 
 

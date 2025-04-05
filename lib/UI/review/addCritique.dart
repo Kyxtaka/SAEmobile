@@ -56,20 +56,20 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
     final critiquesViewModel = Provider.of<CritiqueViewModel>(context, listen: false);
     // critiquesViewModel.generateCritiques(UserViewModel.getCurrentUser());
 
-    void showLoading() {
+    void _showLoading(BuildContext context) {
       showDialog(
         barrierColor: Colors.black.withValues(alpha: 0.5),
         context: context,
-        builder: (_) =>
-            Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+        builder: (_) => Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
       );
     }
+
 
     return Scaffold(
       appBar: Header.create(),
@@ -204,7 +204,7 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()){
                                 if (_selectedImage != null) {
-                                  showLoading();
+                                  _showLoading(context);
                                   print("Image sélectionnée : ${_selectedImage!.path}");
                                   await critiquesViewModel.insertCritiquePhoto(
                                       user_identifier,
@@ -213,18 +213,23 @@ class _AddCritiquePageState extends State<AddCritiquePage> {
                                       (_noteController + 0.5).toInt() ?? 3,
                                       _selectedImage
                                   );
-                                  context.go('/avis');
                                 }else {
                                   print("Image sélectionnée : nan");
-                                  showLoading();
+                                  _showLoading(context);
                                   await critiquesViewModel.insertCritique(
                                     widget.restID.toString(),
                                     user_identifier,
                                     _formKey.currentState?.fields['Message']?.value ?? "Pas de méssage",
                                     (_noteController + 0.5).toInt() ?? 3,
                                   );
-                                  context.go('/avis');
                                 }
+                                if (Navigator.of(context, rootNavigator: true).canPop()) {
+                                  debugPrint("Pop du dialog...");
+                                  Navigator.of(context, rootNavigator: true).pop();
+                                } else {
+                                  debugPrint("Aucun dialog à pop !");
+                                }
+                                GoRouter.of(context).goNamed('avis');
                               }
                             },
                             child: const Text(
