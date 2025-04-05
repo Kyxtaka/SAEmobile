@@ -181,19 +181,25 @@ class RestaurantAPI {
   }
 
   // renvoit deux restaurants pour les suggestions selon les types pref du user
-  Future<List<Restaurant>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
+  Future<List<Restaurant?>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
     final supabase = Supabase.instance.client;
     final typesString = '(${typesPref.join(',')})';
+    print("types : $typesString");
     final restoString = '(${restaurantPref.join(',')})';
+    print("restos : $restoString");
     var resultat = await supabase
-        .from('restaurants')
+        .from('Restaurant')
         .select('*')
-        .filter('_id_cuisine', 'in', typesString)
-        .not('id', 'in', restoString)
+        .filter('id_cuisine', 'in', typesString)
+        .not('id_resto', 'in', restoString)
         .limit(2);
-    return (resultat as List)
-        .map((rawResto) =>
-        Restaurant.fromMap(rawResto as Map<String, dynamic>))
-        .toList();
+    print("resultat : $resultat");
+    List<Restaurant?> restaurantList = [];
+    for (var item in (resultat as List)) {
+      final id = (item as Map<String, dynamic>)['id_resto'];
+      final restaurant = await getRestaurantById(id);
+      restaurantList.add(restaurant);
+    }
+    return restaurantList;
   }
 }
