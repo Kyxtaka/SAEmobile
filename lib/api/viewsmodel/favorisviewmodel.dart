@@ -30,8 +30,12 @@ class FavorisViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> isFavoris(fav) async {
+  Future<bool> isFavoris(int fav) async {
+    debugPrint("Fav check id ${fav.toString()}");
+    debugPrint("check int and string same value ${1 == "1"}");
     for (var i = 0;i<favoris.length;i++){
+      debugPrint("it rest id: ${favoris[i].id}");
+      debugPrint("check: ${favoris[i].id == fav}");
       if (favoris[i].id==fav){
         return true;
       }

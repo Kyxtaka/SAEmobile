@@ -32,7 +32,12 @@ class _DetailsPageState extends State<DetailsPage> {
   RestaurantAPI api = RestaurantAPI();
 
   Future<Map<String, dynamic>> getDetailsRestaurant() async {
+    final favViewModel = Provider.of<FavorisViewModel>(context, listen: false);
+
     var api = RestaurantAPI();
+    bool isFav = await favViewModel.isFavoris(int.parse(widget.restaurantId.toString()));
+    debugPrint("favoris status ${isFav.toString()}");
+
     var restaurant = await RestaurantAPI.getRestaurantById(int.parse(widget.restaurantId??"-1"));
     var type;
     try {
@@ -40,7 +45,7 @@ class _DetailsPageState extends State<DetailsPage> {
     } catch (e) {
       type = "Non renseigné";
     }
-    return {"restaurant": restaurant, "typecuisine": type};
+    return {"restaurant": restaurant, "typecuisine": type, "isFav": isFav};
   }
 
 
@@ -133,10 +138,14 @@ class _DetailsPageState extends State<DetailsPage> {
                   Text("Ajouter en favoris", style: TextStyle(fontSize:15)),
                   IconButton(
                     icon: Icon(Icons.favorite,),
-                    color: Colors.grey,
+                    color: (snapshot.data!['isFav']) ? Colors.red : Colors.grey,
                     onPressed:() async {
                       var user = await  UserViewModel.getCurrentUser();
-                      favorisViewModel.addFavoris(user, snapshot.data?['restaurant'].id);
+                      if (snapshot.data!['isFav']) {
+                        favorisViewModel.removeFavoris(user, snapshot.data?['restaurant'].id);
+                      }else {
+                        favorisViewModel.addFavoris(user, snapshot.data?['restaurant'].id);
+                      }
                       context.go('/favoris');}
                   ),
                   SizedBox(height: 15),
