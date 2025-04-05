@@ -44,20 +44,8 @@ class RestaurantsPrefereesDAO {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      restaurants.add(new Restaurant(int.parse(restaurant['restaurant_id'].toString()),
-          "",
-          "",
-          0,
-          "",
-          "",
-          "",
-          "",
-          0,
-          45,
-          0,
-          "",
-          0.0,
-          0.0));
+      Restaurant? rest = await RestaurantAPI.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
+      restaurants.add(rest!);
     }
     return restaurants;
   }
