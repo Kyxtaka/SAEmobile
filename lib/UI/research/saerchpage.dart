@@ -13,46 +13,87 @@ import 'package:saemobile/models/typeCuisine.dart';
 import 'package:saemobile/UI/research/dropdownbutton.dart';
 
 class SearchScreen extends StatefulWidget {
+  final bool shouldFocus;
+  final String? initialCuisineId;
+  final bool autoSearch;
+  const SearchScreen({
+    super.key,
+    this.shouldFocus = false,
+    this.initialCuisineId,
+    this.autoSearch = false,
+  });
 
-  const SearchScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+
   final CaracteristiqueAndCuisineAPI caracAndCuisineAPI = CaracteristiqueAndCuisineAPI();
 
   late Future<void> _loadDataFuture;
   final _formKey = GlobalKey<FormBuilderState>();
-
-  List<TypeCuisine> typeCuisines = [];
-  List<Caracteristique> caracteristiques = [];
   late var position;
   late var restauranstByPosition;
 
+  List<TypeCuisine> typeCuisines = [];
+  List<Caracteristique> caracteristiques = [];
+
   TypeCuisine? selectedType;
   Caracteristique? selectedCarac;
-
   @override
   void initState() {
     super.initState();
     _loadDataFuture = _loadData();
+    if (widget.shouldFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(_focusNode);
+      });
+    }
   }
 
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
   Future<void> _loadData() async {
     final cuisines = await caracAndCuisineAPI.getAllTypeCuisine();
     final caracs = await caracAndCuisineAPI.getAllCaracterisque();
     position = await UserViewModel.getLocalisation();
     restauranstByPosition = await RestaurantAPI.getRestaurantsByLocation(position.latitude, position.longitude);
 
+
     setState(() {
       typeCuisines = cuisines;
       caracteristiques = caracs;
       selectedType = cuisines.first;
       selectedCarac = caracs.first;
+      if (widget.initialCuisineId != null) {
+        final matchedType = cuisines.firstWhere(
+              (c) => c.id.toString() == widget.initialCuisineId,
+          orElse: () => cuisines.first,
+        );
+        selectedType = matchedType;
+      }
     });
+
+    if (widget.autoSearch && widget.initialCuisineId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.goNamed(
+          'searchResult',
+          queryParameters: {
+            'cuisine': widget.initialCuisineId!,
+          },
+        );
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
