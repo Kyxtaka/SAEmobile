@@ -151,7 +151,6 @@ class DropdownTypeCuisineFavoris extends StatelessWidget {
   final ValueChanged<TypeCuisine?> onChanged;
   final TypeCuisine? selectedType;
   final ValueChanged<TypeCuisine>? onRemove;
-  final bool? addDelete;
 
   const DropdownTypeCuisineFavoris({
     super.key,
@@ -159,16 +158,42 @@ class DropdownTypeCuisineFavoris extends StatelessWidget {
     required this.onChanged,
     this.selectedType,
     this.onRemove,
-    this.addDelete,
   });
 
-  Widget? addBoutonDelete(){
-    if(addDelete == null) {
-      return null;
+  Widget addBoutonDelete(item){
+    var button = null;
+    if (typeCuisines.contains(item)){
+      var button =IconButton(
+        icon: Icon(Icons.delete, color: Colors.red),
+        onPressed: () {
+          onRemove!(item);
+        },
+      );
     }
-
+    else {
+      var button = IconButton(
+        icon: Icon(Icons.add, color: Colors.green),
+        onPressed: () {
+        },
+      );
+    }
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            item.cuisine,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        button
+      ],
+    );
   }
-
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
@@ -199,27 +224,7 @@ class DropdownTypeCuisineFavoris extends StatelessWidget {
               (TypeCuisine item) {
             return DropdownMenuItem<TypeCuisine>(
               value: item,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.cuisine,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      onRemove!(item);
-                    },
-                  ),
-                ],
-              ),
+              child: addBoutonDelete(item)
             );
           },
         ).toList(),
