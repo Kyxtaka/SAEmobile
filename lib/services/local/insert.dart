@@ -83,11 +83,11 @@ class Insert {
     // Insertion de types de cuisine
     await typeCuisineLocal.insertTypeCuisine(
       1,
-      TypeCuisine(1, 'japonais', 'assets/img/typeCuisine/japonais.jpg'),
+      TypeCuisine(76, 'tacos', 'assets/img/typeCuisine/japonais.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       2,
-      TypeCuisine(2, 'italien', 'assets/img/typeCuisine/italien.jpg'),
+      TypeCuisine(2, 'pizza', 'assets/img/typeCuisine/italien.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       3,
@@ -102,7 +102,7 @@ class Insert {
       TypeCuisine(5, 'indien', 'assets/img/typeCuisine/indien.png'),
     );
 
-    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 1);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 76);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 2);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 3);
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 4);

@@ -67,7 +67,6 @@ class _SearchScreenState extends State<SearchScreen> {
       if (widget.initialCuisineId != null) {
         final matchedType = cuisines.firstWhere(
               (c) => c.id.toString() == widget.initialCuisineId,
-          orElse: () => cuisines.first,
         );
         selectedType = matchedType;
       }
@@ -79,6 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
         'searchResult',
         queryParameters: {
           'cuisine': widget.initialCuisineId!,
+          'carac': '-1',
         },
       );
     });

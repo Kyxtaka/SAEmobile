@@ -162,7 +162,7 @@ class _AccueilState extends State<Accueil> {
                                   padding: const EdgeInsets.only(right: 12.0),
                                   child: InkWell(
                                     onTap: () {
-                                      context.go('/search?focus=true&cuisine=${cuisine.id.toString()}&autoSearch=true');
+                                      context.go('/search?focus=true&cuisine=${cuisine.id}&autoSearch=true');
                                     },
                                   child: Column(
                                     children: [
