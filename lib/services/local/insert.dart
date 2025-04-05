@@ -87,26 +87,26 @@ class Insert {
     );
     await typeCuisineLocal.insertTypeCuisine(
       2,
-      TypeCuisine(2, 'pizza', 'assets/img/typeCuisine/italien.jpg'),
+      TypeCuisine(78, 'italian', 'assets/img/typeCuisine/italien.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       3,
-      TypeCuisine(3, 'coréen', 'assets/img/typeCuisine/coreen.jpg'),
+      TypeCuisine(83, 'mexican', 'assets/img/typeCuisine/coreen.jpg'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       4,
-      TypeCuisine(4, 'français', 'assets/img/typeCuisine/francais.png'),
+      TypeCuisine(91, 'vietnamese', 'assets/img/typeCuisine/francais.png'),
     );
     await typeCuisineLocal.insertTypeCuisine(
       5,
-      TypeCuisine(5, 'indien', 'assets/img/typeCuisine/indien.png'),
+      TypeCuisine(102, 'turkish', 'assets/img/typeCuisine/indien.png'),
     );
 
     await typeCuisinePref.insertCuisinePrefere('a@mail.com', 76);
-    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 2);
-    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 3);
-    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 4);
-    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 5);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 78);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 83);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 91);
+    await typeCuisinePref.insertCuisinePrefere('a@mail.com', 102);
 
   }
 }
