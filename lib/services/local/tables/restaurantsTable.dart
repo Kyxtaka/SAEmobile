@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../../../api/restaurantAPI.dart';
 import '../../../models/restaurant.dart';
 import '../sqlfliteDatabase.dart';
 
@@ -57,13 +58,17 @@ class RestaurantsTable {
     }).toList();
   }
 
-  static Future<Restaurant> getRestaurantById(int id) async {
+  static Future<Restaurant?> getRestaurantById(int id) async {
     final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> Restmaps = await db.query(
       'restaurants',
       where: 'id = ?',
       whereArgs: [id],
     );
+    if (Restmaps.isEmpty) {
+      Restaurant? rest = await RestaurantAPI.getRestaurantById(id);
+      return rest;
+    }
     final map = Restmaps.first;
     final capacity = (map['capacity'] as int?) ?? 0;
     final tel = (map['tel'] as String?) ?? '';

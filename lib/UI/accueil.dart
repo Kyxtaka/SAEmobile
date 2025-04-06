@@ -202,7 +202,7 @@ class _AccueilState extends State<Accueil> {
                         },
                       ),
                       FutureBuilder<List<Restaurant?>>(
-                        future: RestaurantsPrefereesDAO.getRestaurantsPreferees(
+                        future: RestaurantsPrefereesDAO.getRestaurantsPrefereesLocal(
                             user),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData && snapshot.connectionState !=

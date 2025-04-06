@@ -41,8 +41,24 @@ class RestaurantsPrefereesDAO {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      Restaurant? rest = await RestaurantsTable.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
-      restaurants.add(rest);
+      Restaurant? rest = await RestaurantAPI.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
+      restaurants.add(rest!);
+    }
+    return restaurants;
+  }
+
+  static Future<List<Restaurant>> getRestaurantsPrefereesLocal(String email) async {
+    final db = await SqlfliteDatabase.instance.database;
+    var result = await db.query(
+      'restaurants_preferees',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    List<Restaurant> restaurants = [];
+    for (var i =0;i<result.length;i++){
+      var restaurant = result[i];
+      Restaurant? rest = (await RestaurantsTable.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()))) as Restaurant?;
+      restaurants.add(rest!);
     }
     return restaurants;
   }
