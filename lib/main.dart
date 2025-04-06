@@ -1,125 +1,368 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:saemobile/UI/review/addCritique.dart';
+import 'package:saemobile/UI/review/critiquesRestaurant.dart';
+import 'package:saemobile/UI/favoris.dart';
+import 'package:saemobile/UI/research/saerchpage.dart';
+import 'package:saemobile/UI/research/searchresult.dart';
+import 'package:saemobile/UI/settings.dart';
+import 'package:saemobile/api/viewsmodel/favorisviewmodel.dart';
+import 'package:saemobile/providers/connectivyprovider.dart';
+import 'package:saemobile/providers/imgsizeprovider.dart';
+import 'package:saemobile/services/local/insert.dart';
+import 'package:saemobile/services/local/sqlfliteDatabase.dart';
+import 'package:sqflite/sqflite.dart';
+import 'UI/accueil.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'UI/profile.dart';
+import 'UI/review/avis.dart';
+import 'UI/research/decouverte.dart';
+import 'dart:async';
+import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
+import 'UI/forms/editForm.dart';
+import 'UI/home.dart';
+import 'UI/signIn.dart';
+import 'UI/login.dart';
+import 'UI/details.dart';
+import 'UI/profile.dart';
+import 'UI/themes/theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
+import 'package:internet_connection_control_alert/internet_connection_control_alert.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-//
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+import 'api/viewsmodel/critiquesviewmodel.dart';
+import 'api/viewsmodel/userviewmodel.dart'; // Detects if running on Web
+
+Future<SupabaseClient> initSupabase() async{
+  try {
+    await dotenv.load(fileName: ".env");
+    await Supabase.initialize(
+        url: dotenv.env['SUPABASE_DB_API_URL']??'',
+        anonKey: dotenv.env['SUPABASE_ANON_KEY']??''
     );
+    print('SUPABASE INITIALIZED');
+    return Supabase.instance.client;
+  } catch (e) {
+    debugPrint("Error lors de l'initialisation de supabase $e");
   }
+  return Supabase.instance.client;
+
+
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    if (kIsWeb) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfiWeb;
+    }
+  } catch (e) {
+    print(e);
   }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+  var database = new SqlfliteDatabase();
+  final db = await database.database;
+  await  Insert.insertData(db);
+  print("données bien inserées");
+  runApp(
+    // reprise de l'exemple connection alert https://pub.dev/packages/internet_connection_control_alert
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Builder(
+            builder: (context) {
+              ConnectivityProvider.checkConnectovity(context);
+              return MyApp(database: db);
+            }
         ),
+      )
+  );
+}
+
+GoRouter _router(UserViewModel userViewModel) {
+  return GoRouter(
+    initialLocation: '/',
+
+    routes: [
+      GoRoute(
+        name:'home',
+        path: '/',
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+        builder: (context, state) => Home(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+      GoRoute(
+          path: '/login',
+          builder: (context, state) => Login(userViewModel: userViewModel, database: Supabase.instance.client,),
+          redirect: (BuildContext context, GoRouterState state) {
+            if (userViewModel.isConnected()) {
+              return '/accueil';
+            } else {
+              return null;
+            }
+          },
+      ),
+      GoRoute(
+        path:'/signIn',
+        builder: (context, state) => SignIn(database: Supabase.instance.client,),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (userViewModel.isConnected()) {
+            return '/accueil';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/search',
+        //builder: (context, state) => SearchScreen(),
+          builder: (context, state) => SearchScreen(
+            shouldFocus: state.uri.queryParameters["focus"] == "true",
+            initialCuisineId: state.uri.queryParameters["cuisine"],
+            autoSearch: state.uri.queryParameters["autoSearch"] == "true",
+          ),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'decouverte',
+            name: 'decouverte',
+            builder: (context, state) => Decouverte(),
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+          GoRoute(
+            path: 'result',
+            name: 'searchResult',
+            // builder: (context, state) => SearchResult(
+            //     cuisine:int.parse(state.uri.queryParameters['cuisine'].toString()),
+            //     carac:int.parse(state.uri.queryParameters['carac'].toString()),
+            //     search: state.uri.queryParameters['search'].toString()
+            // ),
+            builder: (context, state) {
+              final cuisineParam = state.uri.queryParameters['cuisine'];
+              final caracParam = state.uri.queryParameters['carac'];
+              final searchParam = state.uri.queryParameters['search'];
+
+              final cuisine = cuisineParam != null ? int.tryParse(cuisineParam) ?? 0 : 0;
+              final carac   = caracParam != null ? int.tryParse(caracParam) ?? 0 : 0;
+              final search  = searchParam ?? "";
+
+              return SearchResult(
+                cuisine: cuisine,
+                carac: carac,
+                search: search,
+              );
+            },
+            redirect: (BuildContext context, GoRouterState state) {
+              if (!userViewModel.isConnected()) {
+                return '/login';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ]
+      ),
+      GoRoute(
+          path: '/favoris',
+        builder: (context, state) => Favoris(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },),
+      GoRoute(
+        path: '/accueil',
+        builder: (context, state) => Accueil(database: Supabase.instance.client),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/avis',
+        name: 'avis',
+        builder: (context, state) => Avis(),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => SettingsScreen(userViewModel: userViewModel),
+        redirect: (BuildContext context, GoRouterState state) {
+          if (!userViewModel.isConnected()) {
+            return '/login';
+          } else {
+            return null;
+          }
+        },
+      ),
+      GoRoute(
+        path: '/profil/:email',
+        builder: (context, state) {
+          final String email = state.pathParameters['email'] ?? '';
+          return Profile(userEmail: email);
+        },
+      ),
+      GoRoute(
+        path: ('/avis/:id'),
+        builder: (BuildContext context, GoRouterState state) {
+          final id = state.pathParameters['id']!;
+          return EditForm(
+            id: id,
+          );
+        },),
+      GoRoute(
+        path: ('/details/:id'),
+        builder: (BuildContext context, GoRouterState state){
+          final id = state.pathParameters['id']!;
+          return DetailsPage(restaurantId:id);
+        },
+        routes: <RouteBase> [
+          GoRoute(
+            path: 'addcritique',
+            name: 'addCritique',
+            builder: (BuildContext context, GoRouterState state) => AddCritiquePage(
+              restID:int.parse(state.pathParameters['id'].toString())
+            )
+          )
+        ]
+      ),
+      GoRoute(
+          path: ('/details/:id/avis'),
+          builder: (BuildContext context, GoRouterState state){
+            final id = state.pathParameters['id']!;
+            return CritiqueRestaurants(restaurantId: id);
+          }
+      ),
+      // Code d'Ophelie
+      GoRoute(
+        path: '/profile/:email',
+        builder: (context, state) {
+          final String email = state.pathParameters['email'] ?? '';
+          return Profile(userEmail: email);
+        },
+      ),
+    ],
+  );
+}
+
+
+class MyApp extends StatelessWidget {
+  final Database database;
+  MyApp({required this.database});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = MyTheme.defaultTheme();
+    final Widget loadingSceen = CircularProgressIndicator();
+    return FutureBuilder(
+        future: initSupabase(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return MaterialApp(
+              home: Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return MaterialApp(
+              home: Scaffold(
+                body: Center(child: Text("Erreur de chargement de Supabase")),
+              ),
+            );
+          }
+
+          return MultiProvider(
+              providers: [
+
+                Provider<SupabaseClient>(create: (_) => Supabase.instance.client),
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
+                ),
+                FutureProvider<String>(
+                  create: (context) => UserViewModel.getCurrentUser(),
+                  initialData: "",
+                ),
+                ChangeNotifierProvider<UserViewModel>(
+                  create: (_) =>
+                      UserViewModel(
+                          database: Supabase.instance.client, context: context),
+                ),
+                ChangeNotifierProxyProvider<String, FavorisViewModel>(
+                  create: (context) => FavorisViewModel(),
+                  update: (context, email, favorisViewModel) {
+                    if (email.isNotEmpty) {
+                      favorisViewModel?.generateFavoris(email);
+                    }
+                    return favorisViewModel ?? FavorisViewModel();
+                  },
+                  child: Avis(),
+                ),
+                ChangeNotifierProxyProvider<String, CritiqueViewModel>(
+                  create: (context) => CritiqueViewModel(),
+                  update: (context, email, critiquesViewModel) {
+                    if (email.isNotEmpty) {
+                       critiquesViewModel?.generateCritiques(email);
+                    }
+                    return critiquesViewModel ?? CritiqueViewModel();
+                  },
+                ),
+              ],
+              child: Consumer<UserViewModel>( //int ici car le themeProvider ou le settingViewmodel n'est pas encore fait
+                builder: (context, userViewModel, child) {
+                  ConnectivityProvider.checkAndHandleRequiredConnectivity(context, false);
+                  if (userViewModel.isLoading) {
+                    return MaterialApp(
+                      home: Scaffold(
+                        body: Center(child: CircularProgressIndicator()),
+                      ),
+                    );
+                  }
+                  return MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    theme: theme,
+                    title: 'My App',
+                    routerConfig: _router(userViewModel),
+                  );
+                }
+              )
+          );
+
+        });
   }
 }
+

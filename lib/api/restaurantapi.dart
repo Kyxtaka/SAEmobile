@@ -1,0 +1,216 @@
+
+import 'package:flutter/material.dart';
+import 'package:saemobile/api/carateristiqueandcuisineapi.dart';
+import 'package:saemobile/models/restaurant.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../models/typeCuisine.dart';
+
+class RestaurantAPI {
+
+  final SupabaseClient database = Supabase.instance.client;
+
+  RestaurantAPI();
+
+  Restaurant createRestant(Map<String, dynamic> row) {
+    return Restaurant(
+        row['id_resto'],
+        row['nom']??'None',
+        row['adresse']??'None',
+        row['capacity']??-1,
+        row['tel']??'None',
+        row['siret']??'None',
+        row['website']??'None',
+        row['photo']??'None',
+        row['id_cuisine']??-1,
+        row['id_region']??-1,
+        row['nb_etoile']??-1,
+        row['horaires']??'None',
+        row['gps_lat']??0.0,
+        row['gps_long']??0.0
+    );
+  }
+
+  Future<List<Restaurant>> getAllRestaurants() async {
+    //final supabase = await _initDb();
+    try {
+      final response = await database
+          .from('Restaurant')
+          .select();
+
+      debugPrint("Function executed");
+      List<Restaurant> restaurants = [];
+      debugPrint("Response contains ${response.length} rows.");
+      if (response.isNotEmpty) {
+        for (var row in response) {
+          Restaurant restaurant = Restaurant(
+              row['id_resto'],
+              row['nom']??'None',
+              row['adresse']??'None',
+              row['capacity']??-1,
+              row['tel']??'None',
+              row['siret']??'None',
+              row['website']??'None',
+              row['photo']??'None',
+              row['id_cuisine']??-1,
+              row['id_region']??-1,
+              row['nb_etoile']??-1,
+              row['horaires']??'None',
+              row['gps_lat']??0.0,
+              row['gps_long']??0.0
+          );
+          restaurants.add(restaurant);
+        }
+        debugPrint("Restaurants count: ${restaurants.length}");
+      } else {
+        debugPrint("Response is a List, but it's EMPTY! ❌");
+      }
+          return restaurants;
+    } catch (e) {
+      debugPrint("Error fetching data: $e ❌");
+      return [];
+    }
+  }
+
+
+  static Future<Restaurant?> getRestaurantById(int id) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('Restaurant')
+          .select()
+          .eq('id_resto', id)
+          .maybeSingle(); // Permet de récupérer un seul élément
+      if (response != null) {
+        return Restaurant(
+          response['id_resto'],
+          response['nom'] ?? 'None',
+          response['adresse'] ?? 'None',
+          response['capacity'] ?? -1,
+          response['tel'] ?? 'None',
+          response['siret'] ?? 'None',
+          response['website'] ?? 'Pas de site web',
+          response['url_photo'] ?? 'None',
+          response['id_cuisine'] ?? -1,
+          response['id_region'] ?? -1,
+          response['nb_etoile'] ?? -1,
+          response['horaires'] ?? 'None',
+          response['gps_lat'] ?? 0.0,
+          response['gps_long'] ?? 0.0,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé $id");
+    return null;
+  }
+
+  Future<List<Restaurant>> getRestaurantByCarac(int caracId) async {
+    List<Restaurant> result = [];
+    try {
+      final responseCaracteriser = await database
+          .from('Caracteriser')
+          .select('id_resto')
+          .eq('id_carac', caracId); // Permet de récupérer un seul élément
+      if (responseCaracteriser.isNotEmpty) {
+        for (var rowIdResto in responseCaracteriser) {
+          Restaurant? rest = await getRestaurantById(int.parse(rowIdResto['id_resto'].toString()));
+          if (rest != null) {
+            result.add(rest);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
+    return result;
+  }
+
+  Future<List<Restaurant>> getRestaurantByCuisine(int cuisineId) async {
+    List<Restaurant> result = [];
+    try {
+      final responseCuisine = await database
+          .from('Restaurant')
+          .select()
+          .eq('id_cuisine', cuisineId); // Permet de récupérer un seul élément
+      if (responseCuisine.isNotEmpty) {
+        for (var resto in responseCuisine) {
+          Restaurant rest = createRestant(resto);
+          if (rest != null) {
+            result.add(rest);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé avec l id carac ${cuisineId}");
+    return result;
+  }
+
+  Future<List<Restaurant>> getRestaurantByCaracAndCuisine(int caracId, int cuisineId) async {
+    List<Restaurant> result = [];
+    try {
+      final responseCaracteriser = await database
+          .from('Caracteriser')
+          .select('id_resto')
+          .eq('id_carac', caracId); // Permet de récupérer un seul élément
+      if (responseCaracteriser.isNotEmpty) {
+        for (var rowIdResto in responseCaracteriser) {
+          Restaurant? rest = await getRestaurantById(int.parse(rowIdResto['id_resto'].toString()));
+          if (rest != null && rest.id_cuisine == cuisineId) {
+            result.add(rest);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching restaurant by ID: $e ❌");
+    }
+    debugPrint("Pas de restaurant trouvé avec l id carac ${caracId}");
+    return result;
+  }
+
+  Future<TypeCuisine> getRestaurantType(int restaurantId) async {
+    final supabase = Supabase.instance.client;
+    Restaurant rest = RestaurantAPI.getRestaurantById(restaurantId) as Restaurant;
+    TypeCuisine type = CaracteristiqueAndCuisineAPI.getType(rest.id_cuisine) as TypeCuisine;
+    return type;
+  }
+
+
+  /// récupéré de la flutter doc
+  static Future<dynamic> getRestaurantsByLocation(lat, long) async {
+    final data = await Supabase.instance.client.rpc('nearby_restaurants',params: {
+      'lat': lat,
+      'long': long,
+    });
+    return data.getRange(0,10).toList();
+  }
+
+  // renvoit trois restaurants pour les suggestions selon les types pref du user
+  Future<List<Restaurant?>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
+    final supabase = Supabase.instance.client;
+    final typesString = '(${typesPref.join(',')})';
+    print("types : $typesString");
+    final restoString = '(${restaurantPref.join(',')})';
+    print("restos : $restoString");
+    var resultat = await supabase
+        .from('Restaurant')
+        .select('*')
+        .filter('id_cuisine', 'in', typesString)
+        .not('id_resto', 'in', restoString)
+        .limit(3);
+    print("resultat : $resultat");
+    List<Restaurant?> restaurantList = [];
+    for (var item in (resultat as List)) {
+      final id = (item as Map<String, dynamic>)['id_resto'];
+      final restaurant = await getRestaurantById(id);
+      if (restaurant != null) {
+        restaurantList.add(restaurant);
+      }
+    }
+    return restaurantList;
+  }
+}
