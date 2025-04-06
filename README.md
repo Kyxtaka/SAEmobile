@@ -15,6 +15,7 @@ Pour ouvrir le projet, vous devez avoir préalablement les installations nécess
 Pour lancer le projet depuis le web, vous devez : 
 - vous rendre à la racine du projet
 - lancer avec la commande ```flutter run```
+  
 
 ## Fonctionnalités implémentées
 L'application mobile IUTables'O permet :
@@ -23,4 +24,5 @@ L'application mobile IUTables'O permet :
 - de mettre en favoris des restaurants, de les supprimer
 - de donner des avis, de les supprimer ou modifier (avec photos)
 - de garder en mémoire votre localisation ou encore vos types de cuisine préféré
+- modification de votre profil (nom, prenom, mot de passe..)
 
