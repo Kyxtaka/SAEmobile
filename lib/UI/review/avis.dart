@@ -102,7 +102,6 @@ class _AvisState extends State<Avis> {
                 Selector<UserViewModel, String>(
                   selector: (_, userViewModel) => userViewModel.identifier,
                   builder: (context, currentUser, __)  {
-                    debugPrint("====================== User identifier changed: cu ${currentUser} =======");
                     initOnUserChange();
                     return SizedBox.shrink(); // Widget invisible qui écoute les changements
                   },
