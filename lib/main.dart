@@ -29,6 +29,7 @@ import 'UI/home.dart';
 import 'UI/signIn.dart';
 import 'UI/login.dart';
 import 'UI/details.dart';
+import 'UI/profile.dart';
 import 'UI/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -52,6 +53,7 @@ Future<SupabaseClient> initSupabase() async{
     debugPrint("Error lors de l'initialisation de supabase $e");
   }
   return Supabase.instance.client;
+
 
 }
 
@@ -228,6 +230,13 @@ GoRouter _router(UserViewModel userViewModel) {
         },
       ),
       GoRoute(
+        path: '/profil/:email',
+        builder: (context, state) {
+          final String email = state.pathParameters['email'] ?? '';
+          return Profile(userEmail: email);
+        },
+      ),
+      GoRoute(
         path: ('/avis/:id'),
         builder: (BuildContext context, GoRouterState state) {
           final id = state.pathParameters['id']!;
@@ -356,3 +365,4 @@ class MyApp extends StatelessWidget {
         });
   }
 }
+

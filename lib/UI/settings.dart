@@ -178,6 +178,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   child: Text("Autoriser la localisation")),
               const SizedBox(height: 40),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 20),
+                  backgroundColor: Colors.orangeAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),onPressed: () async {
+                var user = await UserViewModel.getCurrentUser();
+                context.go('/profil/${user}');
+              }, child: const Text(
+                'Modifier mon profil',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),),
+              const SizedBox(height: 40),
 
               Padding(
                 padding: EdgeInsets.all(10),

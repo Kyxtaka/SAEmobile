@@ -25,13 +25,8 @@ class Footer {
         BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favoris"),
         BottomNavigationBarItem(icon: Icon(Icons.messenger_outline), label: "Avis"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
-        //code d'Ophelie
-        BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Profil',
+          label: 'Settings',
         ),
       ],
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:saemobile/UI/global/footer.dart';
 import 'package:saemobile/services/local/tables/userTable.dart';
 import 'package:saemobile/models/user.dart' as app_models;
+import 'package:saemobile/models/user.dart';
+import '../utils/UserTools.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 //Merge du code d'ophelie Valin a la main pour ne pas casser le projet
@@ -37,7 +39,7 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _loadUserData() async {
-    app_models.User? user = await _userTable.getUserByEmail(widget.userEmail);
+    var user = await _userTable.getUserByEmail(widget.userEmail);
     if (user != null) {
       setState(() {
         _nomController.text = user.nom;
@@ -68,11 +70,6 @@ class _ProfilePageState extends State<Profile> {
     );
   }
 
-
-  Future<void> _logout() async {
-    await supabase.auth.signOut();
-    Navigator.pushReplacementNamed(context, '/home');
-  }
 
   @override
   Widget build(BuildContext context) {

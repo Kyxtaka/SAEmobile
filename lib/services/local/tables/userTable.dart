@@ -1,6 +1,9 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:saemobile/models/user.dart' as app_models;
 import '../sqlfliteDatabase.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserTable {
 
