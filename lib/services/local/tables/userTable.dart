@@ -20,7 +20,7 @@ class UserTable {
     final db = await SqlfliteDatabase.instance.database;
     await db.update(
       'User',
-      user.toMapLocal(),
+      {'email': user.mail, 'password': user.password, 'localisation':'', 'id_type': 0},
       where: 'email = ?',
       whereArgs: [user.mail],
     );
@@ -39,7 +39,7 @@ class UserTable {
     final db = await SqlfliteDatabase.instance.database;
     final List<Map<String, Object?>> result = await db.query(
       'User',
-      where: 'mail = ?',
+      where: 'email = ?',
       whereArgs: [email],
     );
 
