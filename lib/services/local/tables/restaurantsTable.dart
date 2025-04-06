@@ -97,7 +97,6 @@ class RestaurantsTable {
       gpsLat,
       gpsLong,
     );
-    print("restaurant par id $resto");
     return resto;
   }
 }

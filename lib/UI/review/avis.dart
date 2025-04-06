@@ -63,7 +63,6 @@ class _AvisState extends State<Avis> {
     }
 
     Future<void> initOnUserChange() async {
-      debugPrint("initOnUserChanged called");
       final String currentUser = await UserViewModel.getCurrentUser();
       if (critiquesViewModel.liste.isNotEmpty) {
         if (currentUser != critiquesViewModel.liste.first.user?.mail) refreshWidget();
@@ -71,7 +70,6 @@ class _AvisState extends State<Avis> {
         await critiquesViewModel.refreshDataNoNotify();
         if (critiquesViewModel.liste.isNotEmpty) refreshWidget();
       }
-      debugPrint("refresh canceled");
     }
     print("Avis widget reconstruit !");
     if (critiquesViewModel.onLoading) {

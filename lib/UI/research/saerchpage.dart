@@ -183,9 +183,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: ElevatedButton(
                       onPressed: () {
 
-                        debugPrint("slected type id string ${selectedType?.id.toString()}");
-                        debugPrint("slected  carac id string ${selectedCarac?.id.toString()}");
-
                         final searchValue = _formKey.currentState?.fields['search']?.value;
 
                         context.goNamed(
