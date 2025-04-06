@@ -90,7 +90,7 @@ class RestaurantAPI {
           response['tel'] ?? 'None',
           response['siret'] ?? 'None',
           response['website'] ?? 'Pas de site web',
-          response['photo'] ?? 'None',
+          response['url_photo'] ?? 'None',
           response['id_cuisine'] ?? -1,
           response['id_region'] ?? -1,
           response['nb_etoile'] ?? -1,

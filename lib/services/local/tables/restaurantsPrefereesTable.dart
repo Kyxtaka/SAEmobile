@@ -3,6 +3,7 @@
 import 'package:saemobile/models/restaurant.dart';
 import 'package:flutter/material.dart';
 import 'package:saemobile/api/restaurantapi.dart';
+import 'package:saemobile/services/local/tables/restaurantsTable.dart';
 import 'package:sqflite/sqflite.dart';
 import '../sqlfliteDatabase.dart';
 
@@ -40,8 +41,8 @@ class RestaurantsPrefereesDAO {
     List<Restaurant> restaurants = [];
     for (var i =0;i<result.length;i++){
       var restaurant = result[i];
-      Restaurant? rest = await RestaurantAPI.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
-      restaurants.add(rest!);
+      Restaurant? rest = await RestaurantsTable.getRestaurantById(int.parse(restaurant['restaurant_id'].toString()));
+      restaurants.add(rest);
     }
     return restaurants;
   }
