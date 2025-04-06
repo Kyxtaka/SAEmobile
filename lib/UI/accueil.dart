@@ -256,7 +256,7 @@ class _AccueilState extends State<Accueil> {
                                               image: DecorationImage(
                                                 image: resto?.url_photo == 'None'
                                                     ? AssetImage(
-                                                    'assets/img/default-image.png')
+                                                    'assets/img/default-image2.png')
                                                     : AssetImage(resto!.url_photo),
                                                 fit: BoxFit.cover,
                                               ),
@@ -322,7 +322,7 @@ class _AccueilState extends State<Accueil> {
                                   },
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 2),
                             ],
                           );
                         },
@@ -376,7 +376,7 @@ class _AccueilState extends State<Accueil> {
                                               borderRadius: BorderRadius.circular(12),
                                               image: DecorationImage(
                                                 image: (resto?.url_photo == 'None')
-                                                    ? const AssetImage('assets/img/default-image.png')
+                                                    ? const AssetImage('assets/img/default-image2.png')
                                                     : AssetImage(resto!.url_photo),
                                                 fit: BoxFit.cover,
                                               ),

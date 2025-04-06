@@ -189,7 +189,7 @@ class RestaurantAPI {
     return data.getRange(0,10).toList();
   }
 
-  // renvoit deux restaurants pour les suggestions selon les types pref du user
+  // renvoit trois restaurants pour les suggestions selon les types pref du user
   Future<List<Restaurant?>> getRestaurantSuggestions(List<int> typesPref, List<int> restaurantPref) async {
     final supabase = Supabase.instance.client;
     final typesString = '(${typesPref.join(',')})';
@@ -201,7 +201,7 @@ class RestaurantAPI {
         .select('*')
         .filter('id_cuisine', 'in', typesString)
         .not('id_resto', 'in', restoString)
-        .limit(2);
+        .limit(3);
     print("resultat : $resultat");
     List<Restaurant?> restaurantList = [];
     for (var item in (resultat as List)) {
